@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:fitfacts/screens/homePage.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
   static const routename = 'LoginPage';
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+
+  TextEditingController user = TextEditingController(); 
+  TextEditingController  psw = TextEditingController(); 
+
+  final String raight_user = 'username';
+  final String raight_psw = 'password';
 
   @override
   Widget build(BuildContext context) {
@@ -12,49 +24,109 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('FitFacts'),
+        centerTitle: true,
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           //logo image
-          Image.asset('assets/images/logo.jpeg', width: 100, height: 100,),
+          Image.asset('assets/images/logo.jpeg', width: 200, height: 200,),
           
           //text field
-          Padding(
-              padding: EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
-              child: TextField(
-                decoration: InputDecoration(
+          Container(
+              padding: EdgeInsets.only(left:30.0,right: 30.0,top:0,bottom: 0),
+              
+              child: Column(children: [
+                TextField(
+                  controller: user,
+                  decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Username',),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 0),
-              child: TextField(
-                obscureText: true,
-                decoration: InputDecoration(
+                ),
+
+                SizedBox(height: 20,),
+
+                TextField(
+                  controller: psw,
+                  obscureText: true,
+                  decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Password',),
-              ),
+                ),],),
             ),
 
             //floating botton
             Container(
-              height: 50,
-              width: 250,
-              decoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.circular(20)),
-              child: ElevatedButton(
-                child: Text('LOGIN'),
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
-                },
-              ),
-            ),
+              child: Column(
+                children: [
+                  TextButton(
+                    child: Text('LOGIN', style: TextStyle(fontSize: 20),),
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(15)),
+                      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                      backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                          side: BorderSide(color: Colors.blueAccent)))
+                    ),
+                    onPressed: () {
+                      if(user==raight_user && psw==raight_psw){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+                      }else{
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            content: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children:[
+                                Icon( Icons.cancel, size: 50, color: Colors.red,),
+                                Text("Wrong Username or Password"),],),
+                            actions: <Widget>[
+                              TextButton(onPressed: () {Navigator.of(context).pop();},
+                                child: const Text("exit"),
+                                style: ButtonStyle(
+                                  padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(15)),
+                                  foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );}
+                    }
+                  ),
+
+                  TextButton(
+                    child: Text('Register'),
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(15)),
+                      foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          content: const Text("non ho la minima idea di come si possa gestire la cosa"),
+                          actions: <Widget>[
+                            TextButton(onPressed: () {Navigator.of(context).pop();},
+                              child: const Text("exit"),
+                              style: ButtonStyle(
+                                padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(15)),
+                                foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+
+              ],),
+            )
+
         ],
       ), 
     );
-  } //build
-
-} 
+  } } 
 
