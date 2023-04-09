@@ -12,11 +12,11 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
-  TextEditingController user = TextEditingController(); 
-  TextEditingController  psw = TextEditingController(); 
+  final user_controller = TextEditingController(); 
+  final psw_controller = TextEditingController(); 
 
-  final String raight_user = 'username';
-  final String raight_psw = 'password';
+  final String raight_user = 'user';
+  final String raight_psw = 'psw';
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +26,13 @@ class _LoginPageState extends State<LoginPage> {
         title: Text('FitFacts'),
         centerTitle: true,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      body: ListView( //ho usato lisview perchè column dava problemi di overflow
         children: [
           //logo image
-          Image.asset('assets/images/logo.jpeg', width: 200, height: 200,),
+          Padding( 
+            padding: EdgeInsets.only(left:0,right:0,top:30,bottom:30),
+            child: Image.asset('assets/images/logo.jpeg', width: 200, height: 200,),
+          ),
           
           //text field
           Container(
@@ -38,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
               
               child: Column(children: [
                 TextField(
-                  controller: user,
+                  controller: user_controller,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Username',),
@@ -47,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: 20,),
 
                 TextField(
-                  controller: psw,
+                  controller: psw_controller,
                   obscureText: true,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
@@ -55,8 +57,9 @@ class _LoginPageState extends State<LoginPage> {
                 ),],),
             ),
 
-            //floating botton
+            //Bottons
             Container(
+              padding: EdgeInsets.only(left:0,right:0,top:30,bottom: 0),
               child: Column(
                 children: [
                   TextButton(
@@ -71,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
                           side: BorderSide(color: Colors.blueAccent)))
                     ),
                     onPressed: () {
-                      if(user==raight_user && psw==raight_psw){
+                      if(user_controller.text==raight_user && psw_controller.text==raight_psw){
                         Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
                       }else{
                         showDialog(
@@ -100,7 +103,6 @@ class _LoginPageState extends State<LoginPage> {
                   TextButton(
                     child: Text('Register'),
                     style: ButtonStyle(
-                      padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(15)),
                       foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
                     ),
                     onPressed: () {
