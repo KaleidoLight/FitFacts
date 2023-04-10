@@ -12,6 +12,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       //This specifies the app entrypoint
       home: LoginPage(),
+      theme: ThemeData(
+        primarySwatch: Colors.pink,
+      ),
     );
   } //build
 }//MyApp
