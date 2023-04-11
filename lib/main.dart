@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fitfacts/screens/homePage.dart';
 import 'package:fitfacts/screens/loginPage.dart';
+import 'package:fitfacts/screens/hearth.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,10 +13,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       //This specifies the app entrypoint
-      home: LoginPage(),
+      home: const HomePage(),
       theme: ThemeData(
         primarySwatch: Colors.pink,
       ),
+      routes: {
+        '/login' : (context) => const LoginPage(),
+        '/heart' : (context) => const HeartView(),
+      },
     );
   } //build
 }//MyApp

@@ -5,13 +5,13 @@ DateTime _drawerDate = DateTime.now();
 
 /// NAVBAR MAIN WIDGET
 /// Returns a Drawer to display
+///
 /// Header: [NavHeader]
 /// Fitbit Server Status: [ServerStatus]
 /// Activity List: [NavList]
 /// Toolbar: [BottomBar]
 ///
 class Navbar extends StatefulWidget {
-
   final String username; // The username to display
   final Color primaryColor; // The color accent of the widget
 
@@ -60,7 +60,6 @@ class _NavbarState extends State<Navbar> {
   }
 }
 
-
 /// NAVIGATION HEADER WIDGET
 ///
 class NavHeader extends StatefulWidget {
@@ -85,8 +84,7 @@ class _NavHeaderState extends State<NavHeader> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "${_drawerDate.day.toString()}-${_drawerDate.month
-                  .toString()}-${_drawerDate.year.toString()}",
+              "${_drawerDate.day.toString()}-${_drawerDate.month.toString()}-${_drawerDate.year.toString()}",
               style: const TextStyle(fontSize: 15),
             ),
             Row(
@@ -98,7 +96,7 @@ class _NavHeaderState extends State<NavHeader> {
                     const Text(
                       "Hello, ",
                       style:
-                      TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       widget.username,
@@ -127,9 +125,12 @@ class _NavHeaderState extends State<NavHeader> {
 /// FITBIT STATUS WIDGET
 ///
 class ServerStatus extends StatefulWidget {
+  final String watchUser;
   final Color primaryColor;
 
-  const ServerStatus({Key? key, required this.primaryColor}) : super(key: key);
+  const ServerStatus(
+      {Key? key, required this.primaryColor, this.watchUser = 'User'})
+      : super(key: key);
 
   @override
   State<ServerStatus> createState() => _ServerStatusState();
@@ -149,18 +150,22 @@ class _ServerStatusState extends State<ServerStatus> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(children: [
-            Icon(
-              Icons.fitbit,
-              color: widget.primaryColor,
-            ),
-            Container(width: 20,),
-            const Text(
-              'FITBIT OF ALBERTO',
-              style:
-              TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
-            )
-          ],),
+          Row(
+            children: [
+              Icon(
+                Icons.fitbit,
+                color: widget.primaryColor,
+              ),
+              Container(
+                width: 20,
+              ),
+              Text(
+                'FITBIT OF ${widget.watchUser.toUpperCase()}',
+                style: const TextStyle(
+                    color: Colors.black87, fontWeight: FontWeight.w600),
+              )
+            ],
+          ),
         ],
       ),
     );
@@ -170,10 +175,9 @@ class _ServerStatusState extends State<ServerStatus> {
 /// NAVIGATION LIST
 ///
 dynamic _selection = '/'; // Detects current page
+
 class NavList extends StatefulWidget {
-
   final Color primaryColor;
-
 
   const NavList({Key? key, required this.primaryColor}) : super(key: key);
 
@@ -194,8 +198,18 @@ class _NavListState extends State<NavList> {
             height: 10,
           ),
           Column(
-            children: [ /// ADD NAVIGATION LINKS HERE
-              NavItem(icon: Icons.home_rounded, title: 'Overview', destinationView: '/', color: widget.primaryColor),
+            children: [
+              /// ADD NAVIGATION LINKS HERE
+              NavItem(
+                  icon: Icons.home_rounded,
+                  title: 'Overview',
+                  destinationView: '/',
+                  color: widget.primaryColor),
+              NavItem(
+                  icon: Icons.favorite_outline,
+                  title: 'Heart',
+                  destinationView: '/heart',
+                  color: widget.primaryColor),
             ],
           ),
         ],
@@ -211,9 +225,13 @@ class NavItem extends StatefulWidget {
   final String title;
   final String destinationView;
   final Color color;
-  
+
   const NavItem(
-      {Key? key, required this.icon, required this.title, required this.destinationView, required this.color})
+      {Key? key,
+      required this.icon,
+      required this.title,
+      required this.destinationView,
+      required this.color})
       : super(key: key);
 
   @override
@@ -228,8 +246,15 @@ class _NavItemState extends State<NavItem> {
           splashColor: Colors.transparent, highlightColor: Colors.transparent),
       child: InkWell(
         onTap: () async {
-          Navigator.pushNamedAndRemoveUntil(context, widget.destinationView, ModalRoute.withName(widget.destinationView)).then((value) => Navigator.popUntil(context, ModalRoute.withName(widget.destinationView)));
-          _selection = widget.destinationView;
+          if (_selection == widget.destinationView) {
+            Navigator.of(context).pop();
+          } else {
+            Navigator.pushNamedAndRemoveUntil(context, widget.destinationView,
+                    ModalRoute.withName(widget.destinationView))
+                .then((value) => Navigator.popUntil(
+                    context, ModalRoute.withName(widget.destinationView)));
+            _selection = widget.destinationView;
+          }
         },
         child: Container(
           margin: const EdgeInsets.fromLTRB(0, 5, 0, 5),
@@ -237,7 +262,9 @@ class _NavItemState extends State<NavItem> {
           height: 50,
           decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(8)),
-              color: (_selection == widget.destinationView) ? widget.color.withAlpha(25) : Colors.grey.withAlpha(30)),
+              color: (_selection == widget.destinationView)
+                  ? widget.color.withAlpha(25)
+                  : Colors.grey.withAlpha(30)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -248,7 +275,9 @@ class _NavItemState extends State<NavItem> {
                   Icon(
                     widget.icon,
                     size: 25,
-                    color: (_selection == widget.destinationView) ? widget.color : Colors.black87,
+                    color: (_selection == widget.destinationView)
+                        ? widget.color
+                        : Colors.black87,
                   ),
                   Container(
                     width: 20,
@@ -258,12 +287,18 @@ class _NavItemState extends State<NavItem> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
-                      color: (_selection == widget.destinationView) ? widget.color : Colors.black87,
+                      color: (_selection == widget.destinationView)
+                          ? widget.color
+                          : Colors.black87,
                     ),
-
                   ),
                   const Spacer(),
-                  Icon(Icons.arrow_right, color: (_selection == widget.destinationView) ? widget.color : Colors.black87,)
+                  Icon(
+                    Icons.arrow_right,
+                    color: (_selection == widget.destinationView)
+                        ? widget.color
+                        : Colors.black87,
+                  )
                 ],
               ),
             ],
@@ -273,7 +308,6 @@ class _NavItemState extends State<NavItem> {
     );
   }
 }
-
 
 /// BOTTOM TOOLBAR WIDGET
 ///
@@ -297,9 +331,11 @@ class _BottomBarState extends State<BottomBar> {
               flex: 6,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: [ /// RELOAD DATA ACTION HERE
+                children: [
+                  /// RELOAD DATA ACTION HERE
                   IconButton(
-                      onPressed: () {}, icon: Icon(Icons.refresh_outlined))
+                      onPressed: () {},
+                      icon: const Icon(Icons.refresh_outlined))
                 ],
               ),
             ),
@@ -307,23 +343,24 @@ class _BottomBarState extends State<BottomBar> {
                 flex: 2,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [ /// SETTING ACTION HERE
+                  children: [
+                    /// SETTING ACTION HERE
                     IconButton(
-                        onPressed: () {}, icon: Icon(Icons.settings_outlined))
+                        onPressed: () {},
+                        icon: const Icon(Icons.settings_outlined))
                   ],
-                )
-            ),
+                )),
             Expanded(
                 flex: 2,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [ /// LOGOUT ACTION HERE
-                    IconButton(onPressed: () {}, icon: Icon(Icons.exit_to_app))
+                  children: [
+                    /// LOGOUT ACTION HERE
+                    IconButton(
+                        onPressed: () {}, icon: const Icon(Icons.exit_to_app))
                   ],
-                )
-            )
+                ))
           ],
-        )
-    );
+        ));
   }
 }
