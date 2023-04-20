@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:fitfacts/themes/theme.dart';
 
 // DRAWER DATE FORMATTER
 DateTime _drawerDate = DateTime.now();
@@ -13,10 +15,9 @@ DateTime _drawerDate = DateTime.now();
 ///
 class Navbar extends StatefulWidget {
   final String username; // The username to display
-  final Color primaryColor; // The color accent of the widget
 
   const Navbar(
-      {Key? key, required this.username, this.primaryColor = Colors.teal})
+      {Key? key, required this.username})
       : super(key: key);
 
   @override
@@ -26,11 +27,11 @@ class Navbar extends StatefulWidget {
 class _NavbarState extends State<Navbar> {
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
+    return ClipRRect( // Border Radius of Drawer
       borderRadius: const BorderRadius.only(
           topRight: Radius.circular(30), bottomRight: Radius.circular(30)),
       child: Drawer(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).drawerTheme.backgroundColor,
         child: Column(
           children: [
             Expanded(
@@ -41,12 +42,9 @@ class _NavbarState extends State<Navbar> {
                     children: [
                       NavHeader(
                         username: widget.username,
-                        primaryColor: widget.primaryColor,
                       ),
-                      ServerStatus(
-                        primaryColor: widget.primaryColor,
-                      ),
-                      NavList(primaryColor: widget.primaryColor)
+                      const ServerStatus(),
+                      NavList(primaryColor: Theme.of(context).primaryColor)
                     ],
                   ),
                 ],
@@ -64,10 +62,9 @@ class _NavbarState extends State<Navbar> {
 ///
 class NavHeader extends StatefulWidget {
   final String username;
-  final Color primaryColor;
 
   const NavHeader(
-      {Key? key, required this.username, required this.primaryColor})
+      {Key? key, required this.username})
       : super(key: key);
 
   @override
@@ -103,7 +100,7 @@ class _NavHeaderState extends State<NavHeader> {
                       style: TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.bold,
-                          color: widget.primaryColor),
+                          color: Theme.of(context).primaryColor),
                     ),
                   ],
                 ),
@@ -125,11 +122,9 @@ class _NavHeaderState extends State<NavHeader> {
 /// FITBIT STATUS WIDGET
 ///
 class ServerStatus extends StatefulWidget {
-  final String watchUser;
-  final Color primaryColor;
 
   const ServerStatus(
-      {Key? key, required this.primaryColor, this.watchUser = 'User'})
+      {Key? key})
       : super(key: key);
 
   @override
@@ -143,8 +138,9 @@ class _ServerStatusState extends State<ServerStatus> {
       margin: const EdgeInsets.fromLTRB(20, 5, 20, 5),
       padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
       decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(8)),
-          color: widget.primaryColor.withAlpha(20)),
+          borderRadius: BorderRadius.all(Radius.circular(8)),
+          color: Theme.of(context).primaryColor.withAlpha(30)
+          ),
       height: 50,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -154,15 +150,14 @@ class _ServerStatusState extends State<ServerStatus> {
             children: [
               Icon(
                 Icons.fitbit,
-                color: widget.primaryColor,
+                color: Theme.of(context).primaryColor,
               ),
               Container(
                 width: 20,
               ),
-              Text(
-                'FITBIT OF ${widget.watchUser.toUpperCase()}',
-                style: const TextStyle(
-                    color: Colors.black87, fontWeight: FontWeight.w600),
+              const Text( /// TO CHANGE AT A LATER TIME
+                'UPDATED: Today 10:00',
+                style:  TextStyle(fontWeight: FontWeight.w500),
               )
             ],
           ),
@@ -241,6 +236,10 @@ class NavItem extends StatefulWidget {
 class _NavItemState extends State<NavItem> {
   @override
   Widget build(BuildContext context) {
+
+    var themeMode = context.watch<ThemeModel>().mode;
+    var greyColor = (themeMode == ThemeMode.light) ? Colors.grey[700] : Colors.grey[300];
+
     return Theme(
       data: ThemeData(
           splashColor: Colors.transparent, highlightColor: Colors.transparent),
@@ -277,7 +276,7 @@ class _NavItemState extends State<NavItem> {
                     size: 25,
                     color: (_selection == widget.destinationView)
                         ? widget.color
-                        : Colors.black87,
+                        : greyColor,
                   ),
                   Container(
                     width: 20,
@@ -289,7 +288,7 @@ class _NavItemState extends State<NavItem> {
                       fontWeight: FontWeight.w500,
                       color: (_selection == widget.destinationView)
                           ? widget.color
-                          : Colors.black87,
+                          : greyColor,
                     ),
                   ),
                   const Spacer(),
@@ -297,7 +296,7 @@ class _NavItemState extends State<NavItem> {
                     Icons.arrow_right,
                     color: (_selection == widget.destinationView)
                         ? widget.color
-                        : Colors.black87,
+                        : greyColor,
                   )
                 ],
               ),
@@ -321,6 +320,9 @@ class BottomBar extends StatefulWidget {
 class _BottomBarState extends State<BottomBar> {
   @override
   Widget build(BuildContext context) {
+
+    var themeMode = context.watch<ThemeModel>().mode;
+
     return Container(
         margin: const EdgeInsets.fromLTRB(20, 10, 0, 20),
         padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
@@ -332,10 +334,12 @@ class _BottomBarState extends State<BottomBar> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  /// RELOAD DATA ACTION HERE
+                  /// THEME SELECTOR
                   IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.refresh_outlined))
+                      onPressed: () {
+                        context.read<ThemeModel>().toggleMode();
+                      },
+                      icon: (themeMode == ThemeMode.dark) ? const Icon(Icons.light_mode_rounded) : const Icon(Icons.dark_mode_rounded))
                 ],
               ),
             ),

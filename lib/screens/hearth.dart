@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fitfacts/navigation/Navbar.dart';
+import 'package:fitfacts/navigation/navbar.dart';
 
 
 class HeartView extends StatelessWidget {
@@ -19,7 +19,6 @@ class HeartView extends StatelessWidget {
       ),
       drawer: const Navbar(
         username: 'User',
-        primaryColor: Colors.pink,
       ),
     );
   } //build

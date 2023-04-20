@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fitfacts/navigation/Navbar.dart';
+import 'package:fitfacts/navigation/navbar.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -18,7 +18,6 @@ class HomePage extends StatelessWidget {
       ),
       drawer: const Navbar(
         username: 'User',
-        primaryColor: Colors.pink,
       ),
     );
   } //build
