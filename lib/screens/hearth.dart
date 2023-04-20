@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:fitfacts/navigation/navbar.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
 
-  static const routename = 'HomePage';
+class HeartView extends StatelessWidget {
+  const HeartView({Key? key}) : super(key: key);
+
+  static const routename = 'Heart';
 
   @override
   Widget build(BuildContext context) {
-    print('${HomePage.routename} built'); // REMOVE BEFORE PRODUCTION
+    print('${HeartView.routename} built');
     return Scaffold(
       appBar: AppBar(
-        title: const Text('FitFacts'),
+        title: const Text('Heart'),
       ),
       body: const Center(
         child: Text('nothing yet'),
@@ -22,4 +23,4 @@ class HomePage extends StatelessWidget {
     );
   } //build
 
-} 
+}

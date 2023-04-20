@@ -1,17 +1,34 @@
+
 import 'package:flutter/material.dart';
+import 'package:fitfacts/screens/homePage.dart';
 import 'package:fitfacts/screens/loginPage.dart';
+import 'package:fitfacts/screens/hearth.dart';
+import 'package:fitfacts/themes/theme.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp( MyApp());
 } //main
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      //This specifies the app entrypoint
-      home: LoginPage(),
+    return ChangeNotifierProvider<ThemeModel>(
+      create: (_) => ThemeModel(),
+      child: Consumer<ThemeModel>(
+        builder: (_, model, __) {
+          return MaterialApp(
+            theme: appLight, // Provide light theme.
+            darkTheme: appDark, // Provide dark theme.
+            themeMode: model.mode, // Decides which theme to show.
+            home: const HomePage(),
+            routes: {
+              '/login' : (context) => const LoginPage(),
+              '/heart' : (context) => const HeartView(),
+            },
+          );
+        },
+      ),
     );
-  } //build
-}//MyApp
+  }
+}
