@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:fitfacts/screens/homePage.dart';
 import 'package:fitfacts/screens/loginPage.dart';
+import 'package:fitfacts/screens/profilePage.dart';
 import 'package:fitfacts/screens/hearth.dart';
 import 'package:fitfacts/themes/theme.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
             routes: {
               '/login' : (context) => const LoginPage(),
               '/heart' : (context) => const HeartView(),
+              '/profile' : (context) => ProfilePage(),
             },
           );
         },

@@ -37,6 +37,9 @@ dependencies:
   flex_color_scheme: ^4.1.1
   provider: ^6.0.5
   dob_input_field: ^2.0.0
+  flutter_lints: ^2.0.0
+  flutter_holo_date_picker: ^1.1.0
+  intl: 0.17.0-nullsafety.2
 
 dev_dependencies:
   flutter_test:
