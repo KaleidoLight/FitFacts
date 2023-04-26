@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dob_input_field/dob_input_field.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/intl.dart';
 
 
@@ -20,7 +22,10 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
+  final _fbKey = GlobalKey<FormBuilderState>();
+  
+  num weigth = 0.0;
+  String bornDate = "01-Janu-2000";
   String? gender;
   // Define a custom Form widget.
   // necessary for validation of last 3 TextFormField
@@ -28,6 +33,10 @@ class _ProfilePageState extends State<ProfilePage> {
   int? calculated_age;
   bool visibility = false;
 
+  @override
+  void initState() {
+    super.initState();
+  }//initState
 
   TextEditingController weightController = TextEditingController();
 
@@ -163,10 +172,28 @@ class _ProfilePageState extends State<ProfilePage> {
               
               Padding(
                 padding: EdgeInsets.all(5.0),
-                child: ElevatedButton(
-                  child: Text("set"),
-                  onPressed: () {selectDate(context);},
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [ 
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text("$bornDate"),
+                      ],
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [ 
+                        ElevatedButton(
+                          child: Text("set"),
+                          onPressed: () {
+                            setState(() {/*bornDate = selectDate(context);*/}); //bisogna capire come convertire il tipo di variabile in uscita dalla funcion (future dynamic) in stringa
+                          },
+                        ),],
+                    ),
+                  ],),
                 ),
 
               ProfileInfo(info: 'Weigth', icon: Icons.fitness_center),
@@ -174,33 +201,60 @@ class _ProfilePageState extends State<ProfilePage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(
-                      width: 250,
-                      child: TextFormField(
-                        controller:weightController,
-                        style: TextStyle(color: Colors.grey[400],
-                            letterSpacing: 2),
-                        enabled: true,
-                        onSaved: (value){} ,
-                        validator: (value){
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your weight';
-                          } else if (int.tryParse(value) == null) {
-                            return 'Please enter an integer valid number';
-                          }
-                          return null;
-                        },
-                      ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text("$weigth Kg"),
+                      ],
                     ),
-                    ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {}
-                        },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFE91E63),
-                            shape: const CircleBorder()),
-                        child: const Icon(Icons.check))
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [ 
+                        ElevatedButton(
+                          child: Text("set"),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                content: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children:[
+                                    SizedBox(
+                                      width: 250,
+                                      child:FormBuilderTextField(
+                                        name: "Weigth",
+                                        decoration: InputDecoration(labelText: 'Weigth'),
+                                        validator: FormBuilderValidators.numeric(),
+                                        autovalidateMode: AutovalidateMode.always,
+                                      ),
+                                    ),],
+                                ),
+                              actions: <Widget>[
+                                
+                                TextButton(onPressed: () async {
+                                  
+                                  if(_fbKey.currentState!.saveAndValidate()){
+                                    setState(() {
+                                      weigth = _fbKey.currentState!.value["Weigth"];
+                                    });
+                                    Navigator.of(context).pop();}else{}
+                                  },
+                                  child: const Text("save"),
+                                  style: ButtonStyle(
+                                    padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(15)),
+                                    foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                                  ),
+                                ),
+                              ],
+                              ),);
+                          },
+                        ),],
+                    ),
                   ],
                 ),
               ),
@@ -329,7 +383,7 @@ calculateAge(DateTime birthDate) {
 
 //prende la data corrente per ottenere l'anno corrente per la data di nascita
 int currentYear(){
-  String currentDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String currentDate = DateFormat('yyyy-MMMM-dd').format(DateTime.now());
   int dateYear = int.parse(currentDate.substring(0,4));
   return dateYear;
 }
@@ -345,6 +399,7 @@ selectDate(context) async {
                     locale: DateTimePickerLocale.en_us,
                     looping: true,
                     );
+  
   return datePicked;
 }
 
