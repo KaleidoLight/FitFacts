@@ -24,26 +24,26 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final _fbKey = GlobalKey<FormBuilderState>();
   
-  num weigth = 0.0;
-  String bornDate = "01-Janu-2000";
+  String? weigth;
+  String? bornDate;
+  String? calGoal;
+  String? steps;
   String? gender;
-  // Define a custom Form widget.
-  // necessary for validation of last 3 TextFormField
-  final _formKey = GlobalKey<FormState>();
+  num? age;
+ 
   int? calculated_age;
   bool visibility = false;
 
   @override
   void initState() {
+    bornDate = "01-January-2000";
+    weigth = "0.0";
+    calGoal = "0";
+    steps = "10000";
+    gender = null;
+    age = null;
     super.initState();
   }//initState
-
-  TextEditingController weightController = TextEditingController();
-
-  TextEditingController caloriesController = TextEditingController();
-
-  TextEditingController stepsController = TextEditingController();
-
 
   @override
   Widget build(BuildContext context) {
@@ -58,9 +58,8 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(30, 5, 30, 0),
-        children:[ Form(
-          key: _formKey,
-          child: Column(
+        children:[
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               const Padding(
@@ -139,7 +138,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         letterSpacing: 2
                     ),
                     ),
-
                     Radio(
                       value: "male",
                       groupValue: gender,
@@ -188,15 +186,27 @@ class _ProfilePageState extends State<ProfilePage> {
                       children: [ 
                         ElevatedButton(
                           child: Text("set"),
-                          onPressed: () {
-                            setState(() {/*bornDate = selectDate(context);*/}); //bisogna capire come convertire il tipo di variabile in uscita dalla funcion (future dynamic) in stringa
+                          onPressed: () async {
+                            var datePicked = await DatePicker.showSimpleDatePicker(
+                                context,
+                                initialDate: DateTime(2000),
+                                firstDate: DateTime(1940),
+                                lastDate: DateTime(currentYear()),
+                                dateFormat: "dd-MMMM-yyyy",
+                                locale: DateTimePickerLocale.en_us,
+                                looping: true,
+                              );
+                            setState(()  {
+                              bornDate = DateFormat('dd-MMMM-yyyy').format(datePicked!);
+                              age = calculateAge(datePicked);
+                            },);
                           },
                         ),],
                     ),
                   ],),
                 ),
 
-              ProfileInfo(info: 'Weigth', icon: Icons.fitness_center),
+              ProfileInfo(info: 'Weigth [Kg]', icon: Icons.fitness_center),
               
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -207,7 +217,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text("$weigth Kg"),
+                        Text("$weigth"),
                       ],
                     ),
                     Column(
@@ -226,21 +236,27 @@ class _ProfilePageState extends State<ProfilePage> {
                                   children:[
                                     SizedBox(
                                       width: 250,
-                                      child:FormBuilderTextField(
-                                        name: "Weigth",
-                                        decoration: InputDecoration(labelText: 'Weigth'),
-                                        validator: FormBuilderValidators.numeric(),
+                                      child: FormBuilder(
+                                        key:  _fbKey,
                                         autovalidateMode: AutovalidateMode.always,
+                                        onChanged: () {
+                                          _fbKey.currentState!.save();
+                                        },
+                                        child:
+                                          FormBuilderTextField(
+                                            name: "Weigth",
+                                            decoration: InputDecoration(labelText: 'Weigth'),
+                                            validator: FormBuilderValidators.numeric(),
+                                          )
                                       ),
                                     ),],
                                 ),
                               actions: <Widget>[
-                                
-                                TextButton(onPressed: () async {
-                                  
-                                  if(_fbKey.currentState!.saveAndValidate()){
+                                TextButton(onPressed: () {
+                                  final valid = _fbKey.currentState?.saveAndValidate() ?? true;
+                                  if(valid){
                                     setState(() {
-                                      weigth = _fbKey.currentState!.value["Weigth"];
+                                      weigth = _fbKey.currentState?.value["Weigth"];
                                     });
                                     Navigator.of(context).pop();}else{}
                                   },
@@ -259,82 +275,146 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
 
-              ProfileInfo(info: 'Calories goal', icon: Icons.local_fire_department),
+              ProfileInfo(info: 'Calories goal [Kcal]', icon: Icons.local_fire_department),
               
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(
-                      width: 250,
-                      child: TextFormField(
-                        controller:caloriesController,
-                        style: TextStyle(color: Colors.grey[400],
-                            letterSpacing: 2),
-                        enabled: true,
-                        onSaved: (value){} ,
-                        validator: (value){
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your calories goal';
-                          } else if (int.tryParse(value) == null) {
-                            return 'Please enter an integer valid number';
-                          }
-                          return null;
-                        },
-                      ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text("$calGoal"),
+                      ],
                     ),
-                    ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {}
-                        },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFE91E63),
-                            shape: const CircleBorder()),
-                        child: const Icon(Icons.check))
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [ 
+                        ElevatedButton(
+                          child: Text("set"),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                content: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children:[
+                                    SizedBox(
+                                      width: 250,
+                                      child: FormBuilder(
+                                        key:  _fbKey,
+                                        autovalidateMode: AutovalidateMode.always,
+                                        onChanged: () {
+                                          _fbKey.currentState!.save();
+                                        },
+                                        child:
+                                          FormBuilderTextField(
+                                            name: "Calories",
+                                            decoration: InputDecoration(labelText: 'Calories'),
+                                            validator: FormBuilderValidators.numeric(),
+                                          )
+                                      ),
+                                    ),],
+                                ),
+                              actions: <Widget>[
+                                TextButton(onPressed: () {
+                                  final valid = _fbKey.currentState?.saveAndValidate() ?? true;
+                                  if(valid){
+                                    setState(() {
+                                      calGoal = _fbKey.currentState?.value["Calories"];
+                                    });
+                                    Navigator.of(context).pop();}else{}
+                                  },
+                                  child: const Text("save"),
+                                  style: ButtonStyle(
+                                    padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(15)),
+                                    foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                                  ),
+                                ),
+                              ],
+                              ),);
+                          },
+                        ),],
+                    ),
                   ],
                 ),
               ),
-
 
               ProfileInfo(info: 'Steps goal', icon: Icons.directions_walk),
               
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(
-                      width: 250,
-                      child: TextFormField(
-                        controller:stepsController,
-                        style: TextStyle(color: Colors.grey[400],
-                            letterSpacing: 2),
-                        enabled: true,
-                        onSaved: (value){} ,
-                        validator: (value){
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your step goal';
-                          } else if (int.tryParse(value) == null) {
-                            return 'Please enter an integer valid number';
-                          }
-                          return null;
-                        },
-                      ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text("$steps"),
+                      ],
                     ),
-                    ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {}
-                        },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFE91E63),
-                            shape: const CircleBorder()),
-                        child: const Icon(Icons.check))
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [ 
+                        ElevatedButton(
+                          child: Text("set"),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                content: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children:[
+                                    SizedBox(
+                                      width: 250,
+                                      child: FormBuilder(
+                                        key:  _fbKey,
+                                        autovalidateMode: AutovalidateMode.always,
+                                        onChanged: () {
+                                          _fbKey.currentState!.save();
+                                        },
+                                        child:
+                                          FormBuilderTextField(
+                                            name: "Steps",
+                                            decoration: InputDecoration(labelText: 'Steps'),
+                                            validator: FormBuilderValidators.numeric(),
+                                          )
+                                      ),
+                                    ),],
+                                ),
+                              actions: <Widget>[
+                                TextButton(onPressed: () {
+                                  final valid = _fbKey.currentState?.saveAndValidate() ?? true;
+                                  if(valid){
+                                    setState(() {
+                                      steps = _fbKey.currentState?.value["Steps"];
+                                    });
+                                    Navigator.of(context).pop();}else{}
+                                  },
+                                  child: const Text("save"),
+                                  style: ButtonStyle(
+                                    padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(15)),
+                                    foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+                                  ),
+                                ),
+                              ],
+                              ),);
+                          },
+                        ),],
+                    ),
                   ],
                 ),
               ),
 
             ],
           ),
-        ),
       ],),
     );
   }
@@ -386,20 +466,5 @@ int currentYear(){
   String currentDate = DateFormat('yyyy-MMMM-dd').format(DateTime.now());
   int dateYear = int.parse(currentDate.substring(0,4));
   return dateYear;
-}
-
-//date picker
-selectDate(context) async {
-  var datePicked = await DatePicker.showSimpleDatePicker(
-                    context,
-                    initialDate: DateTime(2000),
-                    firstDate: DateTime(1940),
-                    lastDate: DateTime(currentYear()),
-                    dateFormat: "dd-MMMM-yyyy",
-                    locale: DateTimePickerLocale.en_us,
-                    looping: true,
-                    );
-  
-  return datePicked;
 }
 
