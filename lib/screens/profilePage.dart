@@ -39,6 +39,7 @@ class _ProfilePageState extends State<ProfilePage> {
     steps = "10000";
     gender = null;
     age = null;
+    visibility = false;
     super.initState();
   }//initState
 
@@ -196,6 +197,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             setState(()  {
                               bornDate = DateFormat('dd-MMMM-yyyy').format(datePicked!);
                               age = calculateAge(datePicked);
+                              visibility = true;
                             },);
                           },
                         ),],
