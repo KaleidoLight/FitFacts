@@ -1,7 +1,5 @@
 import 'package:fitfacts/navigation/navbar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dob_input_field/dob_input_field.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -30,8 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String? steps;
   String? gender;
   num? age;
- 
-  int? calculated_age;
+
   bool visibility = false;
 
   @override
@@ -106,7 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     AnimatedOpacity(
                       opacity: visibility ? 1.0 : 0.0,
                       duration: const Duration(milliseconds: 500),
-                      child: Text('$calculated_age',
+                      child: Text('$age',
                       style: const TextStyle(
                           color: Colors.pinkAccent,
                           letterSpacing: 2,
