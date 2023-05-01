@@ -5,6 +5,9 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/intl.dart';
 
+import 'package:fitfacts/model/userInfo.dart';
+import 'package:provider/provider.dart';
+
 
 class ProfilePage extends StatefulWidget {
 
@@ -22,7 +25,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final _fbKey = GlobalKey<FormBuilderState>();
   
-  String? weigth;
+  //String? weigth;
   String? bornDate;
   String? calGoal;
   String? steps;
@@ -34,7 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     bornDate = "01-January-2000";
-    weigth = "0.0";
+    //weigth = "0.0";
     calGoal = "0";
     steps = "10000";
     gender = null;
@@ -216,7 +219,11 @@ class _ProfilePageState extends State<ProfilePage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text("$weigth"),
+                        //Text(weigth),
+                        Consumer<UserInfo>(   
+                           builder: (context, userInfo, child) {
+                            return Text(userInfo.Info['weigth']);
+                          },),
                       ],
                     ),
                     Column(
@@ -254,9 +261,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                 TextButton(onPressed: () {
                                   final valid = _fbKey.currentState?.saveAndValidate() ?? true;
                                   if(valid){
-                                    setState(() {
+                                    /*setState(() {
                                       weigth = _fbKey.currentState?.value["Weigth"];
-                                    });
+                                    });*/
+                                    Provider.of<UserInfo>(context,listen: false).updateInfo('weigth',_fbKey.currentState?.value["Weigth"]);
                                     Navigator.of(context).pop();}else{}
                                   },
                                   child: const Text("save"),

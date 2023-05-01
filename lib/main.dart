@@ -4,6 +4,7 @@ import 'package:fitfacts/screens/loginPage.dart';
 import 'package:fitfacts/screens/profilePage.dart';
 import 'package:fitfacts/screens/hearth.dart';
 import 'package:fitfacts/themes/theme.dart';
+import 'package:fitfacts/model/userInfo.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -13,8 +14,9 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ThemeModel>(
-      create: (_) => ThemeModel(),
+    return MultiProvider( providers: [
+      ChangeNotifierProvider<ThemeModel>(create: (_) => ThemeModel(),),
+      ChangeNotifierProvider<UserInfo>(create: (_) => UserInfo(),),],
       child: Consumer<ThemeModel>(
         builder: (_, model, __) {
           return MaterialApp(
@@ -28,8 +30,8 @@ class MyApp extends StatelessWidget {
               '/profile' : (context) => ProfilePage(),
             },
           );
-        },
-      ),
-    );
+        },),
+      );
+    }
   }
-}
+
