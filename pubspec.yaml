@@ -40,6 +40,7 @@ dependencies:
   form_builder_validators: ^8.5.0
   flutter_holo_date_picker: ^1.1.0
   intl: ^0.17.0
+  shared_preferences: ^2.1.0
 
 dev_dependencies:
   flutter_test:

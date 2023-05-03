@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fitfacts/navigation/navbar.dart';
-
-import 'package:fitfacts/model/userInfo.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
@@ -17,11 +15,7 @@ class HomePage extends StatelessWidget {
         title: const Text('FitFacts'),
       ),
       body: Center(
-        child: //Text('nothing yet'),
-          Consumer<UserInfo>(   
-            builder: (context, userInfo, child) {
-               return Text(userInfo.Info['weigth']);
-            },),
+        child: Text('nothing yet'),
       ),
       drawer: const Navbar(
         username: 'User',
