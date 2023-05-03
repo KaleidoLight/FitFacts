@@ -31,13 +31,9 @@ class _ProfilePageState extends State<ProfilePage> {
   
   //String? weigth;
   String? gender;
-  num? age;
-
-  bool visibility = false;
 
   @override
   void initState() {
-    visibility = false;
     super.initState();
   }//initState
   
@@ -48,6 +44,14 @@ class _ProfilePageState extends State<ProfilePage> {
         title: Text('Info'),
         centerTitle: true,
         elevation: 0,
+        actions: <Widget>[
+        Padding(
+        padding: EdgeInsets.only(right: 20.0),
+        child: GestureDetector(
+          onTap: () {setState(() {});},
+          child: Icon(Icons.refresh,size: 26.0,),
+          )
+        ),],
       ),
       drawer: const Navbar(
         username: 'User',
@@ -58,6 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              
               const Padding(
                 padding: EdgeInsets.all(4.0),
                 child: Center(
@@ -67,106 +72,217 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
               ),
-              Padding(
+              
+              Padding( 
                 padding: const EdgeInsets.all(3.0),
                 child: Divider(
-                  color: Colors.grey[800],
+                  color: Theme.of(context).primaryColor,
+                  thickness: 2,
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.all(1.0),
-                child: Text(
-                  'Name',
-                  style: TextStyle(
-                      color: Colors.grey,
-                      letterSpacing: 2
+             
+              NameandAge(name: widget.watchUser, index: ageIndex),
+
+              GenderSelector(index: genderIndex),
+
+              ProfileInfo(info: 'Date of birth', icon: Icons.cake_outlined),
+              
+              BornDate(date_index: bornDateIndex, age_index: ageIndex),
+
+              ProfileInfo(info: 'Weigth [Kg]', icon: Icons.fitness_center),
+              
+              UserInfoInput(name: 'Weigth', index: weigthIndex),
+
+              ProfileInfo(info: 'Calories goal [Kcal]', icon: Icons.local_fire_department),
+              
+              UserInfoInput(name: 'Calories Goal', index: calGoalIndex),
+
+              ProfileInfo(info: 'Steps goal', icon: Icons.directions_walk),
+              
+              UserInfoInput(name: 'Steps', index: stepsIndex),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    child: Text("reset"),
+                    onPressed: () async {
+                      final sp = await SharedPreferences.getInstance();
+                      sp.remove('userInfo');
+                      setState(() {});
+                    }           
                   ),
-                ),
-              ),
-              const SizedBox(height: 5),
-              Padding(
+              ],)
+
+            ],
+          ),
+      ],),
+    );
+  }
+}
+
+
+
+//NAME AND AGE DISPLAY
+class NameandAge extends StatefulWidget {
+  final int index;
+  final String name;
+  
+  const NameandAge({Key? key,
+      required this.name,
+      required this.index})
+      : super(key: key);
+
+
+  @override
+  State<NameandAge> createState() => _NameandAgeState();
+}
+
+class _NameandAgeState extends State<NameandAge> {
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+                padding: EdgeInsets.all(5.0),
+                child: Row( children: [
+                  Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children:[ Row(children: [
+                    Text('Name: ',style: TextStyle(letterSpacing: 2),),
+                    Text(widget.name,
+                      style: const TextStyle(
+                        letterSpacing: 2,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
+                   ],),
+                  ],),
+                  Spacer(),
+                  Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children:[ Row(children: [
+                    Text('Age: ',style: TextStyle(letterSpacing: 2),),
+                    FutureBuilder(
+                        future: SharedPreferences.getInstance(),
+                        builder: ((context, snapshot) { //snapshot = observer of the state of the features variable
+                        if(snapshot.hasData){
+                          final sp = snapshot.data as SharedPreferences;
+                          if(sp.getStringList('userInfo') == null){ //if the string list doesn't already exist it is created
+                            sp.setStringList('userInfo', List<String>.filled(6, '')); //if null inizialization
+                            return const Text('',style: TextStyle(letterSpacing: 2,fontSize: 25,fontWeight: FontWeight.bold),);
+                          }
+                          else{ //otherwise it is readed
+                            final userInfo = sp.getStringList('userInfo');
+                            return Text(userInfo![widget.index],style: TextStyle(letterSpacing: 2,fontSize: 25,fontWeight: FontWeight.bold),); 
+                          }
+                          }
+                        else{
+                          return CircularProgressIndicator();
+                        }
+                        }),
+                      ),
+                   ],),
+                  ],),
+
+                ],)
+              );
+  }
+}
+
+
+
+//GENDER
+class GenderSelector extends StatefulWidget {
+  final int index;
+  
+  const GenderSelector({Key? key,
+      required this.index})
+      : super(key: key);
+
+  @override
+  State<GenderSelector> createState() => _GenderSelectorState();
+}
+
+class _GenderSelectorState extends State<GenderSelector> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: Row(
                   children: [
-                    Text(
-                      ' ${widget.watchUser} ',
-                      style: const TextStyle(
-                          color: Colors.pinkAccent,
-                          letterSpacing: 2,
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold
-                      ),
-                    ),
-                    SizedBox(width: 180,),
+                    Text('gender:     ',style: TextStyle(letterSpacing: 2),),
+                    
+                    Text('male',style: TextStyle(letterSpacing: 2),),
 
-                    AnimatedOpacity(
-                      opacity: visibility ? 1.0 : 0.0,
-                      duration: const Duration(milliseconds: 500),
-                      child: Text('$age',
-                      style: const TextStyle(
-                          color: Colors.pinkAccent,
-                          letterSpacing: 2,
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold
-                      ),
-                      ),
-                    )
-
-                  ],
-                ),
-              ),
-
-              Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Row(
-                  children: [
-                    Text('gender: ',
-                      style: TextStyle(
-                          letterSpacing: 2
-                      ),
-                    ),
-                    SizedBox(width: 40,),
-                    Text('male',
-                    style: TextStyle(
-                        letterSpacing: 2
-                    ),
-                    ),
                     Radio(
                       value: 'male',
-                      groupValue: getGenderValue(genderIndex),
+                      groupValue: getGenderValue(widget.index),
                       onChanged: (value) async {
                         final sp = await SharedPreferences.getInstance();
                         final userInfo = sp.getStringList('userInfo');
                         setState(() {
-                          userInfo![genderIndex] = value.toString();
+                          userInfo![widget.index] = value.toString();
                           sp.setStringList('userInfo',userInfo);
                         });
                       },
                     ),
-                    Text('female',
-                      style: TextStyle(
-                          letterSpacing: 2
-                      ),
-                    ),
+
+                    Text('female',style: TextStyle(letterSpacing: 2),),
+
                     Radio(
                       value: 'female',
-                      groupValue: getGenderValue(genderIndex),
+                      groupValue: getGenderValue(widget.index),
                       onChanged: (value) async {
                         final sp = await SharedPreferences.getInstance();
                         final userInfo = sp.getStringList('userInfo');
                         setState(() {
-                          userInfo![genderIndex] = value.toString();
+                          userInfo![widget.index] = value.toString();
                           sp.setStringList('userInfo',userInfo);
                         });
                       },
                     ),
                   ], // children
                 ),
-              ),
+              );
+  }
+}
 
-              ProfileInfo(info: 'Date of birth', icon: Icons.cake_outlined),
-              
-              Padding(
+Future<String> getGenderValue(int genderIndex)async{
+  String? gender;
+  final sp = await SharedPreferences.getInstance();
+  final userInfo = sp.getStringList('userInfo');
+  if(userInfo == null){
+    sp.setStringList('userInfo', List<String>.filled(6, '')); //if null inizialization
+    gender = '';
+  }else{
+    gender = userInfo[genderIndex];
+  }
+  return gender;
+}
+
+
+//BORN DATE INPUT AND AGE CALCOLOUS
+class BornDate extends StatefulWidget {
+  final int date_index;
+  final int age_index;
+  
+  const BornDate({Key? key,
+      required this.date_index,
+      required this.age_index})
+      : super(key: key);
+
+
+  @override
+  State<BornDate> createState() => _BornDateState();
+}
+
+class _BornDateState extends State<BornDate> {
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
                 padding: EdgeInsets.all(5.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -186,10 +302,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           }
                           else{ //otherwise it is readed
                             final userInfo = sp.getStringList('userInfo');
-                            if(userInfo![bornDateIndex]==''){ //if after the inizialization the string still empty
+                            if(userInfo![widget.date_index]==''){ //if after the inizialization the string still empty
                               return Text('To specify');
                             }else{                //otheswise return the value of that field
-                              return Text(userInfo[bornDateIndex]); 
+                              return Text(userInfo[widget.date_index]); 
                             }
                           }
                         }
@@ -219,37 +335,22 @@ class _ProfilePageState extends State<ProfilePage> {
                             final sp = await SharedPreferences.getInstance();
                             final userInfo = sp.getStringList('userInfo');
                             setState(()  {
-                              userInfo![bornDateIndex] = DateFormat('dd-MMMM-yyyy').format(datePicked!);
-                              age = calculateAge(datePicked);
-                              userInfo[ageIndex] = age.toString();
+                              userInfo![widget.date_index] = DateFormat('dd-MMMM-yyyy').format(datePicked!);
+                              int age = calculateAge(datePicked);
+                              userInfo[widget.age_index] = age.toString();
                               sp.setStringList('userInfo',userInfo);
-                              visibility = true;
                             },);
                           },
                         ),],
                     ),
                   ],),
-                ),
-
-              ProfileInfo(info: 'Weigth [Kg]', icon: Icons.fitness_center),
-              
-              UserInfoInput(name: 'Weigth', index: weigthIndex),
-
-              ProfileInfo(info: 'Calories goal [Kcal]', icon: Icons.local_fire_department),
-              
-              UserInfoInput(name: 'Calories Goal', index: calGoalIndex),
-
-              ProfileInfo(info: 'Steps goal', icon: Icons.directions_walk),
-              
-              UserInfoInput(name: 'Steps', index: stepsIndex),
-
-            ],
-          ),
-      ],),
-    );
+                );
   }
 }
 
+
+
+//STRING OVER INPUTS DISPLAY
 class ProfileInfo extends StatelessWidget{
   final String info;
   final IconData icon;
@@ -272,6 +373,8 @@ class ProfileInfo extends StatelessWidget{
   }
 }
 
+
+
 //calculate the age
 calculateAge(DateTime birthDate) {
   DateTime currentDate = DateTime.now();
@@ -291,6 +394,8 @@ calculateAge(DateTime birthDate) {
   return age;
 }
 
+
+
 //prende la data corrente per ottenere l'anno corrente per la data di nascita
 int currentYear(){
   String currentDate = DateFormat('yyyy-MMMM-dd').format(DateTime.now());
@@ -298,6 +403,9 @@ int currentYear(){
   return dateYear;
 }
 
+
+
+//INPUTS FIELD
 class UserInfoInput extends StatefulWidget {
   final int index;
   final String name;
@@ -410,21 +518,4 @@ class _UserInfoInputState extends State<UserInfoInput> {
               ),
             );
   }
-}
-
-Future<String> getGenderValue_future(int genderIndex)async{
-  String? gender;
-  final sp = await SharedPreferences.getInstance();
-  final userInfo = sp.getStringList('userInfo');
-  if(userInfo == null){
-    sp.setStringList('userInfo', List<String>.filled(6, '')); //if null inizialization
-    gender = '';
-  }else{
-    gender = userInfo[genderIndex];
-  }
-  return gender;
-}
-
-String? getGenderValue(genderIndex){
-  Future.wait([getGenderValue_future(genderIndex)]).then((value) {print(value[0]); return value[0];});
 }
