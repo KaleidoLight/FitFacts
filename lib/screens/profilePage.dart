@@ -1,10 +1,14 @@
+import 'dart:ui';
+
 import 'package:fitfacts/navigation/navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../themes/theme.dart';
 
 
 class ProfilePage extends StatefulWidget {
@@ -28,9 +32,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final int weigthIndex = 3;
   final int calGoalIndex = 4;
   final int stepsIndex = 5;
-  
-  //String? weigth;
-  String? gender;
 
   @override
   void initState() {
@@ -49,7 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
         padding: EdgeInsets.only(right: 20.0),
         child: GestureDetector(
           onTap: () {setState(() {});},
-          child: Icon(Icons.refresh,size: 26.0,),
+          child: const Icon(Icons.refresh,size: 26.0,),
           )
         ),],
       ),
@@ -101,6 +102,8 @@ class _ProfilePageState extends State<ProfilePage> {
               
               UserInfoInput(name: 'Steps', index: stepsIndex),
 
+              DateInfoItem(),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -110,6 +113,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     onPressed: () async {
                       final sp = await SharedPreferences.getInstance();
                       sp.remove('userInfo');
+                      sp.remove('bornDate');
                       setState(() {});
                     }           
                   ),
@@ -152,9 +156,8 @@ class _NameandAgeState extends State<NameandAge> {
                     Text('Name: ',style: TextStyle(letterSpacing: 2),),
                     Text(widget.name,
                       style: const TextStyle(
-                        letterSpacing: 2,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                    ],),
@@ -171,11 +174,11 @@ class _NameandAgeState extends State<NameandAge> {
                           final sp = snapshot.data as SharedPreferences;
                           if(sp.getStringList('userInfo') == null){ //if the string list doesn't already exist it is created
                             sp.setStringList('userInfo', List<String>.filled(6, '')); //if null inizialization
-                            return const Text('',style: TextStyle(letterSpacing: 2,fontSize: 25,fontWeight: FontWeight.bold),);
+                            return const Text('',style: TextStyle(letterSpacing: 1,fontSize: 20,fontWeight: FontWeight.bold),);
                           }
                           else{ //otherwise it is readed
                             final userInfo = sp.getStringList('userInfo');
-                            return Text(userInfo![widget.index],style: TextStyle(letterSpacing: 2,fontSize: 25,fontWeight: FontWeight.bold),); 
+                            return Text(userInfo![widget.index],style: TextStyle(letterSpacing: 1,fontSize: 20,fontWeight: FontWeight.bold),);
                           }
                           }
                         else{
@@ -194,6 +197,9 @@ class _NameandAgeState extends State<NameandAge> {
 
 
 //GENDER
+
+enum Gender{male, female} // Creates gender enumerator
+
 class GenderSelector extends StatefulWidget {
   final int index;
   
@@ -206,40 +212,47 @@ class GenderSelector extends StatefulWidget {
 }
 
 class _GenderSelectorState extends State<GenderSelector> {
+
+  Gender? _gender;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: Row(
                   children: [
-                    Text('gender:     ',style: TextStyle(letterSpacing: 2),),
+                    Text('Gender:     ',style: TextStyle(letterSpacing: 2),),
                     
-                    Text('male',style: TextStyle(letterSpacing: 2),),
+                    Text('Male',style: TextStyle(letterSpacing: 2),),
 
                     Radio(
-                      value: 'male',
-                      groupValue: getGenderValue(widget.index),
+                      value: Gender.male,
+                      groupValue: _gender,
+                      activeColor: Theme.of(context).primaryColor,
                       onChanged: (value) async {
                         final sp = await SharedPreferences.getInstance();
                         final userInfo = sp.getStringList('userInfo');
                         setState(() {
                           userInfo![widget.index] = value.toString();
                           sp.setStringList('userInfo',userInfo);
+                          _gender = Gender.male;
                         });
                       },
                     ),
 
-                    Text('female',style: TextStyle(letterSpacing: 2),),
+                    Text('Female',style: TextStyle(letterSpacing: 2),),
 
                     Radio(
-                      value: 'female',
-                      groupValue: getGenderValue(widget.index),
+                      value: Gender.female,
+                      groupValue: _gender,
+                      activeColor: Theme.of(context).primaryColor,
                       onChanged: (value) async {
                         final sp = await SharedPreferences.getInstance();
                         final userInfo = sp.getStringList('userInfo');
                         setState(() {
                           userInfo![widget.index] = value.toString();
                           sp.setStringList('userInfo',userInfo);
+                          _gender = Gender.female;
                         });
                       },
                     ),
@@ -322,6 +335,7 @@ class _BornDateState extends State<BornDate> {
                       children: [ 
                         ElevatedButton(
                           child: Text("set"),
+                          style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor),
                           onPressed: () async {
                             var datePicked = await DatePicker.showSimpleDatePicker(
                                 context,
@@ -519,3 +533,91 @@ class _UserInfoInputState extends State<UserInfoInput> {
             );
   }
 }
+
+/// DateInfoItem
+///
+///
+class DateInfoItem extends StatefulWidget {
+  const DateInfoItem({Key? key}) : super(key: key);
+
+  @override
+  State<DateInfoItem> createState() => _DateInfoItemState();
+}
+
+class _DateInfoItemState extends State<DateInfoItem> {
+
+  @override
+  Widget build(BuildContext context) {
+    var themeMode = context.watch<ThemeModel>().mode;
+    var greyColor = (themeMode == ThemeMode.light) ? Colors.grey[700] : Colors.grey[300];
+    var bkColor = (themeMode == ThemeMode.light) ? Colors.black.withAlpha(10): Colors.white12;
+    var dialogColor = (themeMode == ThemeMode.light) ? Colors.white : Colors.grey[900];
+    return ClipRRect(
+      borderRadius: const BorderRadius.all(Radius.circular(10)),
+      child: InkWell(
+        onTap: () async { // Open Date Selector
+          var datePicked = await DatePicker.showSimpleDatePicker(
+            context,
+            initialDate: DateTime(2000),
+            firstDate: DateTime(1940),
+            lastDate: DateTime(currentYear()),
+            dateFormat: "dd MMMM yyyy",
+            locale: DateTimePickerLocale.en_us,
+            looping: true,
+            textColor: Theme.of(context).primaryColor,
+            backgroundColor: dialogColor
+          );
+          final sp = await SharedPreferences.getInstance();
+          final userInfo =  DateFormat('dd MMMM yyyy').format(datePicked!);
+          setState(()  {
+            //int age = calculateAge(datePicked);
+            //userInfo[widget.age_index] = age.toString();
+            sp.setString('bornDate',userInfo);
+          },);
+        },
+        child: Container(
+          color: bkColor,
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row( // Main Container
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(children: // Info Container
+                [
+                  Icon(Icons.cake_rounded, color: Theme.of(context).primaryColor,),
+                  Container(width: 10,),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                    Text('Born Date', style: TextStyle(fontSize:16, color: greyColor)),
+                      Container(height: 2,),
+                      FutureBuilder(
+                        future: SharedPreferences.getInstance(),
+                        builder: ((context, snapshot) { //snapshot = observer of the state of the features variable
+                          if(snapshot.hasData){
+                            final sp = snapshot.data as SharedPreferences;
+                            if(sp.getString('bornDate') == null){ //if the string list doesn't already exist it is created
+                              sp.setString('bornDate', '--');
+                              return const Text('--',style: TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),);
+                            }
+                            else{ //otherwise it is read
+                              final userInfo = sp.getString('bornDate') ?? '--';
+                              return Text(userInfo,style: TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),);
+                            }
+                          }
+                          else{
+                            return CircularProgressIndicator();
+                          }
+                        }),
+                      ),],)
+                ],),
+                Icon(Icons.edit, color: Theme.of(context).disabledColor,),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
