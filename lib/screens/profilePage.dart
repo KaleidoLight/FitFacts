@@ -26,13 +26,6 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
 
-  final int bornDateIndex = 0; //index of the persistance string list 
-  final int ageIndex = 1;
-  final int genderIndex = 2;
-  final int weigthIndex = 3;
-  final int calGoalIndex = 4;
-  final int stepsIndex = 5;
-
   @override
   void initState() {
     super.initState();
@@ -42,12 +35,12 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Info'),
+        title: const Text('My Profile'),
         centerTitle: true,
         elevation: 0,
         actions: <Widget>[
         Padding(
-        padding: EdgeInsets.only(right: 20.0),
+        padding: const EdgeInsets.only(right: 20.0),
         child: GestureDetector(
           onTap: () {setState(() {});},
           child: const Icon(Icons.refresh,size: 26.0,),
@@ -58,62 +51,31 @@ class _ProfilePageState extends State<ProfilePage> {
         username: 'User',
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(30, 5, 30, 0),
+        padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
         children:[
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              
-              const Padding(
-                padding: EdgeInsets.all(4.0),
-                child: Center(
-                  child: CircleAvatar(
-                    backgroundImage: AssetImage('assets/images/logo.jpeg'),
-                    radius: 60,
-                  ),
-                ),
-              ),
-              
-              Padding( 
-                padding: const EdgeInsets.all(3.0),
-                child: Divider(
-                  color: Theme.of(context).primaryColor,
-                  thickness: 2,
-                ),
-              ),
-             
-              NameandAge(name: widget.watchUser, index: ageIndex),
 
-              GenderSelector(index: genderIndex),
+              const MainInfoItem(),
 
-              ProfileInfo(info: 'Date of birth', icon: Icons.cake_outlined),
+              const DateInfoItem(),
               
-              BornDate(date_index: bornDateIndex, age_index: ageIndex),
-
-              ProfileInfo(info: 'Weigth [Kg]', icon: Icons.fitness_center),
+              const DefaultInfoItem(badgeIcon: Icons.monitor_weight_outlined, title: 'Weight', unit: '(kg)',),
               
-              UserInfoInput(name: 'Weigth', index: weigthIndex),
+              const DefaultInfoItem(badgeIcon: Icons.local_fire_department_rounded, title: 'Calories Goal', unit: '(kCal)',),
 
-              ProfileInfo(info: 'Calories goal [Kcal]', icon: Icons.local_fire_department),
-              
-              UserInfoInput(name: 'Calories Goal', index: calGoalIndex),
-
-              ProfileInfo(info: 'Steps goal', icon: Icons.directions_walk),
-              
-              UserInfoInput(name: 'Steps', index: stepsIndex),
-
-              DateInfoItem(),
+              const DefaultInfoItem(badgeIcon: Icons.directions_walk_rounded, title: 'Steps Goal',),
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                    child: Text("reset"),
+                    child: const Text("reset"),
                     onPressed: () async {
                       final sp = await SharedPreferences.getInstance();
-                      sp.remove('userInfo');
-                      sp.remove('bornDate');
+                      sp.clear();
                       setState(() {});
                     }           
                   ),
@@ -127,269 +89,8 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 
-
-//NAME AND AGE DISPLAY
-class NameandAge extends StatefulWidget {
-  final int index;
-  final String name;
-  
-  const NameandAge({Key? key,
-      required this.name,
-      required this.index})
-      : super(key: key);
-
-
-  @override
-  State<NameandAge> createState() => _NameandAgeState();
-}
-
-class _NameandAgeState extends State<NameandAge> {
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-                padding: EdgeInsets.all(5.0),
-                child: Row( children: [
-                  Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children:[ Row(children: [
-                    Text('Name: ',style: TextStyle(letterSpacing: 2),),
-                    Text(widget.name,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                   ],),
-                  ],),
-                  Spacer(),
-                  Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children:[ Row(children: [
-                    Text('Age: ',style: TextStyle(letterSpacing: 2),),
-                    FutureBuilder(
-                        future: SharedPreferences.getInstance(),
-                        builder: ((context, snapshot) { //snapshot = observer of the state of the features variable
-                        if(snapshot.hasData){
-                          final sp = snapshot.data as SharedPreferences;
-                          if(sp.getStringList('userInfo') == null){ //if the string list doesn't already exist it is created
-                            sp.setStringList('userInfo', List<String>.filled(6, '')); //if null inizialization
-                            return const Text('',style: TextStyle(letterSpacing: 1,fontSize: 20,fontWeight: FontWeight.bold),);
-                          }
-                          else{ //otherwise it is readed
-                            final userInfo = sp.getStringList('userInfo');
-                            return Text(userInfo![widget.index],style: TextStyle(letterSpacing: 1,fontSize: 20,fontWeight: FontWeight.bold),);
-                          }
-                          }
-                        else{
-                          return CircularProgressIndicator();
-                        }
-                        }),
-                      ),
-                   ],),
-                  ],),
-
-                ],)
-              );
-  }
-}
-
-
-
-//GENDER
-
-enum Gender{male, female} // Creates gender enumerator
-
-class GenderSelector extends StatefulWidget {
-  final int index;
-  
-  const GenderSelector({Key? key,
-      required this.index})
-      : super(key: key);
-
-  @override
-  State<GenderSelector> createState() => _GenderSelectorState();
-}
-
-class _GenderSelectorState extends State<GenderSelector> {
-
-  Gender? _gender;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Row(
-                  children: [
-                    Text('Gender:     ',style: TextStyle(letterSpacing: 2),),
-                    
-                    Text('Male',style: TextStyle(letterSpacing: 2),),
-
-                    Radio(
-                      value: Gender.male,
-                      groupValue: _gender,
-                      activeColor: Theme.of(context).primaryColor,
-                      onChanged: (value) async {
-                        final sp = await SharedPreferences.getInstance();
-                        final userInfo = sp.getStringList('userInfo');
-                        setState(() {
-                          userInfo![widget.index] = value.toString();
-                          sp.setStringList('userInfo',userInfo);
-                          _gender = Gender.male;
-                        });
-                      },
-                    ),
-
-                    Text('Female',style: TextStyle(letterSpacing: 2),),
-
-                    Radio(
-                      value: Gender.female,
-                      groupValue: _gender,
-                      activeColor: Theme.of(context).primaryColor,
-                      onChanged: (value) async {
-                        final sp = await SharedPreferences.getInstance();
-                        final userInfo = sp.getStringList('userInfo');
-                        setState(() {
-                          userInfo![widget.index] = value.toString();
-                          sp.setStringList('userInfo',userInfo);
-                          _gender = Gender.female;
-                        });
-                      },
-                    ),
-                  ], // children
-                ),
-              );
-  }
-}
-
-Future<String> getGenderValue(int genderIndex)async{
-  String? gender;
-  final sp = await SharedPreferences.getInstance();
-  final userInfo = sp.getStringList('userInfo');
-  if(userInfo == null){
-    sp.setStringList('userInfo', List<String>.filled(6, '')); //if null inizialization
-    gender = '';
-  }else{
-    gender = userInfo[genderIndex];
-  }
-  return gender;
-}
-
-
-//BORN DATE INPUT AND AGE CALCOLOUS
-class BornDate extends StatefulWidget {
-  final int date_index;
-  final int age_index;
-  
-  const BornDate({Key? key,
-      required this.date_index,
-      required this.age_index})
-      : super(key: key);
-
-
-  @override
-  State<BornDate> createState() => _BornDateState();
-}
-
-class _BornDateState extends State<BornDate> {
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-                padding: EdgeInsets.all(5.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [ 
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        FutureBuilder(
-                        future: SharedPreferences.getInstance(),
-                        builder: ((context, snapshot) { //snapshot = observer of the state of the features variable
-                        if(snapshot.hasData){
-                          final sp = snapshot.data as SharedPreferences;
-                          if(sp.getStringList('userInfo') == null){ //if the string list doesn't already exist it is created
-                            sp.setStringList('userInfo', List<String>.filled(6, '')); //if null inizialization
-                            return Text('To specify');
-                          }
-                          else{ //otherwise it is readed
-                            final userInfo = sp.getStringList('userInfo');
-                            if(userInfo![widget.date_index]==''){ //if after the inizialization the string still empty
-                              return Text('To specify');
-                            }else{                //otheswise return the value of that field
-                              return Text(userInfo[widget.date_index]); 
-                            }
-                          }
-                        }
-                        else{
-                          return CircularProgressIndicator();
-                        }
-                        }),
-                      ),
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [ 
-                        ElevatedButton(
-                          child: Text("set"),
-                          style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor),
-                          onPressed: () async {
-                            var datePicked = await DatePicker.showSimpleDatePicker(
-                                context,
-                                initialDate: DateTime(2000),
-                                firstDate: DateTime(1940),
-                                lastDate: DateTime(currentYear()),
-                                dateFormat: "dd-MMMM-yyyy",
-                                locale: DateTimePickerLocale.en_us,
-                                looping: true,
-                              );
-                            final sp = await SharedPreferences.getInstance();
-                            final userInfo = sp.getStringList('userInfo');
-                            setState(()  {
-                              userInfo![widget.date_index] = DateFormat('dd-MMMM-yyyy').format(datePicked!);
-                              int age = calculateAge(datePicked);
-                              userInfo[widget.age_index] = age.toString();
-                              sp.setStringList('userInfo',userInfo);
-                            },);
-                          },
-                        ),],
-                    ),
-                  ],),
-                );
-  }
-}
-
-
-
-//STRING OVER INPUTS DISPLAY
-class ProfileInfo extends StatelessWidget{
-  final String info;
-  final IconData icon;
-
-  const ProfileInfo({required this.info, required this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          Icon(icon,),
-          const SizedBox(width: 10,),
-          Text(info,
-            style: TextStyle(letterSpacing: 2),),
-          ],
-        ),
-      );
-  }
-}
-
-
-
-//calculate the age
+/// Age Calculator
+///
 calculateAge(DateTime birthDate) {
   DateTime currentDate = DateTime.now();
   int age = currentDate.year - birthDate.year;
@@ -409,8 +110,8 @@ calculateAge(DateTime birthDate) {
 }
 
 
-
-//prende la data corrente per ottenere l'anno corrente per la data di nascita
+/// Today Getter
+///
 int currentYear(){
   String currentDate = DateFormat('yyyy-MMMM-dd').format(DateTime.now());
   int dateYear = int.parse(currentDate.substring(0,4));
@@ -418,124 +119,8 @@ int currentYear(){
 }
 
 
-
-//INPUTS FIELD
-class UserInfoInput extends StatefulWidget {
-  final int index;
-  final String name;
-  
-  const UserInfoInput({Key? key,
-      required this.name,
-      required this.index})
-      : super(key: key);
-
-
-  @override
-  State<UserInfoInput> createState() => _UserInfoInputState();
-}
-
-class _UserInfoInputState extends State<UserInfoInput> {
-  final _fbKey = GlobalKey<FormBuilderState>();
-
-  @override
-  Widget build(BuildContext context) {
-    return  Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      FutureBuilder(
-                        future: SharedPreferences.getInstance(),
-                        builder: ((context, snapshot) { //snapshot = observer of the state of the features variable
-                        if(snapshot.hasData){
-                          final sp = snapshot.data as SharedPreferences;
-                          if(sp.getStringList('userInfo') == null){
-                            sp.setStringList('userInfo', List<String>.filled(6, '')); //if null inizialization
-                            return Text('To specify');
-                          }
-                          else{ 
-                            //sp.remove('userInfo'); scommentare se si vuole ripulire la memoria
-                            final userInfo = sp.getStringList('userInfo');
-                            if(userInfo![widget.index]==''){ //if after the inizialization the string still empty
-                              return Text('To specify');
-                            }else{                //otheswise return the value of that field
-                              return Text(userInfo[widget.index]); 
-                            }
-                          }
-                        }
-                        else{
-                          return CircularProgressIndicator();
-                        }
-                        }),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [ 
-                      ElevatedButton(
-                        child: Text("set"),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              content: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children:[
-                                  SizedBox(
-                                    width: 250,
-                                    child: FormBuilder(
-                                      key:  _fbKey,
-                                      autovalidateMode: AutovalidateMode.always,
-                                      onChanged: () {
-                                        _fbKey.currentState!.save();
-                                      },
-                                      child:
-                                        FormBuilderTextField(
-                                          name: widget.name,
-                                          decoration: InputDecoration(labelText: widget.name),
-                                          validator: FormBuilderValidators.numeric(),
-                                        )
-                                    ),
-                                  ),],
-                              ),
-                            actions: <Widget>[
-                              TextButton(onPressed: () async {
-                                final valid = _fbKey.currentState?.saveAndValidate() ?? true;
-                                if(valid) {
-                                  final sp = await SharedPreferences.getInstance();
-                                  final userInfo = sp.getStringList('userInfo');
-                                  setState(() {
-                                    userInfo![widget.index] = _fbKey.currentState?.value[widget.name];
-                                    sp.setStringList('userInfo',userInfo);});
-                                  Navigator.of(context).pop();
-                                  }else{}
-                                },
-                                child: const Text("save"),
-                                style: ButtonStyle(
-                                  padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(15)),
-                                  foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-                                ),
-                              ),
-                            ],
-                            ),);
-                        },
-                      ),],
-                  ),
-                ],
-              ),
-            );
-  }
-}
-
-/// DateInfoItem
-///
+/// #### DateInfoItem
+/// Draws date-picker widget
 ///
 class DateInfoItem extends StatefulWidget {
   const DateInfoItem({Key? key}) : super(key: key);
@@ -548,70 +133,388 @@ class _DateInfoItemState extends State<DateInfoItem> {
 
   @override
   Widget build(BuildContext context) {
+
+    // Theme Variables
     var themeMode = context.watch<ThemeModel>().mode;
     var greyColor = (themeMode == ThemeMode.light) ? Colors.grey[700] : Colors.grey[300];
     var bkColor = (themeMode == ThemeMode.light) ? Colors.black.withAlpha(10): Colors.white12;
     var dialogColor = (themeMode == ThemeMode.light) ? Colors.white : Colors.grey[900];
-    return ClipRRect(
-      borderRadius: const BorderRadius.all(Radius.circular(10)),
-      child: InkWell(
-        onTap: () async { // Open Date Selector
-          var datePicked = await DatePicker.showSimpleDatePicker(
-            context,
-            initialDate: DateTime(2000),
-            firstDate: DateTime(1940),
-            lastDate: DateTime(currentYear()),
-            dateFormat: "dd MMMM yyyy",
-            locale: DateTimePickerLocale.en_us,
-            looping: true,
-            textColor: Theme.of(context).primaryColor,
-            backgroundColor: dialogColor
-          );
-          final sp = await SharedPreferences.getInstance();
-          final userInfo =  DateFormat('dd MMMM yyyy').format(datePicked!);
-          setState(()  {
-            //int age = calculateAge(datePicked);
-            //userInfo[widget.age_index] = age.toString();
-            sp.setString('bornDate',userInfo);
-          },);
-        },
+
+    // View Builder
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        child: InkWell(
+          onTap: () async { // Open Date Selector
+            var datePicked = await DatePicker.showSimpleDatePicker(
+              context,
+              initialDate: DateTime(2000),
+              firstDate: DateTime(1940),
+              lastDate: DateTime(currentYear()),
+              dateFormat: "dd MMMM yyyy",
+              locale: DateTimePickerLocale.en_us,
+              looping: true,
+              textColor: Theme.of(context).primaryColor,
+              backgroundColor: dialogColor
+            );
+            final sp = await SharedPreferences.getInstance();
+            final userInfo =  DateFormat('dd MMMM yyyy').format(datePicked!);
+            setState(()  {
+              int age = calculateAge(datePicked);
+              sp.setString('age', age.toString());
+              sp.setString('bornDate',userInfo);
+            },);
+          }, // end on-tap
+          child: Container(
+            color: bkColor,
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row( // Main Container
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(children: // Info Container
+                  [
+                    Icon(Icons.cake_rounded, color: Theme.of(context).primaryColor,),
+                    Container(width: 10,),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                      Text('Born Date', style: TextStyle(fontSize:16, color: greyColor)),
+                        Container(height: 2,),
+                        FutureBuilder(
+                          future: SharedPreferences.getInstance(),
+                          builder: ((context, snapshot) { //snapshot = observer of the state of the features variable
+                            if(snapshot.hasData){
+                              final sp = snapshot.data as SharedPreferences;
+                              if(sp.getString('bornDate') == null){ //if the string list doesn't already exist it is created
+                                sp.setString('bornDate', '--');
+                                return const Text('--',style: TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),);
+                              }
+                              else{ //otherwise it is read
+                                final userInfo = sp.getString('bornDate') ?? '--';
+                                final userAge = sp.getString('age') ?? '--';
+                                return Row(
+                                  children: [
+                                    Text(userInfo,style: const TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),),
+                                    Container(width: 3,),
+                                    Text('($userAge yo)', style: const TextStyle(fontSize: 16,),)
+                                  ],
+                                );
+                              }
+                            }
+                            else{
+                              return const CircularProgressIndicator();
+                            }
+                          }),
+                        ),],)
+                  ],),
+                  Icon(Icons.edit, color: Theme.of(context).disabledColor,),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// #### Default Info Item
+/// Draws default info item widget
+///
+/// [badgeIcon]: The Icon representing the Measure
+///
+/// [title]: The Title of the Measure
+///
+/// [unit]: The unit of the Measure (optional)
+class DefaultInfoItem extends StatefulWidget {
+
+  final IconData badgeIcon;
+  final String title;
+  final String unit;
+
+  const DefaultInfoItem({Key? key, required this.badgeIcon, required this.title, this.unit = ''}) : super(key: key);
+
+  @override
+  State<DefaultInfoItem> createState() => _DefaultInfoItemState();
+}
+
+class _DefaultInfoItemState extends State<DefaultInfoItem> {
+
+  @override
+  Widget build(BuildContext context) {
+
+    // Theme Variables
+    var themeMode = context.watch<ThemeModel>().mode;
+    var greyColor = (themeMode == ThemeMode.light) ? Colors.grey[700] : Colors.grey[300];
+    var bkColor = (themeMode == ThemeMode.light) ? Colors.black.withAlpha(10): Colors.white12;
+
+    final _fbKey = GlobalKey<FormBuilderState>();
+    
+    // View Builder
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        child: InkWell(
+          onTap: () async { // Open Date Selector
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                content: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:[
+                    SizedBox(
+                      width: 2*(MediaQuery.of(context).size.width)/3,
+                      child: FormBuilder(
+                          key:  _fbKey,
+                          autovalidateMode: AutovalidateMode.always,
+                          onChanged: () {
+                            _fbKey.currentState!.save();
+                          },
+                          child:
+                          FormBuilderTextField(
+                            name: widget.title,
+                            decoration: InputDecoration(labelText: widget.title),
+                            validator: FormBuilderValidators.numeric(),
+                          )
+                      ),
+                    ),],
+                ),
+                actions: <Widget>[
+                  TextButton(onPressed: (){Navigator.of(context).pop();},
+                  child: const Text('Cancel'),),
+                  TextButton(onPressed: () async {
+                    final valid = _fbKey.currentState?.saveAndValidate() ?? true;
+                    if(valid) {
+                      final sp = await SharedPreferences.getInstance();
+                      setState(() {
+                        //userInfo![widget.title] = _fbKey.currentState?.value[widget.title];
+                        sp.setString(widget.title,_fbKey.currentState?.value[widget.title]);});
+                      Navigator.of(context).pop();
+                    }
+                  },
+                    child: const Text("Save"),
+                    ),
+                ],
+              ),);
+          }, // end on-tap
+          child: Container(
+            color: bkColor,
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row( // Main Container
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(children: // Info Container
+                  [
+                    Icon(widget.badgeIcon, color: Theme.of(context).primaryColor,),
+                    Container(width: 10,),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(widget.title, style: TextStyle(fontSize:16, color: greyColor)),
+                            Container(width: 5,),
+                            Text(widget.unit, style: TextStyle(fontSize:16, color: greyColor))
+                          ],
+                        ),
+                        Container(height: 2,),
+                        FutureBuilder(
+                          future: SharedPreferences.getInstance(),
+                          builder: ((context, snapshot) { //snapshot = observer of the state of the features variable
+                            if(snapshot.hasData){
+                              final sp = snapshot.data as SharedPreferences;
+                              if(sp.getString(widget.title) == null){ //if the string list doesn't already exist it is created
+                                sp.setString(widget.title, '--');
+                                return const Text('--',style: TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),);
+                              }
+                              else{ //otherwise it is read
+                                final userInfo = sp.getString(widget.title) ?? '--';
+                                return Text(userInfo,style: const TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),);
+                              }
+                            }
+                            else{
+                              return const CircularProgressIndicator();
+                            }
+                          }),
+                        ),],)
+                  ],),
+                  Icon(Icons.edit, color: Theme.of(context).disabledColor,),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// #### [MainInfoItem]
+///
+/// Draws the header widget for the profile page
+///
+///
+class MainInfoItem extends StatefulWidget {
+  const MainInfoItem({Key? key}) : super(key: key);
+
+  @override
+  State<MainInfoItem> createState() => _MainInfoItemState();
+}
+
+class _MainInfoItemState extends State<MainInfoItem> {
+  @override
+  Widget build(BuildContext context) {
+
+    // Theme Variables
+    var themeMode = context.watch<ThemeModel>().mode;
+    var bkColor = (themeMode == ThemeMode.light) ? Colors.black.withAlpha(10): Colors.white12;
+
+    final _fbKey = GlobalKey<FormBuilderState>();
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
         child: Container(
           color: bkColor,
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Row( // Main Container
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(children: // Info Container
-                [
-                  Icon(Icons.cake_rounded, color: Theme.of(context).primaryColor,),
-                  Container(width: 10,),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                    Text('Born Date', style: TextStyle(fontSize:16, color: greyColor)),
-                      Container(height: 2,),
-                      FutureBuilder(
-                        future: SharedPreferences.getInstance(),
-                        builder: ((context, snapshot) { //snapshot = observer of the state of the features variable
-                          if(snapshot.hasData){
-                            final sp = snapshot.data as SharedPreferences;
-                            if(sp.getString('bornDate') == null){ //if the string list doesn't already exist it is created
-                              sp.setString('bornDate', '--');
-                              return const Text('--',style: TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),);
+                Expanded(
+                    flex: 4,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 5, left: 5),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          FutureBuilder(
+                            future: SharedPreferences.getInstance(),
+                            builder: (context, snapshot){
+                              if (snapshot.hasData){
+                                final sp = snapshot.data as SharedPreferences;
+                                return Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(sp.getString('Username') ?? '--', style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
+                                    Container(width: 5,),
+                                    Icon((sp.getString('Gender') == 'Male') ? Icons.male_rounded : Icons.female_rounded, size: 22, color: Colors.grey[600],),
+                                  ],
+                                );
+                              }else {
+                                return const CircularProgressIndicator();
+                              }
                             }
-                            else{ //otherwise it is read
-                              final userInfo = sp.getString('bornDate') ?? '--';
-                              return Text(userInfo,style: TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),);
-                            }
-                          }
-                          else{
-                            return CircularProgressIndicator();
-                          }
-                        }),
-                      ),],)
-                ],),
-                Icon(Icons.edit, color: Theme.of(context).disabledColor,),
+                          ),
+                          Container(height: 3,),
+                          const Text('name.surname@fit.com', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w200),),
+                          Container(height: 10,),
+                          Row(
+                            children: [
+                              Container(
+                                width: 100,
+                                child: OutlinedButton(
+                                    onPressed:  (){
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          content: Container(
+                                            constraints: const BoxConstraints(maxHeight: 180),
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                  children:[
+                                                    SizedBox(
+                                                      width: 2*(MediaQuery.of(context).size.width)/3,
+                                                      child: FormBuilder(
+                                                          key:  _fbKey,
+                                                          autovalidateMode: AutovalidateMode.always,
+                                                          onChanged: () {
+                                                            _fbKey.currentState!.save();
+                                                          },
+                                                          child:
+                                                          FutureBuilder(
+                                                            future: SharedPreferences.getInstance(),
+                                                            builder: (context, snapshot){
+                                                              if (snapshot.hasData){
+                                                                final sp = snapshot.data as SharedPreferences;
+                                                                return FormBuilderTextField(
+                                                                  name: 'Username',
+                                                                  decoration: const InputDecoration(labelText: 'Username'),
+                                                                  validator: FormBuilderValidators.required(),
+                                                                  initialValue: sp.getString('Username')
+                                                                );
+                                                              }else{
+                                                                return const CircularProgressIndicator();
+                                                              }
+                                                            },
+                                                          )
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                GenderSelectionWidget(),
+                                              ],
+                                            ),
+                                          ),
+                                          actions: <Widget>[
+                                            TextButton(onPressed: (){Navigator.of(context).pop();},
+                                              child: const Text('Cancel'),),
+                                            TextButton(onPressed: () async {
+                                              final valid = _fbKey.currentState?.saveAndValidate() ?? true;
+                                              if(valid) {
+                                                final sp = await SharedPreferences.getInstance();
+                                                setState(() {
+                                                  //userInfo![widget.title] = _fbKey.currentState?.value[widget.title];
+                                                  sp.setString('Username',_fbKey.currentState?.value['Username']);});
+                                                Navigator.of(context).pop();
+                                              }
+                                            },
+                                              child: const Text("Save"),
+                                            ),
+                                          ],
+                                        ),);
+                                    },
+                                    style: OutlinedButton.styleFrom(foregroundColor: Theme.of(context).primaryColor),
+                                    child: Row(
+                                      children: [const Icon(Icons.edit), Container(width: 5,), Text('Edit')],
+                                )),
+                              ),
+                              Container(width: 5,),
+                              Container(
+                                child: OutlinedButton(
+                                    onPressed: (){ // Edit Button Action
+                                    },
+                                    style: OutlinedButton.styleFrom(foregroundColor: Theme.of(context).primaryColor),
+                                    child: Row(
+                                      children: const [Icon(Icons.power_settings_new_rounded)],
+                                )),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ) ),
+                Expanded(
+                    flex: 2,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircleAvatar(
+                        backgroundColor: Colors.purple[50],
+                        radius: 60,
+                        child: Icon(Icons.account_circle_rounded, color: Colors.black.withAlpha(50), size: 70,),
+                      )
+                    ],) )
               ],
             ),
           ),
@@ -621,3 +524,54 @@ class _DateInfoItemState extends State<DateInfoItem> {
   }
 }
 
+/// #### [GenderSelectionWidget]
+///
+/// Displays selector for gender
+///
+class GenderSelectionWidget extends StatefulWidget {
+  @override
+  _GenderSelectionWidgetState createState() => _GenderSelectionWidgetState();
+}
+
+class _GenderSelectionWidgetState extends State<GenderSelectionWidget> {
+
+  String selectedGender = 'Male';
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(height: 25,),
+        const Text('Gender', style: TextStyle(fontSize: 18),),
+        Row(
+        children: [
+          Radio<String>(
+            value: 'Male',
+            groupValue: selectedGender,
+            onChanged: (value) async {
+              final sp = await SharedPreferences.getInstance();
+              setState(() {
+                selectedGender = value!;
+                sp.setString('Gender', value);
+              });
+            },
+          ),
+          const Text('Male'),
+          Radio<String>(
+            value: 'Female',
+            groupValue: selectedGender,
+            onChanged: (value) async {
+              final sp = await SharedPreferences.getInstance();
+              setState(() {
+                selectedGender = value!;
+                sp.setString('Gender', value);
+              });
+            },
+          ),
+          const Text('Female'),
+        ],
+      ),
+    ]);
+  }
+}
