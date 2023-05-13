@@ -205,6 +205,11 @@ class _NavListState extends State<NavList> {
                   title: 'Heart',
                   destinationView: '/heart',
                   color: widget.primaryColor),
+              NavItem(
+                  icon: Icons.account_circle,
+                  title: 'Profile',
+                  destinationView: '/profile',
+                  color: widget.primaryColor),
             ],
           ),
         ],
