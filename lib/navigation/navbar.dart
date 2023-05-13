@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fitfacts/themes/theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fitfacts/screens/loginPage.dart';
 
 // DRAWER DATE FORMATTER
 DateTime _drawerDate = DateTime.now();
@@ -169,7 +171,7 @@ class _ServerStatusState extends State<ServerStatus> {
 
 /// NAVIGATION LIST
 ///
-dynamic _selection = '/'; // Detects current page
+dynamic _selection = '/home'; // Detects current page
 
 class NavList extends StatefulWidget {
   final Color primaryColor;
@@ -198,7 +200,7 @@ class _NavListState extends State<NavList> {
               NavItem(
                   icon: Icons.home_rounded,
                   title: 'Overview',
-                  destinationView: '/',
+                  destinationView: '/home',
                   color: widget.primaryColor),
               NavItem(
                   icon: Icons.favorite_outline,
@@ -366,10 +368,22 @@ class _BottomBarState extends State<BottomBar> {
                   children: [
                     /// LOGOUT ACTION HERE
                     IconButton(
-                        onPressed: () {}, icon: const Icon(Icons.exit_to_app))
+                        onPressed: () {_toLoginPage(context);}, icon: const Icon(Icons.exit_to_app))
                   ],
                 ))
           ],
         ));
   }
 }
+
+// to leave user logged in
+void _toLoginPage(BuildContext context) async{
+  //Unset the 'username' filed in SharedPreference
+  final sp = await SharedPreferences.getInstance();
+  sp.remove('logged');
+  //Pop the drawer first
+  Navigator.pop(context);
+  //Then pop the HomePage
+  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)
+  => LoginPage()));
+}//_toCalendarPage

@@ -21,9 +21,9 @@ class MyApp extends StatelessWidget {
             theme: appLight, // Provide light theme.
             darkTheme: appDark, // Provide dark theme.
             themeMode: model.mode, // Decides which theme to show.
-            home: const HomePage(),
+            home: const LoginPage(),
             routes: {
-              '/login' : (context) => const LoginPage(),
+              '/home' : (context) => const HomePage(),
               '/heart' : (context) => const HeartView(),
               '/profile' : (context) => ProfilePage(),
             },
