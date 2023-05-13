@@ -447,6 +447,7 @@ class _MainInfoItemState extends State<MainInfoItem> {
                                                             builder: (context, snapshot){
                                                               if (snapshot.hasData){
                                                                 final sp = snapshot.data as SharedPreferences;
+                                                                sp.setString('Gender', 'Male');
                                                                 return FormBuilderTextField(
                                                                   name: 'Username',
                                                                   decoration: const InputDecoration(labelText: 'Username'),
