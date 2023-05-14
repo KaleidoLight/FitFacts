@@ -204,7 +204,7 @@ class _DateInfoItemState extends State<DateInfoItem> {
                               }
                             }
                             else{
-                              return const CircularProgressIndicator();
+                              return const Text('--');
                             }
                           }),
                         ),],)
@@ -338,7 +338,7 @@ class _DefaultInfoItemState extends State<DefaultInfoItem> {
                               }
                             }
                             else{
-                              return const CircularProgressIndicator();
+                              return const Text('--');
                             }
                           }),
                         ),],)
@@ -409,7 +409,7 @@ class _MainInfoItemState extends State<MainInfoItem> {
                                   ],
                                 );
                               }else {
-                                return const CircularProgressIndicator();
+                                return const Text('--');
                               }
                             }
                           ),
@@ -455,7 +455,7 @@ class _MainInfoItemState extends State<MainInfoItem> {
                                                                   initialValue: sp.getString('Username')
                                                                 );
                                                               }else{
-                                                                return const CircularProgressIndicator();
+                                                                return const Text('--');
                                                               }
                                                             },
                                                           )
