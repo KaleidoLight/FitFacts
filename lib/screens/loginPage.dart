@@ -1,3 +1,4 @@
+import 'package:fitfacts/screens/onboard.dart';
 import 'package:flutter/material.dart';
 import 'package:fitfacts/screens/homePage.dart';
 import 'package:flutter_login/flutter_login.dart';
@@ -33,6 +34,9 @@ class _LoginPageState extends State<LoginPage> {
     if(data.name == 'name@name.com' && data.password == 'psw'){
       final sp = await SharedPreferences.getInstance();
       sp.setBool('logged', true);
+      String firstLoginTime = DateTime.now().toString().replaceAll(' ', '').substring(0,16); // to be saved as encrypt key.
+      sp.setString('firstLoginTime', firstLoginTime);
+      print('Logged at: $firstLoginTime , (${firstLoginTime.length})');
       return '';
     } else {
       return 'Wrong credentials';
@@ -58,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
       onLogin: _loginUser,
       onRecoverPassword: _recoverPassword,
       onSubmitAnimationCompleted: () async{
-        _toHomePage(context);
+        _toOnboard(context);
       },
     );
   }
@@ -72,4 +76,17 @@ class _LoginPageState extends State<LoginPage> {
         reverseTransitionDuration: Duration.zero,
       ),
     );
-  }} // LoginScreen
+  }
+
+  void _toOnboard(BuildContext context){
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation1, animation2) => Onboard(),
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+      ),
+    );
+  }
+
+} // LoginScreen

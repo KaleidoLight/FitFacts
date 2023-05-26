@@ -228,13 +228,20 @@ class _DateInfoItemState extends State<DateInfoItem> {
 /// [title]: The Title of the Measure
 ///
 /// [unit]: The unit of the Measure (optional)
+
+enum Validators{
+   required,
+   numeric,
+}
+
 class DefaultInfoItem extends StatefulWidget {
 
   final IconData badgeIcon;
   final String title;
   final String unit;
+  final Validators validator;
 
-  const DefaultInfoItem({Key? key, required this.badgeIcon, required this.title, this.unit = ''}) : super(key: key);
+  const DefaultInfoItem({Key? key, required this.badgeIcon, required this.title, this.unit = '', this.validator =  Validators.numeric}) : super(key: key);
 
   @override
   State<DefaultInfoItem> createState() => _DefaultInfoItemState();
@@ -278,7 +285,7 @@ class _DefaultInfoItemState extends State<DefaultInfoItem> {
                           FormBuilderTextField(
                             name: widget.title,
                             decoration: InputDecoration(labelText: widget.title),
-                            validator: FormBuilderValidators.numeric(),
+                            validator: (widget.validator == Validators.numeric) ? FormBuilderValidators.numeric() : FormBuilderValidators.required(),
                           )
                       ),
                     ),],
@@ -536,7 +543,7 @@ class GenderSelectionWidget extends StatefulWidget {
 
 class _GenderSelectionWidgetState extends State<GenderSelectionWidget> {
 
-  String selectedGender = 'Male';
+  String selectedGender = '';
 
   @override
   Widget build(BuildContext context) {
@@ -550,6 +557,7 @@ class _GenderSelectionWidgetState extends State<GenderSelectionWidget> {
           Radio<String>(
             value: 'Male',
             groupValue: selectedGender,
+            activeColor: Theme.of(context).primaryColor,
             onChanged: (value) async {
               final sp = await SharedPreferences.getInstance();
               setState(() {
@@ -562,6 +570,7 @@ class _GenderSelectionWidgetState extends State<GenderSelectionWidget> {
           Radio<String>(
             value: 'Female',
             groupValue: selectedGender,
+            activeColor: Theme.of(context).primaryColor,
             onChanged: (value) async {
               final sp = await SharedPreferences.getInstance();
               setState(() {
@@ -576,3 +585,119 @@ class _GenderSelectionWidgetState extends State<GenderSelectionWidget> {
     ]);
   }
 }
+
+/// #### Default Info Item
+/// Draws default info item widget
+///
+/// [badgeIcon]: The Icon representing the Measure
+///
+/// [title]: The Title of the Measure
+///
+/// [unit]: The unit of the Measure (optional)
+class GenderSelectorStyled extends StatefulWidget {
+
+  final IconData badgeIcon;
+  final String title;
+  final String unit;
+
+  const GenderSelectorStyled({Key? key, required this.badgeIcon, required this.title, this.unit = ''}) : super(key: key);
+
+  @override
+  State<GenderSelectorStyled> createState() => _GenderSelectorStyledState();
+}
+
+class _GenderSelectorStyledState extends State<GenderSelectorStyled> {
+
+  @override
+  Widget build(BuildContext context) {
+
+    // Theme Variables
+    var themeMode = context.watch<ThemeModel>().mode;
+    var greyColor = (themeMode == ThemeMode.light) ? Colors.grey[700] : Colors.grey[300];
+    var bkColor = (themeMode == ThemeMode.light) ? Colors.black.withAlpha(10): Colors.white12;
+
+    final _fbKey = GlobalKey<FormBuilderState>();
+
+    // View Builder
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        child: InkWell(
+          onTap: () async { // Open Date Selector
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                content: Container(
+                    constraints: const BoxConstraints(maxHeight: 100),
+                    child:GenderSelectionWidget()),
+                actions: <Widget>[
+                  TextButton(onPressed: (){Navigator.of(context).pop();},
+                    child: const Text('Cancel'),),
+                  TextButton(onPressed: () async {
+                    final valid = _fbKey.currentState?.saveAndValidate() ?? true;
+                    if(valid) {
+                      final sp = await SharedPreferences.getInstance();
+                      setState(() {
+
+                      });
+                      Navigator.of(context).pop();
+                      print('popped');
+                    }
+                  },
+                    child: const Text("Save"),
+                  ),
+                ],
+              ),);
+          }, // end on-tap
+          child: Container(
+            color: bkColor,
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row( // Main Container
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(children: // Info Container
+                  [
+                    Icon(Icons.transgender_rounded, color: Theme.of(context).primaryColor,),
+                    Container(width: 10,),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text('Gender', style: TextStyle(fontSize:16, color: greyColor)),
+                          ],
+                        ),
+                        Container(height: 2,),
+                        FutureBuilder(
+                          future: SharedPreferences.getInstance(),
+                          builder: ((context, snapshot) { //snapshot = observer of the state of the features variable
+                            if(snapshot.hasData){
+                              final sp = snapshot.data as SharedPreferences;
+                              if(sp.getString(widget.title) == null){ //if the string list doesn't already exist it is created
+                                sp.setString(widget.title, '--');
+                                return const Text('--',style: TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),);
+                              }
+                              else{ //otherwise it is read
+                                final userInfo = sp.getString(widget.title) ?? '--';
+                                return Text(userInfo,style: const TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),);
+                              }
+                            }
+                            else{
+                              return const Text('--');
+                            }
+                          }),
+                        ),],)
+                  ],),
+                  Icon(Icons.edit, color: Theme.of(context).disabledColor,),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+

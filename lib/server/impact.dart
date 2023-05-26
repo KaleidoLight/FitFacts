@@ -1,3 +1,0 @@
-/// IMPACT API REFERENCE CLASS
-///
-

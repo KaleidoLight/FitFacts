@@ -43,6 +43,9 @@ dependencies:
   intl: ^0.17.0
   http: ^0.13.6
   shared_preferences: ^2.1.0
+  internet_connection_checker: ^1.0.0+1
+  jwt_decoder: ^2.0.1
+  introduction_screen: ^3.1.8
 
 dev_dependencies:
   flutter_test:
@@ -61,7 +64,7 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets: 
-    - assets/images/logo.jpeg
+    - assets/images/
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
