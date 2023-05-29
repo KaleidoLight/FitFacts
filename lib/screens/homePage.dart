@@ -53,13 +53,15 @@ class HomePage extends StatelessWidget {
             }, child: Text('Heart Rate')),
             ElevatedButton(onPressed: () async {
               final response = await Impact().getSleep();
-              
               dynamic sleepData = response.day(1).sleepResume();
-              
               print(sleepData);
-              
-              }, child: Text('Sleep'))
-
+              }, child: Text('Sleep')),
+            ElevatedButton(onPressed: () async{
+              final response = await Impact().getActivity();
+              for (final activity in response.day(3).data){
+                print(activity);
+              }
+            }, child: Text('Activity Data'))
           ],
         ),
       ),
@@ -68,5 +70,4 @@ class HomePage extends StatelessWidget {
       ),
     );
   } //build
-
 } 

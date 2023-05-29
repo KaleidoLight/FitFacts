@@ -11,6 +11,7 @@ import 'dart:convert';
 import 'package:fitfacts/server/NetworkUtils.dart';
 import 'package:intl/intl.dart';
 
+import '../Models/Activity.dart';
 import '../Models/HeartRate.dart';
 
 class Impact{
@@ -24,11 +25,13 @@ class Impact{
   static String password = '12345678!';
 
   // DATA
-  static String patientUsername = 'Jpefaq6m58';
-  static String stepsEndpoint   = 'data/v1/steps/patients/';
-  static String calorieEndpoint = 'data/v1/calories/patients/';
-  static String heartEndpoint   = 'data/v1/heart_rate/patients/';
-  static String sleepEndpoint   = 'data/v1/sleep/patients/';
+  static String patientUsername    = 'Jpefaq6m58';
+
+  static String stepsEndpoint      = 'data/v1/steps/patients/';
+  static String calorieEndpoint    = 'data/v1/calories/patients/';
+  static String heartEndpoint      = 'data/v1/heart_rate/patients/';
+  static String sleepEndpoint      = 'data/v1/sleep/patients/';
+  static String activityEndpoint   = 'data/v1/exercise/patients/';
   
   //This method allows to check if the IMPACT backend is up
   Future<bool> _isServerUp() async {
@@ -193,6 +196,29 @@ class Impact{
     if (response.statusCode == 200) {
       final decodedResponse = jsonDecode(response.body);
       return Sleep.fromJson(decodedResponse);
+    } //if
+    else{
+      throw Exception('Failed to load data');
+    }//else
+
+  }
+
+  Future<Activity> getActivity() async {
+
+    String endDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 1)));
+    String fromDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 8)));
+
+    final url = '${Impact.baseUrl}${Impact.activityEndpoint}${Impact.patientUsername}/daterange/start_date/$fromDate/end_date/$endDate/';
+    final headers = {HttpHeaders.authorizationHeader: 'Bearer ${await TokenManager.accessToken()}'};
+
+    //Get the response
+    print('Calling: $url');
+    final response = await http.get(Uri.parse(url), headers: headers);
+
+    //if OK parse the response, otherwise return null
+    if (response.statusCode == 200) {
+      final decodedResponse = jsonDecode(response.body);
+      return Activity.fromJson(decodedResponse);
     } //if
     else{
       throw Exception('Failed to load data');
