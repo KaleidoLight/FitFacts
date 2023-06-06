@@ -1,3 +1,5 @@
+import 'package:fitfacts/database/DatabaseRepo.dart';
+import 'package:fitfacts/server/NetworkUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fitfacts/themes/theme.dart';
@@ -97,23 +99,42 @@ class _NavHeaderState extends State<NavHeader> {
                       style:
                           TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                     ),
-                    Text(
-                      widget.username,
-                      style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).primaryColor),
-                    ),
+                    Consumer<DatabaseRepository>(
+                      builder: (context, dbr, child){
+                        return FutureBuilder(
+                            initialData: '--',
+                            future: Provider.of<DatabaseRepository>(context).getUsername(),
+                            builder: (context, snapshot){
+                              if (snapshot.hasData){
+                                final data = snapshot.data as String;
+                                print('NAVUSER: $data');
+                                return Text(
+                                  data,
+                                  style: TextStyle(
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).primaryColor),
+                                );
+                              } else {
+                                return Text(
+                                  '--',
+                                  style: TextStyle(
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).primaryColor),
+                                );
+                              }
+                            }
+                        );
+                      },
+                    )
                   ],
                 ),
-                const CircleAvatar(
-                  backgroundColor: Colors.grey,
-                  child: Text(
-                    '--', // Change with profile picture later
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
-                  ),
-                ),
+                CircleAvatar(
+                  backgroundColor: Colors.purple[50],
+                  radius: 25,
+                  foregroundImage: Image.asset('assets/images/profilePic.png').image,
+                )
               ],
             ),
           ],
@@ -368,7 +389,11 @@ class _BottomBarState extends State<BottomBar> {
                   children: [
                     /// LOGOUT ACTION HERE
                     IconButton(
-                        onPressed: () {_toLoginPage(context);}, icon: const Icon(Icons.exit_to_app))
+                        onPressed: () async{
+                          await Provider.of<DatabaseRepository>(context, listen: false).wipeDatabase();
+                          clearSharedPreferences();
+                          _toLoginPage(context);
+                          }, icon: const Icon(Icons.exit_to_app))
                   ],
                 ))
           ],

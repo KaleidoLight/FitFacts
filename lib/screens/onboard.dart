@@ -1,8 +1,16 @@
+import 'package:fitfacts/database/DataDownloader.dart';
+import 'package:fitfacts/screens/homePage.dart';
 import 'package:fitfacts/server/Impact.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:fitfacts/screens/profilePage.dart';
+import 'package:provider/provider.dart';
+import 'package:visibility_detector/visibility_detector.dart';
+import 'package:fitfacts/database/DatabaseRepo.dart';
+
+import '../database/DatabaseRepo.dart';
+import '../database/UserInfo.dart';
 
 class Onboard extends StatelessWidget {
   Onboard({Key? key}) : super(key: key);
@@ -19,14 +27,14 @@ class Onboard extends StatelessWidget {
 
     return Scaffold(
         body: IntroductionScreen(
-          showNextButton: false,
-          showBackButton: false,
-          showSkipButton: false,
-          showDoneButton: false,
-          freeze: true,
-          key: _introKey,
-          onDone: () {},
-          onSkip: () {},
+      showNextButton: false,
+      showBackButton: false,
+      showSkipButton: false,
+      showDoneButton: false,
+      freeze: true,
+      key: _introKey,
+      onDone: () {},
+      onSkip: () {},
       pages: [
         PageViewModel(
           // FITBIT LOGIN
@@ -62,7 +70,7 @@ class Onboard extends StatelessWidget {
                         name: 'Username',
                         decoration:
                             const InputDecoration(labelText: 'Username'),
-                        //initialValue: 'MMmxITaSML',
+                        initialValue: 'MMmxITaSML',
                       ),
                     )),
               ),
@@ -86,7 +94,7 @@ class Onboard extends StatelessWidget {
                               decoration:
                                   const InputDecoration(labelText: 'Password'),
                               obscureText: true,
-                              //initialValue: '12345678!',
+                              initialValue: '12345678!',
                             ),
                           )),
                     ),
@@ -109,6 +117,10 @@ class Onboard extends StatelessWidget {
                                 await Impact().authorize(context, user, pass);
                             if (response == 200) {
                               print('AUTHORIZED');
+                              Provider.of<DatabaseRepository>(context,
+                                      listen: false)
+                                  .registerUser(UserInfo(
+                                      '--', '00-00-0000', '', 0, 0, 0, 0));
                               _introKey.currentState?.next();
                             }
                           }))
@@ -123,15 +135,12 @@ class Onboard extends StatelessWidget {
                 height: 60,
               ),
               Image.asset(
-                'assets/images/fitbit_login_hero.png',
+                'assets/images/fitbitLink.png',
                 scale: 1,
-                height: 300,
-                width: 300,
               ),
             ],
           )),
         ),
-
         PageViewModel(
             image: Center(
                 child: Column(
@@ -140,15 +149,15 @@ class Onboard extends StatelessWidget {
                   height: 60,
                 ),
                 Image.asset(
-                  'assets/images/fitbit_login_data.png',
+                  'assets/images/personalInfo.png',
                   scale: 1,
-                  height: 300,
-                  width: 300,
                 ),
               ],
             )),
             title: "About You",
             decoration: const PageDecoration(
+              bodyFlex: 1,
+              imagePadding: const EdgeInsets.only(bottom: 0),
               titleTextStyle:
                   TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
@@ -163,13 +172,15 @@ class Onboard extends StatelessWidget {
                   badgeIcon: Icons.person_rounded,
                   title: 'Username',
                   validator: Validators.required,
+                  queryString: 'Username',
                 ),
                 GenderSelectorStyled(
                     badgeIcon: Icons.transgender, title: 'Gender'),
                 DateInfoItem(),
                 proceedButton(route: _introKey)
               ],
-            )),
+            ),
+        ),
         PageViewModel(
             image: Center(
                 child: Column(
@@ -178,10 +189,8 @@ class Onboard extends StatelessWidget {
                   height: 60,
                 ),
                 Image.asset(
-                  'assets/images/fitbit_login_data2.png',
+                  'assets/images/personalGoal.png',
                   scale: 1,
-                  height: 300,
-                  width: 300,
                 ),
               ],
             )),
@@ -201,25 +210,28 @@ class Onboard extends StatelessWidget {
                   badgeIcon: Icons.height_rounded,
                   title: 'Height',
                   unit: '(cm)',
+                  queryString: 'Height',
                 ),
                 const DefaultInfoItem(
                   badgeIcon: Icons.monitor_weight_outlined,
                   title: 'Weight',
                   unit: '(kg)',
+                  queryString: 'Weight',
                 ),
                 const DefaultInfoItem(
                   badgeIcon: Icons.local_fire_department_rounded,
                   title: 'Calories Goal',
                   unit: '(kCal)',
+                  queryString: 'CalorieGoal',
                 ),
                 const DefaultInfoItem(
                   badgeIcon: Icons.directions_walk_rounded,
                   title: 'Steps Goal',
+                  queryString: 'StepGoal',
                 ),
                 proceedButton(route: _introKey)
               ],
             )),
-
         PageViewModel(
             image: Center(
                 child: Column(
@@ -228,10 +240,8 @@ class Onboard extends StatelessWidget {
                   height: 60,
                 ),
                 Image.asset(
-                  'assets/images/fitbit_login_hero.png',
+                  'assets/images/loading.png',
                   scale: 1,
-                  height: 300,
-                  width: 300,
                 ),
               ],
             )),
@@ -240,19 +250,28 @@ class Onboard extends StatelessWidget {
               titleTextStyle:
                   TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
-            bodyWidget: Column(
-              children: [
-                const Text(
-                  'This might take a while. \n Do not disconnect your device from the Internet',
-                  style: TextStyle(fontSize: 18),
-                  textAlign: TextAlign.center,
-                ),
-                Container(
-                  height: 20,
-                ),
-                CircularProgressIndicator(
-                    strokeWidth: 6, color: Theme.of(context).primaryColor)
-              ],
+            bodyWidget: VisibilityDetector(
+              key: Key('your_widget_key'),
+              onVisibilityChanged: (visibilityInfo) {
+                if (visibilityInfo.visibleFraction == 1.0) {
+                  print('VISIBLE');
+                  performLoginSetup(context);
+                }
+              },
+              child: Column(
+                children: [
+                  const Text(
+                    'This might take a while. \n Do not disconnect your device from the Internet',
+                    style: TextStyle(fontSize: 18),
+                    textAlign: TextAlign.center,
+                  ),
+                  Container(
+                    height: 20,
+                  ),
+                  CircularProgressIndicator(
+                      strokeWidth: 6, color: Theme.of(context).primaryColor)
+                ],
+              ),
             ))
       ],
     ));
@@ -299,3 +318,16 @@ class _proceedButtonState extends State<proceedButton> {
     );
   }
 }
+
+void performLoginSetup(BuildContext context) async {
+
+  await downloadAndStoreData(context);
+
+  //Perform Redirection to App
+  await Future.delayed(Duration(seconds: 2));
+  Navigator.of(context).push(MaterialPageRoute (
+    builder: (BuildContext context) => const HomePage(),
+  ),);
+}
+
+

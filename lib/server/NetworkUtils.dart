@@ -68,7 +68,11 @@ class TokenManager {
   static Future<String?> refreshToken() async {
     final sp = await SharedPreferences.getInstance();
     String secretKey = sp.getString('firstLoginTime') ?? 'secret_key_missing';
-    return decryptToken(sp.getString('refresh')!, secretKey);
+    var token = decryptToken(sp.getString('refresh')!, secretKey);
+    if (JwtDecoder.isExpired(token)){
+      print('REFRESH TOKEN EXPIRED');
+    }
+    return token;
   }
 
   /// accessToken
@@ -86,4 +90,10 @@ class TokenManager {
     }
     return token;
   }
+}
+
+// Clear SharedPreferences
+Future<void> clearSharedPreferences() async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  await preferences.clear();
 }

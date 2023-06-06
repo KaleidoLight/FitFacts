@@ -44,12 +44,14 @@ class SleepDay {
 
   factory SleepDay.fromJson(Map<String, dynamic> json) { // JSON Constructor
     var jsonData = json['data'];
-    List<SleepData> sleepDataList;
+    List<SleepData> sleepDataList = [];
 
-    if (jsonData is List) {
-      sleepDataList = jsonData.map((data) => SleepData.fromJson(data)).toList();
-    } else {
-      sleepDataList = [SleepData.fromJson(jsonData)];
+    if (jsonData != null) {
+      if (jsonData is List) {
+        sleepDataList = jsonData.map((data) => SleepData.fromJson(data)).toList();
+      } else {
+        sleepDataList.add(SleepData.fromJson(jsonData));
+      }
     }
 
     return SleepDay(
@@ -68,6 +70,9 @@ class SleepDay {
 
     Duration diff = DateTime.parse(end).difference(DateTime.parse(start));
     String duration = '${diff.inHours} hr, ${diff.inMinutes % 60} min'; // formatted sleep duration
+
+    start = start.split(' ').first;
+    end = end.split(' ').first;
 
     Map<String,SleepLevelSummary> levels = // levels
     { 'deep' : data.first.levels.rem,
@@ -204,7 +209,6 @@ class SleepDayResume{
     return '\nDAY: $day\nSTART: $startDate  --  END: $endDate\nDURATION: $duration\n'
         'LEVELS:\n-- REM: ${levels['rem'].toString()}\n-- WAKE: ${levels['wake'].toString()}\n-- '
         'LIGHT: ${levels['light'].toString()}\n-- DEEP: ${levels['deep'].toString()}';
-
   }
 
 }

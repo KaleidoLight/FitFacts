@@ -1,7 +1,13 @@
+import 'package:fitfacts/database/CalorieData.dart';
+import 'package:fitfacts/database/DataDownloader.dart';
+import 'package:fitfacts/database/HeartData.dart';
+import 'package:fitfacts/database/SleepData.dart';
+import 'package:fitfacts/database/StepsData.dart';
+import 'package:fitfacts/database/DatabaseRepo.dart';
+import 'package:fitfacts/server/Impact.dart';
 import 'package:flutter/material.dart';
 import 'package:fitfacts/navigation/navbar.dart';
-import 'package:fitfacts/server/Impact.dart';
-import 'package:fitfacts/server/NetworkUtils.dart';
+import 'package:provider/provider.dart';
 
 
 class HomePage extends StatelessWidget {
@@ -20,49 +26,54 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(onPressed: (){Impact().authorize(context, "MMmxITaSML", "12345678!");}, child: Text('Authorize')),
-            ElevatedButton(onPressed: () async{
-              var result = await Impact().updateTokens();
-              if (result != 200){
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Token Refresh Error')));
-              }
-              }, child: Text('Refresh Tokens'),),
-            ElevatedButton(onPressed: () async {print( await TokenManager.accessToken());}, child: Text('Access Token')),
-            ElevatedButton(onPressed: () async{
-              final response = await Impact().getCalories();
-              for (final day in response.data){
-                print('DAY: ${day.date}  --  TOTAL CALORIES: ${day.totalCalories()} (kcal)');
-              }
-              print('WEEK AVERAGE: ${response.averageCaloriesWeek()} (kcal)');
-              print('${response.day(6).date}\n${response.day(6).detail()}');
-            }, child: Text('Calories')),
+            Text('HomePage coming Soon'),
             ElevatedButton(onPressed: () async {
-              final response = await Impact().getSteps();
-              for (final day in response.data){
-                print('DAY: ${day.date}  --  TOTAL STEPS: ${day.totalSteps()}');
-              }
-              print('WEEK AVERAGE: ${response.averageStepsWeek()}');
-              print('WEEK TOTAL  : ${response.totalStepsWeek()}');
-            }, child: Text('Get Steps')),
+              final calorieData = await Provider.of<DatabaseRepository>(context, listen: false).getCalorieData();
+              printCalorieTable(calorieData);
+            }, child: Text('Print Calories')),
             ElevatedButton(onPressed: () async {
-              final response = await Impact().getHeartRate();
-              Map<String,double> data = response.day(6).fiveMinuteMean();
-              data.forEach((key, value) {
-                print('$key : $value (bpm)');
+              final calorieData = await Provider.of<DatabaseRepository>(context, listen: false).getCalorieDetail();
+              printCalorieDetail(calorieData);
+            }, child: Text('Print Calories Detail')),
+            ElevatedButton(onPressed: () async {
+              final stepsData = await Provider.of<DatabaseRepository>(context, listen: false).getStepsData();
+              printStepsTable(stepsData);
+            }, child: Text('Print Steps')),
+            ElevatedButton(onPressed: () async {
+              final stepsDetail = await Provider.of<DatabaseRepository>(context, listen: false).getStepsDetail();
+              printStepsDetail(stepsDetail);
+            }, child: Text('Print Step Detail')),
+            ElevatedButton(onPressed: () async {
+              final heartFull = await Provider.of<DatabaseRepository>(context, listen: false).getHeartData();
+              printHeartTable(heartFull);
+            }, child: Text('Print Heart Full')),
+            ElevatedButton(onPressed: () async {
+              final heartDay = await Provider.of<DatabaseRepository>(context, listen: false).getHeartDataOfDay('2023-05-31');
+              printHeartTable(heartDay);
+            }, child: Text('Print Heart Day')),
+            ElevatedButton(onPressed: () async {
+              final sleepFull = await Provider.of<DatabaseRepository>(context, listen: false).getSleepData();
+              printSleepTable(sleepFull);
+            }, child: Text('Print Sleep Full')),
+            ElevatedButton(onPressed: () async {
+              final sleepDay = await Provider.of<DatabaseRepository>(context, listen: false).getSleepDataOfDay('2023-05-31');
+              printSleepTable(sleepDay);
+            }, child: Text('Print Sleep Day')),
+            ElevatedButton(onPressed: () async {
+              final activityData = await Provider.of<DatabaseRepository>(context, listen: false).getActivityData();
+              activityData.forEach((element) {
+                print('${element.activityReference}\t${element.name}\t\t${element.date}');
               });
-            }, child: Text('Heart Rate')),
-            ElevatedButton(onPressed: () async {
-              final response = await Impact().getSleep();
-              dynamic sleepData = response.day(1).sleepResume();
-              print(sleepData);
-              }, child: Text('Sleep')),
-            ElevatedButton(onPressed: () async{
-              final response = await Impact().getActivity();
-              for (final activity in response.day(3).data){
-                print(activity);
-              }
-            }, child: Text('Activity Data'))
-          ],
+            }, child: Text('Activity Data')),
+            ElevatedButton(onPressed: () async
+            {
+              await Provider.of<DatabaseRepository>(context, listen: false).wipeDatabase();
+            }, child: Text('Wipe Database')),
+            ElevatedButton(onPressed: () async
+            {
+              await downloadAndStoreData(context);
+            }, child: Text('Populate Database'))
+          ]
         ),
       ),
       drawer: const Navbar(
