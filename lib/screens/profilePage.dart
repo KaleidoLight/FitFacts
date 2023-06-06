@@ -10,7 +10,9 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../server/NetworkUtils.dart';
 import '../themes/theme.dart';
+import 'loginPage.dart';
 
 
 class ProfilePage extends StatefulWidget {
@@ -495,7 +497,18 @@ class _MainInfoItemState extends State<MainInfoItem> {
                               Container(width: 5,),
                               Container(
                                 child: OutlinedButton(
-                                    onPressed: (){ // Edit Button Action
+                                    onPressed: (){
+                                      showDialog(context: context, builder: (BuildContext context){
+                                        return SignOutAlertDialog();
+                                      }).then((value) async {
+                                        if (value != null && value == true) {
+                                          await Provider.of<DatabaseRepository>(context, listen: false).wipeDatabase();
+                                          clearSharedPreferences();
+                                          _toLoginPage(context);
+                                        } else {
+                                          // User canceled sign out
+                                        }
+                                      });
                                     },
                                     style: OutlinedButton.styleFrom(foregroundColor: Theme.of(context).primaryColor),
                                     child: Row(
@@ -548,7 +561,7 @@ class _GenderSelectionWidgetState extends State<GenderSelectionWidget> {
   Future<void> _loadSelectedGender() async {
     final gender = await Provider.of<DatabaseRepository>(context, listen: false).getSex();
     setState(() {
-      selectedGender = gender ?? '';
+      selectedGender = gender;
     });
   }
 
@@ -726,3 +739,41 @@ int calculateStringAge(String birthday) {
   return age;
 }
 
+/// SignOutVerification
+///
+class SignOutAlertDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Sign Out'),
+      content: const Text('Are you sure?\nYou will also be disconnected from your Fitbit',
+        textAlign: TextAlign.center,),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('Cancel'),
+          onPressed: () {
+            Navigator.of(context).pop(false); // Return false when cancel button is pressed
+          },
+        ),
+        TextButton(
+          child: const Text('Sign Out', style: TextStyle(color: Colors.red), selectionColor: Colors.red),
+          onPressed: () {
+            Navigator.of(context).pop(true); // Return true when sign out button is pressed
+          },
+        ),
+      ],
+    );
+  }
+}
+
+// to leave user logged in
+void _toLoginPage(BuildContext context) async{
+  //Unset the 'username' filed in SharedPreference
+  final sp = await SharedPreferences.getInstance();
+  sp.remove('logged');
+  //Pop the drawer first
+  Navigator.pop(context);
+  //Then pop the HomePage
+  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)
+  => LoginPage()));
+}//_toCalendarPage

@@ -6,6 +6,8 @@ import 'package:fitfacts/themes/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitfacts/screens/loginPage.dart';
 
+import '../database/DataDownloader.dart';
+
 // DRAWER DATE FORMATTER
 DateTime _drawerDate = DateTime.now();
 
@@ -376,10 +378,12 @@ class _BottomBarState extends State<BottomBar> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    /// SETTING ACTION HERE
+                    /// REFRESH ACTION HERE
                     IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.settings_outlined))
+                        onPressed: () async {
+                          await downloadAndStoreData(context);
+                        },
+                        icon: const Icon(Icons.refresh_rounded))
                   ],
                 )),
             Expanded(
@@ -390,10 +394,21 @@ class _BottomBarState extends State<BottomBar> {
                     /// LOGOUT ACTION HERE
                     IconButton(
                         onPressed: () async{
-                          await Provider.of<DatabaseRepository>(context, listen: false).wipeDatabase();
-                          clearSharedPreferences();
-                          _toLoginPage(context);
-                          }, icon: const Icon(Icons.exit_to_app))
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return SignOutAlertDialog();
+                            },
+                          ).then((value) async {
+                            if (value != null && value == true) {
+                              await Provider.of<DatabaseRepository>(context, listen: false).wipeDatabase();
+                              clearSharedPreferences();
+                              _toLoginPage(context);
+                            } else {
+                              // User canceled sign out
+                            }
+                          });
+                          }, icon: const Icon(Icons.power_settings_new_rounded))
                   ],
                 ))
           ],
@@ -412,3 +427,31 @@ void _toLoginPage(BuildContext context) async{
   Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)
   => LoginPage()));
 }//_toCalendarPage
+
+
+/// SignOutVerification
+///
+class SignOutAlertDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Sign Out'),
+      content: const Text('Are you sure?\nYou will also be disconnected from your Fitbit',
+      textAlign: TextAlign.center,),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('Cancel'),
+          onPressed: () {
+            Navigator.of(context).pop(false); // Return false when cancel button is pressed
+          },
+        ),
+        TextButton(
+          child: const Text('Sign Out', style: TextStyle(color: Colors.red), selectionColor: Colors.red),
+          onPressed: () {
+            Navigator.of(context).pop(true); // Return true when sign out button is pressed
+          },
+        ),
+      ],
+    );
+  }
+}

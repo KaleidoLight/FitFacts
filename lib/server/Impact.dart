@@ -82,11 +82,11 @@ class Impact{
   }
 
   //This method allows to obtain the JWT token pair from IMPACT and store it in SharedPreferences
-  Future<int> updateTokens() async {
+  Future<int> updateTokens(BuildContext context) async {
 
     //Create the request
     final url = Impact.baseUrl + Impact.refreshEndpoint;
-    final body = {'refresh': await TokenManager.refreshToken()};
+    final body = {'refresh': await TokenManager.refreshToken(context)};
 
     //Get the response
     print('Calling: $url');
@@ -111,13 +111,13 @@ class Impact{
 
   } //_refreshTokens
 
-  Future<Calories> getCalories() async {
+  Future<Calories> getCalories(BuildContext context) async {
 
     String endDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 1)));
     String fromDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 8)));
 
     final url = '${Impact.baseUrl}${Impact.calorieEndpoint}${Impact.patientUsername}/daterange/start_date/$fromDate/end_date/$endDate/';
-    final headers = {HttpHeaders.authorizationHeader: 'Bearer ${await TokenManager.accessToken()}'};
+    final headers = {HttpHeaders.authorizationHeader: 'Bearer ${await TokenManager.accessToken(context)}'};
 
     //Get the response
     print('Calling: $url');
@@ -134,13 +134,13 @@ class Impact{
 
   }
 
-  Future<Steps> getSteps() async {
+  Future<Steps> getSteps(BuildContext context) async {
 
     String endDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 1)));
     String fromDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 8)));
 
     final url = '${Impact.baseUrl}${Impact.stepsEndpoint}${Impact.patientUsername}/daterange/start_date/$fromDate/end_date/$endDate/';
-    final headers = {HttpHeaders.authorizationHeader: 'Bearer ${await TokenManager.accessToken()}'};
+    final headers = {HttpHeaders.authorizationHeader: 'Bearer ${await TokenManager.accessToken(context)}'};
 
     //Get the response
     print('Calling: $url');
@@ -157,13 +157,13 @@ class Impact{
 
   }
 
-  Future<HeartRate> getHeartRate() async {
+  Future<HeartRate> getHeartRate(BuildContext context) async {
 
     String endDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 1)));
     String fromDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 8)));
 
     final url = '${Impact.baseUrl}${Impact.heartEndpoint}${Impact.patientUsername}/daterange/start_date/$fromDate/end_date/$endDate/';
-    final headers = {HttpHeaders.authorizationHeader: 'Bearer ${await TokenManager.accessToken()}'};
+    final headers = {HttpHeaders.authorizationHeader: 'Bearer ${await TokenManager.accessToken(context)}'};
 
     //Get the response
     print('Calling: $url');
@@ -180,13 +180,13 @@ class Impact{
 
   }
 
-  Future<Sleep> getSleep() async {
+  Future<Sleep> getSleep(BuildContext context) async {
 
     String endDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 1)));
     String fromDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 8)));
 
     final url = '${Impact.baseUrl}${Impact.sleepEndpoint}${Impact.patientUsername}/daterange/start_date/$fromDate/end_date/$endDate/';
-    final headers = {HttpHeaders.authorizationHeader: 'Bearer ${await TokenManager.accessToken()}'};
+    final headers = {HttpHeaders.authorizationHeader: 'Bearer ${await TokenManager.accessToken(context)}'};
 
     //Get the response
     print('Calling: $url');
@@ -203,13 +203,13 @@ class Impact{
 
   }
 
-  Future<Activity> getActivity() async {
+  Future<Activity> getActivity(BuildContext context) async {
 
     String endDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 1)));
     String fromDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 8)));
 
     final url = '${Impact.baseUrl}${Impact.activityEndpoint}${Impact.patientUsername}/daterange/start_date/$fromDate/end_date/$endDate/';
-    final headers = {HttpHeaders.authorizationHeader: 'Bearer ${await TokenManager.accessToken()}'};
+    final headers = {HttpHeaders.authorizationHeader: 'Bearer ${await TokenManager.accessToken(context)}'};
 
     //Get the response
     print('Calling: $url');

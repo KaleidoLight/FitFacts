@@ -1,4 +1,6 @@
+import 'package:fitfacts/screens/impactLogin.dart';
 import 'package:fitfacts/server/Encrypter.dart';
+import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -65,12 +67,23 @@ class TokenManager {
   /// refreshToken
   ///
   /// Returns the current refreshToken
-  static Future<String?> refreshToken() async {
+  static Future<String?> refreshToken(BuildContext context) async {
     final sp = await SharedPreferences.getInstance();
     String secretKey = sp.getString('firstLoginTime') ?? 'secret_key_missing';
     var token = decryptToken(sp.getString('refresh')!, secretKey);
     if (JwtDecoder.isExpired(token)){
       print('REFRESH TOKEN EXPIRED');
+      final tokenResult = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) {
+          return ImpactLogin();
+        }),
+      );
+      if (tokenResult == 200){
+        print('TOKENS RENEWED');
+      }else {
+        print('ERROR WHILE RENEWING TOKENS');
+      }
     }
     return token;
   }
@@ -79,12 +92,12 @@ class TokenManager {
   ///
   /// Returns the current access token
   /// If expired automatically requests a new one
-  static Future<String?> accessToken() async {
+  static Future<String?> accessToken(BuildContext context) async {
     final sp = await SharedPreferences.getInstance();
     String secretKey = sp.getString('firstLoginTime') ?? 'secret_key_missing';
     var token = decryptToken(sp.getString('access')!, secretKey);
     if (JwtDecoder.isExpired(token)){
-      await Impact().updateTokens();
+      await Impact().updateTokens(context);
       token = decryptToken(sp.getString('access')!, secretKey);
       print('ACCESS TOKEN RENEWED');
     }

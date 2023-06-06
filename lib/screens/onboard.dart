@@ -8,8 +8,6 @@ import 'package:fitfacts/screens/profilePage.dart';
 import 'package:provider/provider.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:fitfacts/database/DatabaseRepo.dart';
-
-import '../database/DatabaseRepo.dart';
 import '../database/UserInfo.dart';
 
 class Onboard extends StatelessWidget {
@@ -69,7 +67,7 @@ class Onboard extends StatelessWidget {
                       child: FormBuilderTextField(
                         name: 'Username',
                         decoration:
-                            const InputDecoration(labelText: 'Username'),
+                            const InputDecoration(labelText: 'Username', focusedBorder: InputBorder.none),
                         initialValue: 'MMmxITaSML',
                       ),
                     )),
@@ -92,7 +90,7 @@ class Onboard extends StatelessWidget {
                             child: FormBuilderTextField(
                               name: 'Password',
                               decoration:
-                                  const InputDecoration(labelText: 'Password'),
+                                  const InputDecoration(labelText: 'Password', focusedBorder: InputBorder.none),
                               obscureText: true,
                               initialValue: '12345678!',
                             ),

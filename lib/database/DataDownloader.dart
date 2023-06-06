@@ -12,7 +12,7 @@ import 'DatabaseRepo.dart';
 Future<void> downloadAndStoreData(BuildContext context) async {
 
   // Calories Download and Storing
-  final caloriesAPIResponse = await Impact().getCalories();
+  final caloriesAPIResponse = await Impact().getCalories(context);
   for (int day = 1; day <= 7; day++) {
     if (caloriesAPIResponse.data.isNotEmpty) {
       Provider.of<DatabaseRepository>(context, listen: false).addCalorieData(
@@ -31,7 +31,7 @@ Future<void> downloadAndStoreData(BuildContext context) async {
   });
 
   // Steps Download and Storing
-  final stepsAPIResponse = await Impact().getSteps();
+  final stepsAPIResponse = await Impact().getSteps(context);
   for (int day = 1; day <= 7; day++) {
     if (stepsAPIResponse.data.isNotEmpty) {
       Provider.of<DatabaseRepository>(context, listen: false).addStepsData(
@@ -50,7 +50,7 @@ Future<void> downloadAndStoreData(BuildContext context) async {
 
 
   // HeartRate Download and Storing
-  final heartAPIResponse = await Impact().getHeartRate();
+  final heartAPIResponse = await Impact().getHeartRate(context);
   int dayReference = 0;
   for (int day = 1; day <= 7; day++) {
     if (heartAPIResponse.data.isNotEmpty) {
@@ -72,7 +72,7 @@ Future<void> downloadAndStoreData(BuildContext context) async {
     }
   }
   // SleepData Download and Storing
-  final sleepAPIResponse = await Impact().getSleep();
+  final sleepAPIResponse = await Impact().getSleep(context);
   for(int day = 1; day <= 7; day++){
     if (sleepAPIResponse.data.isNotEmpty) {
       final sleepDay = sleepAPIResponse.day(day);
@@ -101,7 +101,7 @@ Future<void> downloadAndStoreData(BuildContext context) async {
 
   // ActivityData
 
-  final activityAPIResponse = await Impact().getActivity();
+  final activityAPIResponse = await Impact().getActivity(context);
   int activityReference = 0;
   for(int day = 1; day <= 7; day++){
     if(activityAPIResponse.data.isNotEmpty){
