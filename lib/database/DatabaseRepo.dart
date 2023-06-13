@@ -54,6 +54,11 @@ class DatabaseRepository extends ChangeNotifier{
     return result.stepGoal;
   }
 
+  Future<int> getSmartStars() async {
+    final result = await findUser();
+    return result.smartStars;
+  }
+
   Future<dynamic>? queryUserInfo(String fromString){
     if (fromString == 'Username'){
       return getUsername();

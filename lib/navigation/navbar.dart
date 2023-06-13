@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:fitfacts/database/DatabaseRepo.dart';
 import 'package:fitfacts/server/NetworkUtils.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:fitfacts/themes/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -87,8 +90,8 @@ class _NavHeaderState extends State<NavHeader> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "${_drawerDate.day.toString()}-${_drawerDate.month.toString()}-${_drawerDate.year.toString()}",
-              style: const TextStyle(fontSize: 15),
+              "${DateFormat('EEEE, d MMMM').format(_drawerDate)}",
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -109,7 +112,6 @@ class _NavHeaderState extends State<NavHeader> {
                             builder: (context, snapshot){
                               if (snapshot.hasData){
                                 final data = snapshot.data as String;
-                                print('NAVUSER: $data');
                                 return Text(
                                   data,
                                   style: TextStyle(
@@ -168,21 +170,36 @@ class _ServerStatusState extends State<ServerStatus> {
           ),
       height: 50,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Row(
             children: [
               Icon(
-                Icons.fitbit,
+                Icons.stars_rounded,
                 color: Theme.of(context).primaryColor,
+                size: 30,
               ),
               Container(
-                width: 20,
+                width: 25,
               ),
+              Consumer<DatabaseRepository>(
+                  builder: (context, dbr, child){
+                    return FutureBuilder(
+                        initialData: '--',
+                        future: Provider.of<DatabaseRepository>(context).getSmartStars(),
+                        builder: (context, snapshot){
+                          if (snapshot.hasData){
+                            return  Text('${snapshot.data}', style: TextStyle( fontSize: 24,fontWeight:  FontWeight.w700),);
+                          } else {
+                            return  Text('--', style: TextStyle( fontSize: 24,fontWeight:  FontWeight.w700),);
+                          }
+                        });
+                  }),
+              Container(width: 5,),
               const Text( /// TO CHANGE AT A LATER TIME
-                'UPDATED: Today 10:00',
-                style:  TextStyle(fontWeight: FontWeight.w500),
+                'Smart Stars',
+                style:  TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               )
             ],
           ),

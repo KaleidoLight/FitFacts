@@ -95,7 +95,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `UserInfo` (`userKey` INTEGER NOT NULL, `username` TEXT NOT NULL, `birthDay` TEXT NOT NULL, `sex` TEXT NOT NULL, `height` INTEGER NOT NULL, `weight` INTEGER NOT NULL, `calorieGoal` INTEGER NOT NULL, `stepGoal` INTEGER NOT NULL, PRIMARY KEY (`userKey`))');
+            'CREATE TABLE IF NOT EXISTS `UserInfo` (`userKey` INTEGER NOT NULL, `username` TEXT NOT NULL, `birthDay` TEXT NOT NULL, `sex` TEXT NOT NULL, `height` INTEGER NOT NULL, `weight` INTEGER NOT NULL, `calorieGoal` INTEGER NOT NULL, `stepGoal` INTEGER NOT NULL, `smartStars` INTEGER NOT NULL, PRIMARY KEY (`userKey`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `CalorieData` (`dayReference` INTEGER NOT NULL, `date` TEXT NOT NULL, `calorie` INTEGER NOT NULL, PRIMARY KEY (`dayReference`))');
         await database.execute(
@@ -166,7 +166,8 @@ class _$UserInfoDao extends UserInfoDao {
                   'height': item.height,
                   'weight': item.weight,
                   'calorieGoal': item.calorieGoal,
-                  'stepGoal': item.stepGoal
+                  'stepGoal': item.stepGoal,
+                  'smartStars': item.smartStars
                 }),
         _userInfoUpdateAdapter = UpdateAdapter(
             database,
@@ -180,7 +181,8 @@ class _$UserInfoDao extends UserInfoDao {
                   'height': item.height,
                   'weight': item.weight,
                   'calorieGoal': item.calorieGoal,
-                  'stepGoal': item.stepGoal
+                  'stepGoal': item.stepGoal,
+                  'smartStars': item.smartStars
                 }),
         _userInfoDeletionAdapter = DeletionAdapter(
             database,
@@ -194,7 +196,8 @@ class _$UserInfoDao extends UserInfoDao {
                   'height': item.height,
                   'weight': item.weight,
                   'calorieGoal': item.calorieGoal,
-                  'stepGoal': item.stepGoal
+                  'stepGoal': item.stepGoal,
+                  'smartStars': item.smartStars
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -219,7 +222,8 @@ class _$UserInfoDao extends UserInfoDao {
             row['height'] as int,
             row['weight'] as int,
             row['calorieGoal'] as int,
-            row['stepGoal'] as int));
+            row['stepGoal'] as int,
+            row['smartStars'] as int));
   }
 
   @override

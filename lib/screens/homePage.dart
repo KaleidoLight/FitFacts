@@ -4,7 +4,6 @@ import 'package:fitfacts/database/HeartData.dart';
 import 'package:fitfacts/database/SleepData.dart';
 import 'package:fitfacts/database/StepsData.dart';
 import 'package:fitfacts/database/DatabaseRepo.dart';
-import 'package:fitfacts/server/Impact.dart';
 import 'package:flutter/material.dart';
 import 'package:fitfacts/navigation/navbar.dart';
 import 'package:provider/provider.dart';
@@ -72,7 +71,12 @@ class HomePage extends StatelessWidget {
             ElevatedButton(onPressed: () async
             {
               await downloadAndStoreData(context);
-            }, child: Text('Populate Database'))
+            }, child: Text('Populate Database')),
+            ElevatedButton(onPressed: () async {
+              await Provider.of<DatabaseRepository>(context, listen: false).updateUserInfo((info) {
+                info.smartStars += 5;
+              });
+            }, child: Text('Add Coins'))
           ]
         ),
       ),

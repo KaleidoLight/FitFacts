@@ -118,7 +118,7 @@ class Onboard extends StatelessWidget {
                               Provider.of<DatabaseRepository>(context,
                                       listen: false)
                                   .registerUser(UserInfo(
-                                      '--', '00-00-0000', '', 0, 0, 0, 0));
+                                      '', '00-00-0000', '', 0, 0, 0, 0, 0));
                               _introKey.currentState?.next();
                             }
                           }))

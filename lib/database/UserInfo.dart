@@ -14,8 +14,9 @@ class UserInfo {
   int weight;
   int calorieGoal;
   int stepGoal;
+  int smartStars;
 
-  UserInfo(this.username, this.birthDay, this.sex, this.height, this.weight, this.calorieGoal, this.stepGoal);
+  UserInfo(this.username, this.birthDay, this.sex, this.height, this.weight, this.calorieGoal, this.stepGoal, this.smartStars);
   
 }
 
