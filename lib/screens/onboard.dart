@@ -115,10 +115,7 @@ class Onboard extends StatelessWidget {
                                 await Impact().authorize(context, user, pass);
                             if (response == 200) {
                               print('AUTHORIZED');
-                              Provider.of<DatabaseRepository>(context,
-                                      listen: false)
-                                  .registerUser(UserInfo(
-                                      '', '00-00-0000', '', 0, 0, 0, 0, 0));
+                              Provider.of<DatabaseRepository>(context, listen: false).registerUser(UserInfo('', '00-00-0000', '', 0, 0, 0, 0, 0));
                               _introKey.currentState?.next();
                             }
                           }))
@@ -252,7 +249,6 @@ class Onboard extends StatelessWidget {
               key: Key('your_widget_key'),
               onVisibilityChanged: (visibilityInfo) {
                 if (visibilityInfo.visibleFraction == 1.0) {
-                  print('VISIBLE');
                   performLoginSetup(context);
                 }
               },

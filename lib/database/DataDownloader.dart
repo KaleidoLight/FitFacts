@@ -16,9 +16,7 @@ Future<void> downloadAndStoreData(BuildContext context) async {
   for (int day = 1; day <= 7; day++) {
     if (caloriesAPIResponse.data.isNotEmpty) {
       Provider.of<DatabaseRepository>(context, listen: false).addCalorieData(
-          CalorieData(day, caloriesAPIResponse
-              .day(day)
-              .date, caloriesAPIResponse.day(day).totalCalories())
+          CalorieData(day, caloriesAPIResponse.day(day).date, caloriesAPIResponse.day(day).totalCalories())
       );
     }else {
       print('No Calories Data for time-range');

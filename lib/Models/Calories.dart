@@ -76,7 +76,7 @@ class CalorieData {
   /// Returns the total calories burnt in the day
   int totalCalories(){
     double total = 0;
-    for (final log in data){
+    for (final log in data){ // every element
       total = total + double.parse(log.value);
     }
     return total.round();

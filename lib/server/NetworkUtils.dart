@@ -55,6 +55,7 @@ class AuthorizationException implements Exception {
 ///
 /// The managing class for API Tokens
 class TokenManager {
+
   static Future<void> storeTokens(Map<String, dynamic> tokens) async {
     final sp = await SharedPreferences.getInstance();
     String secretKey = sp.getString('firstLoginTime') ?? 'secret_key_missing';
