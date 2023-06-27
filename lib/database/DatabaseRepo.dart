@@ -251,6 +251,11 @@ class DatabaseRepository extends ChangeNotifier{
     return result;
   }
 
+  Future<int> getActivityDays() async {
+    final result = await database.activityDataDao.findActivityDaysOnWeek() ?? 0;
+    return result;
+  }
+
   Future<void> addActivityData(ActivityData withInfo) async {
     await database.activityDataDao.addActivityData(withInfo);
   }

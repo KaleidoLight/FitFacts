@@ -512,7 +512,7 @@ class _MainInfoItemState extends State<MainInfoItem> {
                                     },
                                     style: OutlinedButton.styleFrom(foregroundColor: Theme.of(context).primaryColor),
                                     child: Row(
-                                      children: const [Icon(Icons.power_settings_new_rounded)],
+                                      children: const [Icon(Icons.logout)],
                                 )),
                               ),
                             ],

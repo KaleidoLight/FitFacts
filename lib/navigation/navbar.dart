@@ -12,7 +12,7 @@ import 'package:fitfacts/screens/loginPage.dart';
 import '../database/DataDownloader.dart';
 
 // DRAWER DATE FORMATTER
-DateTime _drawerDate = DateTime.now();
+DateTime _drawerDate = DateTime.now().subtract(Duration(days: 1));
 
 /// NAVBAR MAIN WIDGET
 /// Returns a Drawer to display
@@ -239,14 +239,35 @@ class _NavListState extends State<NavList> {
               /// ADD NAVIGATION LINKS HERE
               NavItem(
                   icon: Icons.home_rounded,
-                  title: 'Overview',
+                  title: 'Dashboard',
                   destinationView: '/home',
                   color: widget.primaryColor),
               NavItem(
-                  icon: Icons.favorite_outline,
+                  icon: Icons.favorite_rounded,
                   title: 'Heart',
                   destinationView: '/heart',
                   color: widget.primaryColor),
+              NavItem(
+                  icon: Icons.dark_mode_rounded,
+                  title: 'Sleep',
+                  destinationView: '/sleep',
+                  color: widget.primaryColor),
+              NavItem(
+                  icon: Icons.local_fire_department_rounded,
+                  title: 'Calories',
+                  destinationView: '/calories',
+                  color: widget.primaryColor),
+              NavItem(
+                  icon: Icons.directions_walk,
+                  title: 'Steps',
+                  destinationView: '/steps',
+                  color: widget.primaryColor),
+              NavItem(
+                  icon: Icons.sports,
+                  title: 'Activity',
+                  destinationView: '/activity',
+                  color: widget.primaryColor),
+              Container(height: 30,),
               NavItem(
                   icon: Icons.account_circle,
                   title: 'Profile',
@@ -400,7 +421,7 @@ class _BottomBarState extends State<BottomBar> {
                         onPressed: () async {
                           await downloadAndStoreData(context);
                         },
-                        icon: const Icon(Icons.refresh_rounded))
+                        icon: const Icon(Icons.refresh))
                   ],
                 )),
             Expanded(
@@ -425,7 +446,7 @@ class _BottomBarState extends State<BottomBar> {
                               // User canceled sign out
                             }
                           });
-                          }, icon: const Icon(Icons.power_settings_new_rounded))
+                          }, icon: const Icon(Icons.logout))
                   ],
                 ))
           ],

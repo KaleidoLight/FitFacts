@@ -49,6 +49,8 @@ dependencies:
   visibility_detector: ^0.2.0
   path_provider: ^2.0.2
   floor: ^1.4.2
+  percent_indicator: ^4.0.1
+
 
 dev_dependencies:
   floor_generator: ^1.4.2

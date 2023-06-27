@@ -44,6 +44,10 @@ class MyApp extends StatelessWidget {
               '/home' : (context) => const HomePage(),
               '/heart' : (context) => const HeartView(),
               '/profile' : (context) => ProfilePage(),
+              '/sleep' : (context) => HeartView(),
+              '/calories' : (context) => HeartView(),
+              '/steps' : (context) => HeartView(),
+              '/activity' : (context) => HeartView()
             },
           );
         },

@@ -891,6 +891,12 @@ class _$ActivityDataDao extends ActivityDataDao {
   }
 
   @override
+  Future<int?> findActivityDaysOnWeek() async {
+    return _queryAdapter.query('SELECT COUNT(DISTINCT date) from ActivityData',
+        mapper: (Map<String, Object?> row) => row.values.first as int);
+  }
+
+  @override
   Future<void> wipeData() async {
     await _queryAdapter.queryNoReturn('DELETE FROM ActivityData');
   }

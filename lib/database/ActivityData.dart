@@ -60,6 +60,9 @@ abstract class ActivityDataDao{
 
   @Query('SELECT * from ActivityData WHERE date = :date')
   Future<List<ActivityData>> findActivityDataOfDay(String date);
+  
+  @Query('SELECT COUNT(DISTINCT date) from ActivityData')
+  Future<int?> findActivityDaysOnWeek();
 
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> addActivityData(ActivityData withInfo);
