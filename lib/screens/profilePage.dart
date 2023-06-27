@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:fitfacts/database/DatabaseRepo.dart';
+import 'package:fitfacts/database/UserInfo.dart';
 import 'package:fitfacts/navigation/navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
@@ -8,7 +10,9 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../server/NetworkUtils.dart';
 import '../themes/theme.dart';
+import 'loginPage.dart';
 
 
 class ProfilePage extends StatefulWidget {
@@ -38,14 +42,6 @@ class _ProfilePageState extends State<ProfilePage> {
         title: const Text('My Profile'),
         centerTitle: true,
         elevation: 0,
-        actions: <Widget>[
-        Padding(
-        padding: const EdgeInsets.only(right: 20.0),
-        child: GestureDetector(
-          onTap: () {setState(() {});},
-          child: const Icon(Icons.refresh,size: 26.0,),
-          )
-        ),],
       ),
       drawer: const Navbar(
         username: 'User',
@@ -55,32 +51,18 @@ class _ProfilePageState extends State<ProfilePage> {
         children:[
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
+            children: const <Widget>[
+              MainInfoItem(),
 
-              const MainInfoItem(),
-
-              const DateInfoItem(),
+              DateInfoItem(),
               
-              const DefaultInfoItem(badgeIcon: Icons.monitor_weight_outlined, title: 'Weight', unit: '(kg)',),
+              DefaultInfoItem(badgeIcon: Icons.monitor_weight_outlined, title: 'Weight', unit: '(kg)', queryString: 'Weight',),
+
+              DefaultInfoItem(badgeIcon: Icons.height_outlined, title: 'Height', unit: '(cm)', queryString: 'Height',),
               
-              const DefaultInfoItem(badgeIcon: Icons.local_fire_department_rounded, title: 'Calories Goal', unit: '(kCal)',),
+              DefaultInfoItem(badgeIcon: Icons.local_fire_department_rounded, title: 'Calories Goal', unit: '(kCal)', queryString: 'CalorieGoal'),
 
-              const DefaultInfoItem(badgeIcon: Icons.directions_walk_rounded, title: 'Steps Goal',),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    child: const Text("reset"),
-                    onPressed: () async {
-                      final sp = await SharedPreferences.getInstance();
-                      sp.clear();
-                      setState(() {});
-                    }           
-                  ),
-              ],)
-
+              DefaultInfoItem(badgeIcon: Icons.directions_walk_rounded, title: 'Steps Goal', queryString: 'StepGoal',),
             ],
           ),
       ],),
@@ -152,18 +134,17 @@ class _DateInfoItemState extends State<DateInfoItem> {
               initialDate: DateTime(2000),
               firstDate: DateTime(1940),
               lastDate: DateTime(currentYear()),
-              dateFormat: "dd MMMM yyyy",
+              dateFormat: "dd-MM-yyyy",
               locale: DateTimePickerLocale.en_us,
               looping: true,
               textColor: Theme.of(context).primaryColor,
               backgroundColor: dialogColor
             );
-            final sp = await SharedPreferences.getInstance();
-            final userInfo =  DateFormat('dd MMMM yyyy').format(datePicked!);
+            final userInfo =  DateFormat('dd-MM-yyyy').format(datePicked!);
             setState(()  {
-              int age = calculateAge(datePicked);
-              sp.setString('age', age.toString());
-              sp.setString('bornDate',userInfo);
+              Provider.of<DatabaseRepository>(context, listen: false).updateUserInfo((instance) {
+                instance.birthDay = userInfo;
+              });
             },);
           }, // end on-tap
           child: Container(
@@ -182,32 +163,29 @@ class _DateInfoItemState extends State<DateInfoItem> {
                       children: [
                       Text('Born Date', style: TextStyle(fontSize:16, color: greyColor)),
                         Container(height: 2,),
-                        FutureBuilder(
-                          future: SharedPreferences.getInstance(),
-                          builder: ((context, snapshot) { //snapshot = observer of the state of the features variable
-                            if(snapshot.hasData){
-                              final sp = snapshot.data as SharedPreferences;
-                              if(sp.getString('bornDate') == null){ //if the string list doesn't already exist it is created
-                                sp.setString('bornDate', '--');
-                                return const Text('--',style: TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),);
-                              }
-                              else{ //otherwise it is read
-                                final userInfo = sp.getString('bornDate') ?? '--';
-                                final userAge = sp.getString('age') ?? '--';
-                                return Row(
-                                  children: [
-                                    Text(userInfo,style: const TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),),
-                                    Container(width: 3,),
-                                    Text('($userAge yo)', style: const TextStyle(fontSize: 16,),)
-                                  ],
-                                );
-                              }
-                            }
-                            else{
-                              return const Text('--');
-                            }
-                          }),
-                        ),],)
+                        Consumer<DatabaseRepository>(
+                          builder: (context, drb, child){
+                            return FutureBuilder(
+                              future: Provider.of<DatabaseRepository>(context).queryUserInfo('Birthday'),
+                              builder: ((context, snapshot) { //snapshot = observer of the state of the features variable
+                                if(snapshot.hasData){
+                                  final sp = snapshot.data as String;
+                                  return Row(
+                                    children: [
+                                      Text(sp,style: const TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),),
+                                      Container(width: 3,),
+                                      Text('(${calculateStringAge(sp)} yo)', style: const TextStyle(fontSize: 16,),)
+                                      ],
+                                    );
+                                }
+                                else{
+                                  return const Text('--');
+                                }
+                              }),
+                            );
+                          },
+                        )
+                      ],)
                   ],),
                   Icon(Icons.edit, color: Theme.of(context).disabledColor,),
                 ],
@@ -228,13 +206,21 @@ class _DateInfoItemState extends State<DateInfoItem> {
 /// [title]: The Title of the Measure
 ///
 /// [unit]: The unit of the Measure (optional)
+
+enum Validators{
+   required,
+   numeric,
+}
+
 class DefaultInfoItem extends StatefulWidget {
 
   final IconData badgeIcon;
   final String title;
   final String unit;
+  final Validators validator;
+  final String queryString;
 
-  const DefaultInfoItem({Key? key, required this.badgeIcon, required this.title, this.unit = ''}) : super(key: key);
+  const DefaultInfoItem({Key? key, required this.badgeIcon, required this.title, this.unit = '', this.validator =  Validators.numeric, required this.queryString}) : super(key: key);
 
   @override
   State<DefaultInfoItem> createState() => _DefaultInfoItemState();
@@ -278,7 +264,7 @@ class _DefaultInfoItemState extends State<DefaultInfoItem> {
                           FormBuilderTextField(
                             name: widget.title,
                             decoration: InputDecoration(labelText: widget.title),
-                            validator: FormBuilderValidators.numeric(),
+                            validator: (widget.validator == Validators.numeric) ? FormBuilderValidators.numeric() : FormBuilderValidators.required(),
                           )
                       ),
                     ),],
@@ -289,10 +275,23 @@ class _DefaultInfoItemState extends State<DefaultInfoItem> {
                   TextButton(onPressed: () async {
                     final valid = _fbKey.currentState?.saveAndValidate() ?? true;
                     if(valid) {
-                      final sp = await SharedPreferences.getInstance();
                       setState(() {
-                        //userInfo![widget.title] = _fbKey.currentState?.value[widget.title];
-                        sp.setString(widget.title,_fbKey.currentState?.value[widget.title]);});
+                        Provider.of<DatabaseRepository>(context, listen: false).updateUserInfo((instance) {
+                          if (widget.queryString == 'Username'){
+                            instance.username = _fbKey.currentState?.value[widget.title];
+                          } else if (widget.queryString == 'Birthday'){
+                            instance.birthDay = _fbKey.currentState?.value[widget.title];
+                          } else if (widget.queryString == 'CalorieGoal') {
+                            instance.calorieGoal = int.parse(_fbKey.currentState?.value[widget.title]);
+                          } else if (widget.queryString == 'StepGoal'){
+                            instance.stepGoal = int.parse(_fbKey.currentState?.value[widget.title]);
+                          } else if (widget.queryString == 'Weight'){
+                            instance.weight = int.parse(_fbKey.currentState?.value[widget.title]);
+                          } else if (widget.queryString == 'Height'){
+                            instance.height = int.parse(_fbKey.currentState?.value[widget.title]);
+                          }
+                        });
+                      });
                       Navigator.of(context).pop();
                     }
                   },
@@ -323,25 +322,23 @@ class _DefaultInfoItemState extends State<DefaultInfoItem> {
                           ],
                         ),
                         Container(height: 2,),
-                        FutureBuilder(
-                          future: SharedPreferences.getInstance(),
-                          builder: ((context, snapshot) { //snapshot = observer of the state of the features variable
-                            if(snapshot.hasData){
-                              final sp = snapshot.data as SharedPreferences;
-                              if(sp.getString(widget.title) == null){ //if the string list doesn't already exist it is created
-                                sp.setString(widget.title, '--');
-                                return const Text('--',style: TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),);
-                              }
-                              else{ //otherwise it is read
-                                final userInfo = sp.getString(widget.title) ?? '--';
-                                return Text(userInfo,style: const TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),);
-                              }
-                            }
-                            else{
-                              return const Text('--');
-                            }
-                          }),
-                        ),],)
+                        Consumer<DatabaseRepository>(
+                          builder: (context, dbr, child){
+                            return FutureBuilder(
+                              future: Provider.of<DatabaseRepository>(context).queryUserInfo(widget.queryString),
+                              builder: ((context, snapshot) { //snapshot = observer of the state of the features variable
+                                if(snapshot.hasData){
+                                  final sp = snapshot.data;
+                                  return Text('${sp}',style: TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),);
+                                }
+                                else{
+                                  return const Text('--');
+                                }
+                              }),
+                            );
+                          },
+                        )
+                      ],)
                   ],),
                   Icon(Icons.edit, color: Theme.of(context).disabledColor,),
                 ],
@@ -395,23 +392,26 @@ class _MainInfoItemState extends State<MainInfoItem> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          FutureBuilder(
-                            future: SharedPreferences.getInstance(),
-                            builder: (context, snapshot){
-                              if (snapshot.hasData){
-                                final sp = snapshot.data as SharedPreferences;
-                                return Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(sp.getString('Username') ?? '--', style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
-                                    Container(width: 5,),
-                                    Icon((sp.getString('Gender') == 'Male') ? Icons.male_rounded : Icons.female_rounded, size: 22, color: Colors.grey[600],),
-                                  ],
-                                );
-                              }else {
-                                return const Text('--');
+                          Consumer<DatabaseRepository>(
+                            builder: (context, dbr, child){
+                            return FutureBuilder(
+                              future: Provider.of<DatabaseRepository>(context).findUser(),
+                              builder: (context, snapshot){
+                                if (snapshot.hasData){
+                                  final sp = snapshot.data as UserInfo;
+                                  return Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text(sp.username, style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
+                                      Container(width: 5,),
+                                      Icon((sp.sex == 'Male') ? Icons.male_rounded : Icons.female_rounded, size: 22, color: Colors.grey[600],),
+                                    ],
+                                  );
+                                }else {
+                                  return const Text('--');
+                                }
                               }
-                            }
+                            );}
                           ),
                           Container(height: 3,),
                           const Text('name.surname@fit.com', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w200),),
@@ -442,22 +442,25 @@ class _MainInfoItemState extends State<MainInfoItem> {
                                                             _fbKey.currentState!.save();
                                                           },
                                                           child:
-                                                          FutureBuilder(
-                                                            future: SharedPreferences.getInstance(),
-                                                            builder: (context, snapshot){
-                                                              if (snapshot.hasData){
-                                                                final sp = snapshot.data as SharedPreferences;
-                                                                sp.setString('Gender', 'Male');
-                                                                return FormBuilderTextField(
-                                                                  name: 'Username',
-                                                                  decoration: const InputDecoration(labelText: 'Username'),
-                                                                  validator: FormBuilderValidators.required(),
-                                                                  initialValue: sp.getString('Username')
-                                                                );
-                                                              }else{
-                                                                return const Text('--');
-                                                              }
-                                                            },
+                                                          Consumer<DatabaseRepository>(
+                                                            builder: (context, dbr, child){
+                                                              return FutureBuilder(
+                                                                future: Provider.of<DatabaseRepository>(context).queryUserInfo('Username'),
+                                                                builder: (context, snapshot){
+                                                                  if (snapshot.hasData){
+                                                                    final sp = snapshot.data as String;
+                                                                    return FormBuilderTextField(
+                                                                        name: 'Username',
+                                                                        decoration: const InputDecoration(labelText: 'Username'),
+                                                                        validator: FormBuilderValidators.required(),
+                                                                        initialValue: sp
+                                                                    );
+                                                                  }else{
+                                                                    return const Text('--');
+                                                                  }
+                                                                },
+                                                              );
+                                                            }
                                                           )
                                                       ),
                                                     ),
@@ -473,10 +476,11 @@ class _MainInfoItemState extends State<MainInfoItem> {
                                             TextButton(onPressed: () async {
                                               final valid = _fbKey.currentState?.saveAndValidate() ?? true;
                                               if(valid) {
-                                                final sp = await SharedPreferences.getInstance();
                                                 setState(() {
-                                                  //userInfo![widget.title] = _fbKey.currentState?.value[widget.title];
-                                                  sp.setString('Username',_fbKey.currentState?.value['Username']);});
+                                                  Provider.of<DatabaseRepository>(context, listen: false).updateUserInfo((instance) {
+                                                    instance.username = _fbKey.currentState?.value['Username'] as String;
+                                                  });
+                                                });
                                                 Navigator.of(context).pop();
                                               }
                                             },
@@ -493,11 +497,22 @@ class _MainInfoItemState extends State<MainInfoItem> {
                               Container(width: 5,),
                               Container(
                                 child: OutlinedButton(
-                                    onPressed: (){ // Edit Button Action
+                                    onPressed: (){
+                                      showDialog(context: context, builder: (BuildContext context){
+                                        return SignOutAlertDialog();
+                                      }).then((value) async {
+                                        if (value != null && value == true) {
+                                          await Provider.of<DatabaseRepository>(context, listen: false).wipeDatabase();
+                                          clearSharedPreferences();
+                                          _toLoginPage(context);
+                                        } else {
+                                          // User canceled sign out
+                                        }
+                                      });
                                     },
                                     style: OutlinedButton.styleFrom(foregroundColor: Theme.of(context).primaryColor),
                                     child: Row(
-                                      children: const [Icon(Icons.power_settings_new_rounded)],
+                                      children: const [Icon(Icons.logout)],
                                 )),
                               ),
                             ],
@@ -513,7 +528,7 @@ class _MainInfoItemState extends State<MainInfoItem> {
                         CircleAvatar(
                         backgroundColor: Colors.purple[50],
                         radius: 60,
-                        child: Icon(Icons.account_circle_rounded, color: Colors.black.withAlpha(50), size: 70,),
+                        foregroundImage: Image.asset('assets/images/profilePic.png').image,
                       )
                     ],) )
               ],
@@ -535,44 +550,230 @@ class GenderSelectionWidget extends StatefulWidget {
 }
 
 class _GenderSelectionWidgetState extends State<GenderSelectionWidget> {
+  String selectedGender = '';
 
-  String selectedGender = 'Male';
+  @override
+  void initState() {
+    super.initState();
+    _loadSelectedGender();
+  }
+
+  Future<void> _loadSelectedGender() async {
+    final gender = await Provider.of<DatabaseRepository>(context, listen: false).getSex();
+    setState(() {
+      selectedGender = gender;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(height: 25,),
-        const Text('Gender', style: TextStyle(fontSize: 18),),
+        Container(height: 25),
+        const Text(
+          'Gender',
+          style: TextStyle(fontSize: 18),
+        ),
         Row(
-        children: [
-          Radio<String>(
-            value: 'Male',
-            groupValue: selectedGender,
-            onChanged: (value) async {
-              final sp = await SharedPreferences.getInstance();
-              setState(() {
-                selectedGender = value!;
-                sp.setString('Gender', value);
-              });
-            },
-          ),
-          const Text('Male'),
-          Radio<String>(
-            value: 'Female',
-            groupValue: selectedGender,
-            onChanged: (value) async {
-              final sp = await SharedPreferences.getInstance();
-              setState(() {
-                selectedGender = value!;
-                sp.setString('Gender', value);
-              });
-            },
-          ),
-          const Text('Female'),
-        ],
-      ),
-    ]);
+          children: [
+            Radio<String>(
+              value: 'Male',
+              groupValue: selectedGender,
+              activeColor: Theme.of(context).primaryColor,
+              onChanged: (value) {
+                setState(() {
+                  selectedGender = value!;
+                  Provider.of<DatabaseRepository>(context, listen: false).updateUserInfo((instance) {
+                    instance.sex = 'Male';
+                  });
+                });
+              },
+            ),
+            const Text('Male'),
+            Radio<String>(
+              value: 'Female',
+              groupValue: selectedGender,
+              activeColor: Theme.of(context).primaryColor,
+              onChanged: (value) {
+                setState(() {
+                  selectedGender = value!;
+                  Provider.of<DatabaseRepository>(context, listen: false).updateUserInfo((instance) {
+                    instance.sex = 'Female';
+                  });
+                });
+              },
+            ),
+            const Text('Female'),
+          ],
+        ),
+      ],
+    );
   }
 }
+
+/// #### Default Info Item
+/// Draws default info item widget
+///
+/// [badgeIcon]: The Icon representing the Measure
+///
+/// [title]: The Title of the Measure
+///
+/// [unit]: The unit of the Measure (optional)
+class GenderSelectorStyled extends StatefulWidget {
+
+  final IconData badgeIcon;
+  final String title;
+  final String unit;
+
+  const GenderSelectorStyled({Key? key, required this.badgeIcon, required this.title, this.unit = ''}) : super(key: key);
+
+  @override
+  State<GenderSelectorStyled> createState() => _GenderSelectorStyledState();
+}
+
+class _GenderSelectorStyledState extends State<GenderSelectorStyled> {
+
+  @override
+  Widget build(BuildContext context) {
+
+    // Theme Variables
+    var themeMode = context.watch<ThemeModel>().mode;
+    var greyColor = (themeMode == ThemeMode.light) ? Colors.grey[700] : Colors.grey[300];
+    var bkColor = (themeMode == ThemeMode.light) ? Colors.black.withAlpha(10): Colors.white12;
+
+    final _fbKey = GlobalKey<FormBuilderState>();
+
+    // View Builder
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        child: InkWell(
+          onTap: () async { // Open Date Selector
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                content: Container(
+                    constraints: const BoxConstraints(maxHeight: 100),
+                    child:GenderSelectionWidget()),
+                actions: <Widget>[
+                  TextButton(onPressed: (){Navigator.of(context).pop();},
+                    child: const Text('Cancel'),),
+                  TextButton(onPressed: () async {
+                    final valid = _fbKey.currentState?.saveAndValidate() ?? true;
+                    if(valid) {
+                      setState(() {
+
+                      });
+                      Navigator.of(context).pop();
+                      print('popped');
+                    }
+                  },
+                    child: const Text("Save"),
+                  ),
+                ],
+              ),);
+          }, // end on-tap
+          child: Container(
+            color: bkColor,
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row( // Main Container
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(children: // Info Container
+                  [
+                    Icon(Icons.transgender_rounded, color: Theme.of(context).primaryColor,),
+                    Container(width: 10,),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text('Gender', style: TextStyle(fontSize:16, color: greyColor)),
+                          ],
+                        ),
+                        Container(height: 2,),
+                        Consumer<DatabaseRepository>(
+                          builder: (context, dbr, child){
+                            return FutureBuilder(
+                              future: Provider.of<DatabaseRepository>(context).getSex(),
+                              builder: ((context, snapshot) { //snapshot = observer of the state of the features variable
+                                if(snapshot.hasData){
+                                    return Text(snapshot.data as String, style: const TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),);
+                                }
+                                else{
+                                  return const Text('--');
+                                }
+                              }),
+                            );
+                          },
+                        )
+                      ],)
+                  ],),
+                  Icon(Icons.edit, color: Theme.of(context).disabledColor,),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+int calculateStringAge(String birthday) {
+  // Parse the birthday string to a DateTime object
+  DateTime birthDate = DateFormat('dd-MM-yyyy').parse(birthday);
+  print(birthDate);
+  // Get the current date
+  DateTime currentDate = DateTime.now();
+
+  // Calculate the difference between the current date and the birth date
+  Duration difference = currentDate.difference(birthDate);
+
+  // Convert the difference to years and return it as an integer
+  int age = (difference.inDays / 365).floor();
+  return age;
+}
+
+/// SignOutVerification
+///
+class SignOutAlertDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Sign Out'),
+      content: const Text('Are you sure?\nYou will also be disconnected from your Fitbit',
+        textAlign: TextAlign.center,),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('Cancel'),
+          onPressed: () {
+            Navigator.of(context).pop(false); // Return false when cancel button is pressed
+          },
+        ),
+        TextButton(
+          child: const Text('Sign Out', style: TextStyle(color: Colors.red), selectionColor: Colors.red),
+          onPressed: () {
+            Navigator.of(context).pop(true); // Return true when sign out button is pressed
+          },
+        ),
+      ],
+    );
+  }
+}
+
+// to leave user logged in
+void _toLoginPage(BuildContext context) async{
+  //Unset the 'username' filed in SharedPreference
+  final sp = await SharedPreferences.getInstance();
+  sp.remove('logged');
+  //Pop the drawer first
+  Navigator.pop(context);
+  //Then pop the HomePage
+  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)
+  => LoginPage()));
+}//_toCalendarPage

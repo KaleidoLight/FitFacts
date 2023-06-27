@@ -19,7 +19,7 @@ ThemeData appLight = FlexThemeData.light(scheme: FlexScheme.deepPurple).copyWith
 
 /// DARK THEME
 ThemeData appDark = FlexThemeData.dark(scheme: FlexScheme.deepPurple).copyWith(
-    primaryColor: Colors.purple[100],
+    primaryColor: Colors.deepPurple[200],
     appBarTheme: const AppBarTheme(
         backgroundColor: Colors.white12,
         systemOverlayStyle: SystemUiOverlayStyle(

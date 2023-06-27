@@ -1,11 +1,18 @@
+import 'dart:ui';
+
+import 'package:fitfacts/database/DatabaseRepo.dart';
+import 'package:fitfacts/server/NetworkUtils.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:fitfacts/themes/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitfacts/screens/loginPage.dart';
 
+import '../database/DataDownloader.dart';
+
 // DRAWER DATE FORMATTER
-DateTime _drawerDate = DateTime.now();
+DateTime _drawerDate = DateTime.now().subtract(Duration(days: 1));
 
 /// NAVBAR MAIN WIDGET
 /// Returns a Drawer to display
@@ -83,8 +90,8 @@ class _NavHeaderState extends State<NavHeader> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "${_drawerDate.day.toString()}-${_drawerDate.month.toString()}-${_drawerDate.year.toString()}",
-              style: const TextStyle(fontSize: 15),
+              "${DateFormat('EEEE, d MMMM').format(_drawerDate)}",
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -97,23 +104,41 @@ class _NavHeaderState extends State<NavHeader> {
                       style:
                           TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                     ),
-                    Text(
-                      widget.username,
-                      style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).primaryColor),
-                    ),
+                    Consumer<DatabaseRepository>(
+                      builder: (context, dbr, child){
+                        return FutureBuilder(
+                            initialData: '--',
+                            future: Provider.of<DatabaseRepository>(context).getUsername(),
+                            builder: (context, snapshot){
+                              if (snapshot.hasData){
+                                final data = snapshot.data as String;
+                                return Text(
+                                  data,
+                                  style: TextStyle(
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).primaryColor),
+                                );
+                              } else {
+                                return Text(
+                                  '--',
+                                  style: TextStyle(
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).primaryColor),
+                                );
+                              }
+                            }
+                        );
+                      },
+                    )
                   ],
                 ),
-                const CircleAvatar(
-                  backgroundColor: Colors.grey,
-                  child: Text(
-                    '--', // Change with profile picture later
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
-                  ),
-                ),
+                CircleAvatar(
+                  backgroundColor: Colors.purple[50],
+                  radius: 25,
+                  foregroundImage: Image.asset('assets/images/profilePic.png').image,
+                )
               ],
             ),
           ],
@@ -145,21 +170,36 @@ class _ServerStatusState extends State<ServerStatus> {
           ),
       height: 50,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Row(
             children: [
               Icon(
-                Icons.fitbit,
+                Icons.stars_rounded,
                 color: Theme.of(context).primaryColor,
+                size: 30,
               ),
               Container(
-                width: 20,
+                width: 25,
               ),
+              Consumer<DatabaseRepository>(
+                  builder: (context, dbr, child){
+                    return FutureBuilder(
+                        initialData: '--',
+                        future: Provider.of<DatabaseRepository>(context).getSmartStars(),
+                        builder: (context, snapshot){
+                          if (snapshot.hasData){
+                            return  Text('${snapshot.data}', style: TextStyle( fontSize: 24,fontWeight:  FontWeight.w700),);
+                          } else {
+                            return  Text('--', style: TextStyle( fontSize: 24,fontWeight:  FontWeight.w700),);
+                          }
+                        });
+                  }),
+              Container(width: 5,),
               const Text( /// TO CHANGE AT A LATER TIME
-                'UPDATED: Today 10:00',
-                style:  TextStyle(fontWeight: FontWeight.w500),
+                'Smart Stars',
+                style:  TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               )
             ],
           ),
@@ -199,14 +239,35 @@ class _NavListState extends State<NavList> {
               /// ADD NAVIGATION LINKS HERE
               NavItem(
                   icon: Icons.home_rounded,
-                  title: 'Overview',
+                  title: 'Dashboard',
                   destinationView: '/home',
                   color: widget.primaryColor),
               NavItem(
-                  icon: Icons.favorite_outline,
+                  icon: Icons.favorite_rounded,
                   title: 'Heart',
                   destinationView: '/heart',
                   color: widget.primaryColor),
+              NavItem(
+                  icon: Icons.dark_mode_rounded,
+                  title: 'Sleep',
+                  destinationView: '/sleep',
+                  color: widget.primaryColor),
+              NavItem(
+                  icon: Icons.local_fire_department_rounded,
+                  title: 'Calories',
+                  destinationView: '/calories',
+                  color: widget.primaryColor),
+              NavItem(
+                  icon: Icons.directions_walk,
+                  title: 'Steps',
+                  destinationView: '/steps',
+                  color: widget.primaryColor),
+              NavItem(
+                  icon: Icons.sports,
+                  title: 'Activity',
+                  destinationView: '/activity',
+                  color: widget.primaryColor),
+              Container(height: 30,),
               NavItem(
                   icon: Icons.account_circle,
                   title: 'Profile',
@@ -355,10 +416,12 @@ class _BottomBarState extends State<BottomBar> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    /// SETTING ACTION HERE
+                    /// REFRESH ACTION HERE
                     IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.settings_outlined))
+                        onPressed: () async {
+                          await downloadAndStoreData(context);
+                        },
+                        icon: const Icon(Icons.refresh))
                   ],
                 )),
             Expanded(
@@ -368,7 +431,22 @@ class _BottomBarState extends State<BottomBar> {
                   children: [
                     /// LOGOUT ACTION HERE
                     IconButton(
-                        onPressed: () {_toLoginPage(context);}, icon: const Icon(Icons.exit_to_app))
+                        onPressed: () async{
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return SignOutAlertDialog();
+                            },
+                          ).then((value) async {
+                            if (value != null && value == true) {
+                              await Provider.of<DatabaseRepository>(context, listen: false).wipeDatabase();
+                              clearSharedPreferences();
+                              _toLoginPage(context);
+                            } else {
+                              // User canceled sign out
+                            }
+                          });
+                          }, icon: const Icon(Icons.logout))
                   ],
                 ))
           ],
@@ -387,3 +465,31 @@ void _toLoginPage(BuildContext context) async{
   Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)
   => LoginPage()));
 }//_toCalendarPage
+
+
+/// SignOutVerification
+///
+class SignOutAlertDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Sign Out'),
+      content: const Text('Are you sure?\nYou will also be disconnected from your Fitbit',
+      textAlign: TextAlign.center,),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('Cancel'),
+          onPressed: () {
+            Navigator.of(context).pop(false); // Return false when cancel button is pressed
+          },
+        ),
+        TextButton(
+          child: const Text('Sign Out', style: TextStyle(color: Colors.red), selectionColor: Colors.red),
+          onPressed: () {
+            Navigator.of(context).pop(true); // Return true when sign out button is pressed
+          },
+        ),
+      ],
+    );
+  }
+}
