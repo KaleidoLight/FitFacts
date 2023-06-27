@@ -9,12 +9,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:fitfacts/themes/blocks.dart';
 import '../themes/theme.dart';
-// for graph of calories
 import 'package:percent_indicator/percent_indicator.dart';
-// for graph of steps and activity
 
-
-const double defaultPadding = 20.0; // constant measure for padding
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
