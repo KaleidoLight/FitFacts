@@ -2,7 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:fitfacts/quizview/QuizBuilder.dart';
 import 'package:fitfacts/quizview/QuizDatabase.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../database/DatabaseRepo.dart';
+import '../themes/theme.dart';
 
 
 class QuizView extends StatefulWidget {
@@ -21,9 +25,16 @@ class _QuizViewState extends State<QuizView> {
   bool areButtonsEnabled = true;
 
   @override
-  initState() {
+  void initState() {
     super.initState();
-    // Add listeners to this class
+    // Do not access the context here
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Retrieve the context-dependent data here
+    final quizDatabase = createQuizDatabase(context);
     quiz = quizDatabase.getQuiz(widget.topic);
   }
 
@@ -34,12 +45,21 @@ class _QuizViewState extends State<QuizView> {
         start: 20,
         end: 20,
         bottom: 40,
-        top: 20,
+        top: 5,
       ),
       child: Wrap(
         children: [
           Column(
             children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                    child: Container(height: 5, width: 45, color: Theme.of(context).disabledColor,)),
+                  Container(height: 35,)
+              ],),
               Text(
                 quiz.title,
                 style: TextStyle(
@@ -116,9 +136,13 @@ class QuestionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var themeMode = context
+        .watch<ThemeModel>()
+        .mode;
+    final Color? greyColor = (themeMode == ThemeMode.light) ? Colors.grey[350] : Colors.grey[700];
     final color = isSelected
-        ? (isCorrect ? Colors.green : Colors.deepOrange)
-        : Colors.grey[300];
+        ? (isCorrect ? Colors.green : Colors.deepOrange[400])
+        : greyColor;
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -151,39 +175,52 @@ class QuizOutcome extends StatefulWidget {
 class _QuizOutcomeState extends State<QuizOutcome> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Column(
-              children: [
-                Text(
-                  widget.quizActivityData.answer,
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
-                  maxLines: null,
-                  textAlign: TextAlign.center,
-                ),
-                Container(height: 10,),
-                Text(
-                  (10000 > widget.quizActivityData.reference)
-                      ? 'Wonderful! This week you did better than average'
-                      : 'Don\'t give up! This week you did ...',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
-                  maxLines: null,
-                  textAlign: TextAlign.center,
-                ),
-                Container(
-                  height: 30,
-                ),
-                QuizActions(quizActivityData: widget.quizActivityData,)
-              ],
-            ),
-          )
-        ],
-      ),
+    return Consumer<DatabaseRepository>( // link the consumer of the provider
+      builder: (context, dbr, child){
+        return FutureBuilder( // Call Future builder
+            future: widget.quizActivityData.personalRef, /// <= GET THE DATA FROM THE DATABASE with the desider function
+            builder: (context, snapshot){
+          if (snapshot.hasData){
+            final personalRef = snapshot.data as num;  // CHANGE DataType to ouput type of Future
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Text(
+                          widget.quizActivityData.answer,
+                          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+                          maxLines: null,
+                          textAlign: TextAlign.center,
+                        ),
+                        Container(height: 10,),
+                        Text(
+                          (personalRef > widget.quizActivityData.reference)
+                              ? '${widget.quizActivityData.positive} $personalRef ${widget.quizActivityData.unit}'
+                              : '${widget.quizActivityData.negative} $personalRef ${widget.quizActivityData.unit}',
+                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+                          maxLines: null,
+                          textAlign: TextAlign.center,
+                        ),
+                        Container(
+                          height: 30,
+                        ),
+                        QuizActions(quizActivityData: widget.quizActivityData,)
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ); // DRAW THE INTERFACE HERE AND USE THE INFOS from data
+          }else{
+            return Container();
+          }
+        });
+      },
     );
   }
 }
@@ -203,17 +240,24 @@ class _QuizActionsState extends State<QuizActions> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        QuizButton(title: 'Close', points:1, action: () {
+        QuizButton(title: 'Close', points:1, action: () async {
+          await Provider.of<DatabaseRepository>(context, listen: false).updateUserInfo((info) { info.smartStars += 1;});
           Navigator.pop(context);
         }),
         Container(width: 10,),
-        QuizButton(title: 'Read More', points: 5,action: () async {
-          final Uri url =
-          Uri.parse(widget.quizActivityData.link);
-          if (!await launchUrl(url)) {
-            throw Exception('Could not launch $url');
-          }
-        })
+        QuizButton(title: 'Read More', points: 5,
+            action: () async {
+              final Uri url = Uri.parse(widget.quizActivityData.link);
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url);
+                print('Webpage dismissed!');
+                await Provider.of<DatabaseRepository>(context, listen: false).updateUserInfo((info) { info.smartStars += 5;});
+                Navigator.pop(context);
+              } else {
+                throw Exception('Could not launch $url');
+              }
+            }
+        )
       ],
     );
   }
@@ -228,6 +272,10 @@ class QuizButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var themeMode = context
+        .watch<ThemeModel>()
+        .mode;
+    final Color? bkColor = (themeMode == ThemeMode.light) ? Colors.grey[300] : Colors.grey[800];
     return InkWell(
       onTap: action,
       child: ClipRRect(
@@ -235,7 +283,7 @@ class QuizButton extends StatelessWidget {
         child: Container(
             height: 55,
             width: 180,
-            color: Colors.grey[300],
+            color: bkColor,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [ Row(
@@ -253,4 +301,20 @@ class QuizButton extends StatelessWidget {
       ),
     );
   }
+}
+
+void showModalQuiz(QuizTopic topic, BuildContext context){
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(25.0),
+        topRight: Radius.circular(25.0),
+      ),
+    ),
+    builder: (context) {
+      return QuizView(topic: topic,);
+    },
+  );
 }

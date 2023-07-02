@@ -12,7 +12,7 @@ class QuizData {
 
   List<QuizActivity> data;
 
-  QuizData(this.data);
+  QuizData({required this.data});
 
   QuizActivity getQuiz(QuizTopic forTopic){
     List<QuizActivity> result = [];
@@ -36,10 +36,22 @@ class QuizActivity{
   String link;
   List<QuizQuestion> questions;
   String answer;
+  String positive;
+  String negative;
   num reference;
-  Future<int>? personalRef;
+  String unit;
+  Future<num>? personalRef;
 
-  QuizActivity({required this.title, required this.topic ,required this.questions,required this.answer, required this.reference,this.link = ''});
+  QuizActivity({required this.title,
+    required this.topic ,
+    required this.questions,
+    required this.answer,
+    required this.positive,
+    required this.negative,
+    required this.reference,
+    this.unit = '',
+    this.link = '',
+    required Future<num> Function() getPersonalData}) : personalRef = getPersonalData();
 
 }
 
