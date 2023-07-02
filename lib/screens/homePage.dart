@@ -3,6 +3,7 @@ import 'package:fitfacts/database/DatabaseRepo.dart';
 import 'package:fitfacts/database/HeartData.dart';
 import 'package:fitfacts/database/SleepData.dart';
 import 'package:fitfacts/database/StepsData.dart';
+import 'package:fitfacts/quizview/QuizBuilder.dart';
 import 'package:flutter/material.dart';
 import 'package:fitfacts/navigation/navbar.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:fitfacts/themes/blocks.dart';
 import '../themes/theme.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:fitfacts/quizview/QuizView.dart';
 
 
 class HomePage extends StatelessWidget {
@@ -32,6 +34,14 @@ class HomePage extends StatelessWidget {
       backgroundColor: bkColor,
       drawer: const Navbar(
         username: 'User',
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).primaryColor,
+        onPressed: (){
+          showModalQuiz(QuizTopic.heart, context);
+        },
+        child: Icon(Icons.play_arrow_rounded, size: 30,),
+        tooltip: 'Take Quiz',
       ),
     );
   } //build
