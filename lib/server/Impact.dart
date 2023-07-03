@@ -69,7 +69,6 @@ class Impact{
 
       if (response.statusCode == 200) {
         final decodedResponse = jsonDecode(response.body);
-        print(decodedResponse);
         await TokenManager.storeTokens(decodedResponse);
       } else {
         throw AuthorizationException('Authorization failed: Credentials Incorrect');

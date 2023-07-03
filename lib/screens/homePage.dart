@@ -196,7 +196,7 @@ class heartBeatView extends StatelessWidget {
                 builder: (context, snapshot){
                   if (snapshot.hasData){
                     final dayHeart = snapshot.data as List<HeartData>;
-                    double dayBPM = 0.0;
+                    double dayBPM = 0.1;
                     int dayCounts = 0;
                     dayHeart.forEach((element) {
                       if (element.date == DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 1)))){
@@ -204,7 +204,12 @@ class heartBeatView extends StatelessWidget {
                         dayCounts = dayCounts + 1;
                       }
                     });
-                    int avgBPM = (dayBPM / dayCounts).round();
+                    int avgBPM = 0;
+                    try {
+                      avgBPM = (dayBPM / dayCounts).round();
+                    } catch(error){
+                      avgBPM = 0;
+                    }
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -404,6 +409,10 @@ class sleepView extends StatelessWidget {
                       minutes = match.group(2)!;
                     } else {
                       print('Invalid time string');
+                    }
+                    if (hours == '') {
+                      hours = '0';
+                      minutes = '0';
                     }
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.end,

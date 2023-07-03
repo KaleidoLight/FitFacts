@@ -1,5 +1,7 @@
 import 'package:fitfacts/server/Impact.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:fitfacts/database/ActivityData.dart';
 import 'package:fitfacts/database/CalorieData.dart';
@@ -10,22 +12,22 @@ import 'package:fitfacts/database/StepsData.dart';
 import 'DatabaseRepo.dart';
 
 Future<void> downloadAndStoreData(BuildContext context) async {
-
   // Calories Download and Storing
   final caloriesAPIResponse = await Impact().getCalories(context);
   for (int day = 1; day <= 7; day++) {
     if (caloriesAPIResponse.data.isNotEmpty) {
       Provider.of<DatabaseRepository>(context, listen: false).addCalorieData(
-          CalorieData(day, caloriesAPIResponse.day(day).date, caloriesAPIResponse.day(day).totalCalories())
-      );
-    }else {
+          CalorieData(day, caloriesAPIResponse.day(day).date,
+              caloriesAPIResponse.day(day).totalCalories()));
+    } else {
       print('No Calories Data for time-range');
     }
   }
 
   final lastCalorieDay = caloriesAPIResponse.day(7).detail();
   lastCalorieDay.forEach((hour, calorie) {
-    Provider.of<DatabaseRepository>(context, listen: false).addCalorieDetail(CalorieDetail(hour, calorie));
+    Provider.of<DatabaseRepository>(context, listen: false)
+        .addCalorieDetail(CalorieDetail(hour, calorie));
   });
 
   // Steps Download and Storing
@@ -33,19 +35,17 @@ Future<void> downloadAndStoreData(BuildContext context) async {
   for (int day = 1; day <= 7; day++) {
     if (stepsAPIResponse.data.isNotEmpty) {
       Provider.of<DatabaseRepository>(context, listen: false).addStepsData(
-          StepsData(day, stepsAPIResponse
-              .day(day)
-              .date, stepsAPIResponse.day(day).totalSteps())
-      );
+          StepsData(day, stepsAPIResponse.day(day).date,
+              stepsAPIResponse.day(day).totalSteps()));
     } else {
       print('No Steps Data for time-range');
     }
   }
   final lastStepsDay = stepsAPIResponse.day(7).detail();
   lastStepsDay.forEach((hour, steps) {
-    Provider.of<DatabaseRepository>(context, listen: false).addStepsDetail(StepsDetail(hour, steps));
+    Provider.of<DatabaseRepository>(context, listen: false)
+        .addStepsDetail(StepsDetail(hour, steps));
   });
-
 
   // HeartRate Download and Storing
   final heartAPIResponse = await Impact().getHeartRate(context);
@@ -58,11 +58,10 @@ Future<void> downloadAndStoreData(BuildContext context) async {
         final dayLog = dayDetail.fiveMinuteMean();
         dayLog.forEach((logTime, heartBeat) {
           Provider.of<DatabaseRepository>(context, listen: false).addHeartData(
-              HeartData(dayReference, dayDate, logTime, heartBeat)
-          );
+              HeartData(dayReference, dayDate, logTime, heartBeat));
           dayReference += 1;
         });
-      }else {
+      } else {
         print('No Heart data for Day');
       }
     } else {
@@ -71,24 +70,25 @@ Future<void> downloadAndStoreData(BuildContext context) async {
   }
   // SleepData Download and Storing
   final sleepAPIResponse = await Impact().getSleep(context);
-  for(int day = 1; day <= 7; day++){
+  for (int day = 1; day <= 7; day++) {
     if (sleepAPIResponse.data.isNotEmpty) {
       final sleepDay = sleepAPIResponse.day(day);
       if (sleepDay.data.isNotEmpty) {
         final sleepResume = sleepDay.sleepResume();
-        Provider.of<DatabaseRepository>(context, listen: false).addSleepData(SleepData(
-            dayReference: day,
-            start_day: sleepResume.startDate,
-            end_day: sleepResume.endDate,
-            duration: sleepResume.duration,
-            wake_count: sleepResume.levels['wake']?.count ?? 0,
-            wake_minutes: sleepResume.levels['wake']?.minutes ?? 0,
-            light_count: sleepResume.levels['light']?.count ?? 0,
-            light_minutes: sleepResume.levels['light']?.minutes ?? 0,
-            rem_count: sleepResume.levels['rem']?.count ?? 0,
-            rem_minutes: sleepResume.levels['rem']?.minutes ?? 0,
-            deep_count: sleepResume.levels['deep']?.count ?? 0,
-            deep_minutes: sleepResume.levels['deep']?.minutes ?? 0));
+        Provider.of<DatabaseRepository>(context, listen: false).addSleepData(
+            SleepData(
+                dayReference: day,
+                start_day: sleepResume.startDate,
+                end_day: sleepResume.endDate,
+                duration: sleepResume.duration,
+                wake_count: sleepResume.levels['wake']?.count ?? 0,
+                wake_minutes: sleepResume.levels['wake']?.minutes ?? 0,
+                light_count: sleepResume.levels['light']?.count ?? 0,
+                light_minutes: sleepResume.levels['light']?.minutes ?? 0,
+                rem_count: sleepResume.levels['rem']?.count ?? 0,
+                rem_minutes: sleepResume.levels['rem']?.minutes ?? 0,
+                deep_count: sleepResume.levels['deep']?.count ?? 0,
+                deep_minutes: sleepResume.levels['deep']?.minutes ?? 0));
       } else {
         print('No sleep data available for the selected day.');
       }
@@ -101,8 +101,8 @@ Future<void> downloadAndStoreData(BuildContext context) async {
 
   final activityAPIResponse = await Impact().getActivity(context);
   int activityReference = 0;
-  for(int day = 1; day <= 7; day++){
-    if(activityAPIResponse.data.isNotEmpty){
+  for (int day = 1; day <= 7; day++) {
+    if (activityAPIResponse.data.isNotEmpty) {
       final dailyActivities = activityAPIResponse.day(day);
       if (dailyActivities.data.isNotEmpty) {
         dailyActivities.data.forEach((activity) {
@@ -119,17 +119,21 @@ Future<void> downloadAndStoreData(BuildContext context) async {
               activeDuration: activity.activeDuration.toDouble(),
               speed: activity.speed.toDouble(),
               pace: activity.pace,
-              hl1_range: '${activity.heartRateZones[0].min} - ${activity.heartRateZones[0].max} bpm',
+              hl1_range:
+                  '${activity.heartRateZones[0].min} - ${activity.heartRateZones[0].max} bpm',
               hl1_time: activity.heartRateZones[0].minutes.toDouble(),
-              hl2_range: '${activity.heartRateZones[1].min} - ${activity.heartRateZones[1].max} bpm',
+              hl2_range:
+                  '${activity.heartRateZones[1].min} - ${activity.heartRateZones[1].max} bpm',
               hl2_time: activity.heartRateZones[1].minutes.toDouble(),
-              hl3_range: '${activity.heartRateZones[2].min} - ${activity.heartRateZones[2].max} bpm',
+              hl3_range:
+                  '${activity.heartRateZones[2].min} - ${activity.heartRateZones[2].max} bpm',
               hl3_time: activity.heartRateZones[2].minutes.toDouble(),
-              hl4_range: '${activity.heartRateZones[3].min} - ${activity.heartRateZones[3].max} bpm',
+              hl4_range:
+                  '${activity.heartRateZones[3].min} - ${activity.heartRateZones[3].max} bpm',
               hl4_time: activity.heartRateZones[3].minutes.toDouble()));
         });
         activityReference += 1;
-      }else{
+      } else {
         print('No Activities for this Day');
       }
     } else {
@@ -137,4 +141,35 @@ Future<void> downloadAndStoreData(BuildContext context) async {
     }
   }
 
+  showSnackBarAsBottomSheet(context, 'Data Refreshed, Last Update ${DateFormat('yyyy-MM-dd').format(DateTime.now())}');
+
+}
+
+void showSnackBarAsBottomSheet(BuildContext context, String message) {
+  showModalBottomSheet<void>(
+    context: context,
+    barrierColor: const Color.fromRGBO(0, 0, 0, 0),
+    builder: (BuildContext context) {
+      Future.delayed(const Duration(seconds: 4), () {
+        try {
+          Navigator.pop(context);
+        } on Exception {}
+      });
+      return Container(
+          color: Colors.purple[400],
+          padding: const EdgeInsets.all(20),
+          child: Wrap(children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  message,
+                  style:
+                      TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600),
+                ),
+              ],
+            )
+          ]));
+    },
+  );
 }

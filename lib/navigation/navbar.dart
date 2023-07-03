@@ -419,6 +419,7 @@ class _BottomBarState extends State<BottomBar> {
                     /// REFRESH ACTION HERE
                     IconButton(
                         onPressed: () async {
+                          print('${await TokenManager.accessToken(context)}');
                           await downloadAndStoreData(context);
                         },
                         icon: const Icon(Icons.refresh))
