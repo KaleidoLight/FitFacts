@@ -51,6 +51,7 @@ dependencies:
   floor: ^1.4.2
   percent_indicator: ^4.0.1
   url_launcher: ^6.1.11
+  fl_chart: ^0.62.0
 
 dev_dependencies:
   floor_generator: ^1.4.2

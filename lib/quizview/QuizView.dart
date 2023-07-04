@@ -4,7 +4,6 @@ import 'package:fitfacts/quizview/QuizBuilder.dart';
 import 'package:fitfacts/quizview/QuizDatabase.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../database/DatabaseRepo.dart';
 import '../themes/theme.dart';
 
