@@ -1,9 +1,9 @@
-// STEPS VIEW
+// CALORIES VIEW
 
+import 'package:fitfacts/database/CalorieData.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:fitfacts/database/StepsData.dart';
 import '../database/DatabaseRepo.dart';
 import '../navigation/navbar.dart';
 import '../quizview/QuizBuilder.dart';
@@ -13,10 +13,10 @@ import '../themes/theme.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 
-class StepsPage extends StatelessWidget {
-  const StepsPage({Key? key}) : super(key: key);
+class CaloriesPage extends StatelessWidget {
+  const CaloriesPage({Key? key}) : super(key: key);
 
-  static const routename = 'StepsPage';
+  static const routename = 'CaloriesPage';
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +24,10 @@ class StepsPage extends StatelessWidget {
     var themeMode = context.watch<ThemeModel>().mode;
     var bkColor = (themeMode == ThemeMode.light) ? Colors.deepPurple[50] : Colors.black;
 
-    print('${StepsPage.routename} built'); // REMOVE BEFORE PRODUCTION
+    print('${CaloriesPage.routename} built'); // REMOVE BEFORE PRODUCTION
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Steps'),
+        title: const Text('Calories'),
       ),
       body: Body(),
       backgroundColor: bkColor,
@@ -60,7 +60,7 @@ class _BodyState extends State<Body> {
         Wrap(
           children: [
             Container(height: 15,),
-            stepsView(),
+            caloriesView(),
             stepsLine(),
           ],
         )
@@ -69,9 +69,9 @@ class _BodyState extends State<Body> {
   }
 }
 
-// Steps View
-class stepsView extends StatelessWidget {
-  const stepsView({Key? key}) : super(key: key);
+// Calories Weekly View
+class caloriesView extends StatelessWidget {
+  const caloriesView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +80,7 @@ class stepsView extends StatelessWidget {
         .mode;
     final Color? greyColor = (themeMode == ThemeMode.light) ? Colors.grey[200] : Colors.grey[800];
     return largeBlock(
-        title: 'Weekly Steps',
+        title: 'Weekly Calories',
         icon: Icons.event_note_rounded,
         extraHeight: 100,
         body: Padding(
@@ -88,16 +88,16 @@ class stepsView extends StatelessWidget {
           child: Consumer<DatabaseRepository>(
             builder: (context, dbr, child){
               return FutureBuilder(
-                  future:Future.wait([Provider.of<DatabaseRepository>(context).getStepsData(), Provider.of<DatabaseRepository>(context).getStepGoal()]),
+                  future:Future.wait([Provider.of<DatabaseRepository>(context).getCalorieData(), Provider.of<DatabaseRepository>(context).getCalorieGoal()]),
                   builder: (context, snapshot){
                     if (snapshot.hasData){
                       final List<Object> data = snapshot.data!;
-                      final stepsDetail = data[0] as List<StepsData>;
-                      final stepsGoal = data[1] as int;
+                      final calorieDetail = data[0] as List<CalorieData>;
+                      final calorieGoal = data[1] as int;
                       List<BarChartGroupData> dataBars = [];
-                      stepsDetail.forEach((e) {
+                      calorieDetail.forEach((e) {
                         dataBars.add(
-                          BarChartGroupData(x: e.dayReference, barRods: [BarChartRodData(toY: e.steps.toDouble(), width: 15, color: Theme.of(context).primaryColor)])
+                          BarChartGroupData(x: e.dayReference, barRods: [BarChartRodData(toY: e.calorie.toDouble(), width: 15, color: Theme.of(context).primaryColor)])
                         );
                       });
                       return BarChart(BarChartData(
@@ -109,7 +109,7 @@ class stepsView extends StatelessWidget {
                           extraLinesData: ExtraLinesData(extraLinesOnTop: true,
                               horizontalLines: [
                                 HorizontalLine(
-                                    y: stepsGoal.toDouble(),
+                                    y: calorieGoal.toDouble(),
                                     color: Theme.of(context).primaryColor.withAlpha(100),
                                     strokeWidth: 5,
                                     strokeCap: StrokeCap.round,
@@ -139,29 +139,30 @@ class stepsLine extends StatelessWidget {
         .mode;
     final Color? greyColor = (themeMode == ThemeMode.light) ? Colors.grey[200] : Colors.grey[800];
     return largeBlock(
-        title: 'Daily Steps Detail',
+        title: 'Daily Calories Detail',
         icon: Icons.watch_later_rounded,
+        date: '(kcal)',
         extraHeight: 150,
         body: Padding(
           padding: const EdgeInsets.only(top: 20),
           child: Consumer<DatabaseRepository>(
             builder: (context, dbr, child){
               return FutureBuilder(
-                  future: Future.wait([Provider.of<DatabaseRepository>(context).getStepsDetail(), Provider.of<DatabaseRepository>(context).getStepGoal()]),
+                  future: Future.wait([Provider.of<DatabaseRepository>(context).getCalorieDetail(), Provider.of<DatabaseRepository>(context).getCalorieGoal()]),
                   builder: (context, snapshot){
                     if (snapshot.hasData){
                       final List<Object> data = snapshot.data!;
-                      final stepsDetail = data[0] as List<StepsDetail>;
+                      final stepsDetail = data[0] as List<CalorieDetail>;
                       List<FlSpot> lineData =[];
                       stepsDetail.forEach((e) {
-                        lineData.add(FlSpot(e.hour.toDouble(), e.steps));
+                        lineData.add(FlSpot(e.hour.toDouble(), e.calorie));
                       });
                       return LineChart(LineChartData(
                         borderData: FlBorderData(show: false),
                         titlesData: FlTitlesData(topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false))),
                         lineBarsData: [LineChartBarData(
                             spots: lineData,
-                            isCurved: false,
+                            isCurved: true,
                             color: Theme.of(context).primaryColor,
                             barWidth: 3,
                             belowBarData: BarAreaData(show: true, gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: <Color>[Theme.of(context).primaryColor.withAlpha(120),Theme.of(context).primaryColor.withAlpha(20)]))
