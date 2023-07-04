@@ -141,7 +141,7 @@ Future<void> downloadAndStoreData(BuildContext context) async {
     }
   }
 
-  showSnackBarAsBottomSheet(context, 'Data Refreshed, Last Update ${DateFormat('yyyy-MM-dd').format(DateTime.now())}');
+  //showSnackBarAsBottomSheet(context, 'Data Refreshed, Last Update ${DateFormat('yyyy-MM-dd').format(DateTime.now())}');
 
 }
 

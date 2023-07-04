@@ -1,4 +1,5 @@
 import 'package:fitfacts/screens/loginPage.dart';
+import 'package:fitfacts/screens/steps.dart';
 import 'package:flutter/material.dart';
 import 'package:fitfacts/screens/homePage.dart';
 import 'package:fitfacts/screens/profilePage.dart';
@@ -46,7 +47,7 @@ class MyApp extends StatelessWidget {
               '/profile' : (context) => ProfilePage(),
               '/sleep' : (context) => HeartView(),
               '/calories' : (context) => HeartView(),
-              '/steps' : (context) => HeartView(),
+              '/steps' : (context) => StepsPage(),
               '/activity' : (context) => HeartView()
             },
           );
