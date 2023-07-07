@@ -130,7 +130,7 @@ class activityTile extends StatelessWidget {
                       Row(
                         children: [
                           const Icon(Icons.local_fire_department_outlined, color: Colors.redAccent),
-                          Text(' ${data[index].calories} Kcal', style: TextStyle(fontSize: 17),),
+                          Text(' ${data[index].calories.round()} Kcal', style: TextStyle(fontSize: 17),),
                         ],
                       )
                     ]
@@ -149,7 +149,7 @@ class activityTile extends StatelessWidget {
                       Row(
                         children: [
                           Icon(Icons.favorite_border_outlined, color: Colors.red),
-                          Text(' ' + (data[index].avgHR.toString()), style: TextStyle(fontSize: 17),),
+                          Text(' ' + (data[index].avgHR.round().toString() +  ' bpm'), style: TextStyle(fontSize: 17),),
                         ],
                       ),
 
