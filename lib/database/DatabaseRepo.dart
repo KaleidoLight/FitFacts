@@ -198,6 +198,8 @@ class DatabaseRepository extends ChangeNotifier{
     return result;
   }
 
+
+
   Future<List<HeartData>> getHeartDataOfDay(String date) async {
     final result = await database.heartDataDao.findHeartDataOfDay(date);
     return result;

@@ -31,9 +31,7 @@ class CaloriesPage extends StatelessWidget {
       ),
       body: Body(),
       backgroundColor: bkColor,
-      drawer: const Navbar(
-        username: 'User',
-      ),
+      drawer: const Navbar(),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: (){

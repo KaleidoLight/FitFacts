@@ -31,9 +31,7 @@ class StepsPage extends StatelessWidget {
       ),
       body: Body(),
       backgroundColor: bkColor,
-      drawer: const Navbar(
-        username: 'User',
-      ),
+      drawer: const Navbar(),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: (){
@@ -106,6 +104,7 @@ class stepsView extends StatelessWidget {
                         titlesData: FlTitlesData(
                             topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                             bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: getTitles))),
+                          gridData: FlGridData(show: true, drawHorizontalLine: true, drawVerticalLine: false),
                           extraLinesData: ExtraLinesData(extraLinesOnTop: true,
                               horizontalLines: [
                                 HorizontalLine(
@@ -128,7 +127,7 @@ class stepsView extends StatelessWidget {
   }
 }
 
-// Steps View
+// Line View
 class stepsLine extends StatelessWidget {
   const stepsLine({Key? key}) : super(key: key);
 
@@ -154,6 +153,7 @@ class stepsLine extends StatelessWidget {
                       final stepsDetail = data[0] as List<StepsDetail>;
                       List<FlSpot> lineData =[];
                       stepsDetail.forEach((e) {
+
                         lineData.add(FlSpot(e.hour.toDouble(), e.steps));
                       });
                       return LineChart(LineChartData(
@@ -203,6 +203,7 @@ Widget getTitles(double value, TitleMeta meta){
     case 1:
       text =  Text(DateFormat('E').format(DateTime.now().subtract(Duration(days: 7))));
       break;
+
   }
   return SideTitleWidget(
     axisSide: meta.axisSide,

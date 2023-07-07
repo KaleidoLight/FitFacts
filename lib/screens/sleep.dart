@@ -32,9 +32,7 @@ class SleepPage extends StatelessWidget {
       ),
       body: Body(),
       backgroundColor: bkColor,
-      drawer: const Navbar(
-        username: 'User',
-      ),
+      drawer: const Navbar(),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: (){
@@ -66,117 +64,6 @@ class _BodyState extends State<Body> {
           ],
         )
       ],
-    );
-  }
-}
-
-// Calories Weekly View
-class caloriesView extends StatelessWidget {
-  const caloriesView({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    var themeMode = context
-        .watch<ThemeModel>()
-        .mode;
-    final Color? greyColor = (themeMode == ThemeMode.light) ? Colors.grey[200] : Colors.grey[800];
-    return largeBlock(
-        title: 'Weekly Calories',
-        icon: Icons.event_note_rounded,
-        extraHeight: 100,
-        body: Padding(
-          padding: const EdgeInsets.only(top: 25, bottom: 0),
-          child: Consumer<DatabaseRepository>(
-            builder: (context, dbr, child){
-              return FutureBuilder(
-                  future:Future.wait([Provider.of<DatabaseRepository>(context).getCalorieData(), Provider.of<DatabaseRepository>(context).getCalorieGoal()]),
-                  builder: (context, snapshot){
-                    if (snapshot.hasData){
-                      final List<Object> data = snapshot.data!;
-                      final calorieDetail = data[0] as List<CalorieData>;
-                      final calorieGoal = data[1] as int;
-                      List<BarChartGroupData> dataBars = [];
-                      calorieDetail.forEach((e) {
-                        dataBars.add(
-                          BarChartGroupData(x: e.dayReference, barRods: [BarChartRodData(toY: e.calorie.toDouble(), width: 15, color: Theme.of(context).primaryColor)])
-                        );
-                      });
-                      return BarChart(BarChartData(
-                        borderData: FlBorderData(show: false),
-                        barGroups: dataBars,
-                        titlesData: FlTitlesData(
-                            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                            bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: getTitles))),
-                          extraLinesData: ExtraLinesData(extraLinesOnTop: true,
-                              horizontalLines: [
-                                HorizontalLine(
-                                    y: calorieGoal.toDouble(),
-                                    color: Theme.of(context).primaryColor.withAlpha(100),
-                                    strokeWidth: 5,
-                                    strokeCap: StrokeCap.round,
-                                    label: HorizontalLineLabel(show: true)
-                                )]),
-                          barTouchData: BarTouchData(touchTooltipData: BarTouchTooltipData(tooltipBgColor: greyColor))
-                      ));
-                    }else{
-                      return Container();
-                    }
-                  });
-            },
-          ),
-        )
-    );
-  }
-}
-
-// Steps View
-class stepsLine extends StatelessWidget {
-  const stepsLine({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    var themeMode = context
-        .watch<ThemeModel>()
-        .mode;
-    final Color? greyColor = (themeMode == ThemeMode.light) ? Colors.grey[200] : Colors.grey[800];
-    return largeBlock(
-        title: 'Daily Calories Detail',
-        icon: Icons.pie_chart_rounded,
-        date: '(kcal)',
-        extraHeight: 150,
-        body: Padding(
-          padding: const EdgeInsets.only(top: 20),
-          child: Consumer<DatabaseRepository>(
-            builder: (context, dbr, child){
-              return FutureBuilder(
-                  future: Future.wait([Provider.of<DatabaseRepository>(context).getCalorieDetail(), Provider.of<DatabaseRepository>(context).getCalorieGoal()]),
-                  builder: (context, snapshot){
-                    if (snapshot.hasData){
-                      final List<Object> data = snapshot.data!;
-                      final stepsDetail = data[0] as List<CalorieDetail>;
-                      List<FlSpot> lineData =[];
-                      stepsDetail.forEach((e) {
-                        lineData.add(FlSpot(e.hour.toDouble(), e.calorie));
-                      });
-                      return LineChart(LineChartData(
-                        borderData: FlBorderData(show: false),
-                        titlesData: FlTitlesData(topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false))),
-                        lineBarsData: [LineChartBarData(
-                            spots: lineData,
-                            isCurved: true,
-                            color: Theme.of(context).primaryColor,
-                            barWidth: 3,
-                            belowBarData: BarAreaData(show: true, gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: <Color>[Theme.of(context).primaryColor.withAlpha(120),Theme.of(context).primaryColor.withAlpha(20)]))
-                        )],
-                        lineTouchData: LineTouchData(touchTooltipData: LineTouchTooltipData(tooltipBgColor: greyColor)),
-                      ));
-                    }else{
-                      return Container();
-                    }
-                  });
-            },
-          ),
-        )
     );
   }
 }
