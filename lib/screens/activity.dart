@@ -30,7 +30,7 @@ class activityPage extends StatelessWidget {
     print('${activityPage.routename} built'); // REMOVE BEFORE PRODUCTION
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Heart'),
+        title: const Text('Activity'),
       ),
       body: Body(),
       backgroundColor: bkColor,
