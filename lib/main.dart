@@ -1,8 +1,12 @@
+import 'package:fitfacts/screens/calories.dart';
 import 'package:fitfacts/screens/loginPage.dart';
+import 'package:fitfacts/screens/sleep.dart';
+import 'package:fitfacts/screens/steps.dart';
 import 'package:flutter/material.dart';
 import 'package:fitfacts/screens/homePage.dart';
 import 'package:fitfacts/screens/profilePage.dart';
 import 'package:fitfacts/screens/hearth.dart';
+import 'package:fitfacts/screens/activity.dart';
 import 'package:fitfacts/themes/theme.dart';
 import 'package:provider/provider.dart';
 import 'database/Database.dart';
@@ -42,12 +46,12 @@ class MyApp extends StatelessWidget {
             home:  LoginPage(),
             routes: {
               '/home' : (context) => const HomePage(),
-              '/heart' : (context) => const HeartView(),
+              '/heart' : (context) => const HeartPage(),
               '/profile' : (context) => ProfilePage(),
-              '/sleep' : (context) => HeartView(),
-              '/calories' : (context) => HeartView(),
-              '/steps' : (context) => HeartView(),
-              '/activity' : (context) => HeartView()
+              '/sleep' : (context) => SleepPage(),
+              '/calories' : (context) => CaloriesPage(),
+              '/steps' : (context) => StepsPage(),
+              '/activity' : (context) => activityPage()
             },
           );
         },

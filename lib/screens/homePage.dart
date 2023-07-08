@@ -32,9 +32,7 @@ class HomePage extends StatelessWidget {
       ),
       body: Body(),
       backgroundColor: bkColor,
-      drawer: const Navbar(
-        username: 'User',
-      ),
+      drawer: const Navbar(),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: (){
@@ -210,6 +208,7 @@ class heartBeatView extends StatelessWidget {
                     } catch(error){
                       avgBPM = 0;
                     }
+
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [

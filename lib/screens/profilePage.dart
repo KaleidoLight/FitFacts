@@ -43,9 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
         centerTitle: true,
         elevation: 0,
       ),
-      drawer: const Navbar(
-        username: 'User',
-      ),
+      drawer: const Navbar(),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
         children:[

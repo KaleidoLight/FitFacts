@@ -23,10 +23,10 @@ DateTime _drawerDate = DateTime.now().subtract(Duration(days: 1));
 /// Toolbar: [BottomBar]
 ///
 class Navbar extends StatefulWidget {
-  final String username; // The username to display
+
 
   const Navbar(
-      {Key? key, required this.username})
+      {Key? key})
       : super(key: key);
 
   @override
@@ -50,7 +50,7 @@ class _NavbarState extends State<Navbar> {
                   Column(
                     children: [
                       NavHeader(
-                        username: widget.username,
+
                       ),
                       const ServerStatus(),
                       NavList(primaryColor: Theme.of(context).primaryColor)
@@ -70,10 +70,10 @@ class _NavbarState extends State<Navbar> {
 /// NAVIGATION HEADER WIDGET
 ///
 class NavHeader extends StatefulWidget {
-  final String username;
+
 
   const NavHeader(
-      {Key? key, required this.username})
+      {Key? key})
       : super(key: key);
 
   @override
