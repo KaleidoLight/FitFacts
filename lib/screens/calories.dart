@@ -35,7 +35,7 @@ class CaloriesPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: (){
-          showModalQuiz(QuizTopic.heart, context);
+          showModalQuiz(QuizTopic.calorie, context);
         },
         child: Icon(Icons.play_arrow_rounded, size: 30,),
         tooltip: 'Take Quiz',

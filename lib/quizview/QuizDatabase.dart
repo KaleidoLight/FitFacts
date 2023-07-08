@@ -19,7 +19,8 @@ QuizData createQuizDatabase(BuildContext context) {
       getPersonalData: () async {
         final stepsData =
             await Provider.of<DatabaseRepository>(context).getStepsData();
-        print('STEPS DATA FOUND: ${stepsData.last.date} - ${stepsData.last.steps}');
+        print(
+            'STEPS DATA FOUND: ${stepsData.last.date} - ${stepsData.last.steps}');
         return stepsData[0].steps;
       },
       questions: [
@@ -27,6 +28,6 @@ QuizData createQuizDatabase(BuildContext context) {
         QuizQuestion(body: '7000', isCorrect: true),
         QuizQuestion(body: '4000')
       ],
-    )
+    ),
   ]);
 }

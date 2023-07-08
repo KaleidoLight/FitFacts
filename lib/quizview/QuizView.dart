@@ -34,7 +34,7 @@ class _QuizViewState extends State<QuizView> {
     super.didChangeDependencies();
     // Retrieve the context-dependent data here
     final quizDatabase = createQuizDatabase(context);
-    quiz = quizDatabase.getQuiz(widget.topic);
+    quiz = quizDatabase.getQuiz(widget.topic); // <-- selecting question from the quiz database
   }
 
   @override
@@ -214,7 +214,7 @@ class _QuizOutcomeState extends State<QuizOutcome> {
                   )
                 ],
               ),
-            ); // DRAW THE INTERFACE HERE AND USE THE INFOS from data
+            );
           }else{
             return Container();
           }
@@ -247,10 +247,10 @@ class _QuizActionsState extends State<QuizActions> {
         QuizButton(title: 'Read More', points: 5,
             action: () async {
               final Uri url = Uri.parse(widget.quizActivityData.link);
+              await Provider.of<DatabaseRepository>(context, listen: false).updateUserInfo((info) { info.smartStars += 5;});
               if (await canLaunchUrl(url)) {
                 await launchUrl(url);
                 print('Webpage dismissed!');
-                await Provider.of<DatabaseRepository>(context, listen: false).updateUserInfo((info) { info.smartStars += 5;});
                 Navigator.pop(context);
               } else {
                 throw Exception('Could not launch $url');
@@ -301,6 +301,8 @@ class QuizButton extends StatelessWidget {
     );
   }
 }
+
+// END OF CLASSES
 
 void showModalQuiz(QuizTopic topic, BuildContext context){
   showModalBottomSheet(

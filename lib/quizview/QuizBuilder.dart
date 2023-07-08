@@ -31,16 +31,16 @@ class QuizData {
 
 class QuizActivity{
 
-  String title;
-  QuizTopic topic;
-  String link;
-  List<QuizQuestion> questions;
-  String answer;
-  String positive;
-  String negative;
-  num reference;
-  String unit;
-  Future<num>? personalRef;
+  String title; // question title
+  QuizTopic topic; // the topic related
+  String link; // link to the paper
+  List<QuizQuestion> questions; // possible choices
+  String answer; // string answer
+  String positive; // outcome if positive
+  String negative; // outcome if negative
+  num reference; // decision threshold
+  String unit; // unit of measure
+  Future<num>? personalRef; // personal health metric (from the database -> future)
 
   QuizActivity({required this.title,
     required this.topic ,

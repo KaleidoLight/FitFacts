@@ -35,7 +35,7 @@ class StepsPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: (){
-          showModalQuiz(QuizTopic.heart, context);
+          showModalQuiz(QuizTopic.step, context);
         },
         child: Icon(Icons.play_arrow_rounded, size: 30,),
         tooltip: 'Take Quiz',
