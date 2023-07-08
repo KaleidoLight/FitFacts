@@ -314,12 +314,10 @@ class _NavItemState extends State<NavItem> {
       child: InkWell(
         onTap: () async {
           if (_selection == widget.destinationView) {
-            Navigator.of(context).pop();
+           Navigator.of(context).pop();
           } else {
             Navigator.pushNamedAndRemoveUntil(context, widget.destinationView,
-                    ModalRoute.withName(widget.destinationView))
-                .then((value) => Navigator.popUntil(
-                    context, ModalRoute.withName(widget.destinationView)));
+                    ModalRoute.withName(widget.destinationView));
             _selection = widget.destinationView;
           }
         },
