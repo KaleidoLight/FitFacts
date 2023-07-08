@@ -218,7 +218,6 @@ class sleepZonesTimes extends StatelessWidget {
                                 drawVerticalLine: false),
                             titlesData: FlTitlesData(
                                 topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-
                                 bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: getTitles))),
                             barTouchData: BarTouchData(touchTooltipData: BarTouchTooltipData(tooltipBgColor: greyColor))
                         ));
