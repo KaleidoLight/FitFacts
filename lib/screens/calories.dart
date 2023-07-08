@@ -100,6 +100,10 @@ class caloriesView extends StatelessWidget {
                       });
                       return BarChart(BarChartData(
                         borderData: FlBorderData(show: false),
+                          gridData: FlGridData(
+                              show: true,
+                              drawHorizontalLine: true,
+                              drawVerticalLine: false),
                         barGroups: dataBars,
                         titlesData: FlTitlesData(
                             topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
