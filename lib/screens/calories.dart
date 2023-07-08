@@ -160,7 +160,7 @@ class stepsLine extends StatelessWidget {
                         titlesData: FlTitlesData(topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false))),
                         lineBarsData: [LineChartBarData(
                             spots: lineData,
-                            isCurved: true,
+                            isCurved: false,
                             color: Theme.of(context).primaryColor,
                             barWidth: 3,
                             belowBarData: BarAreaData(show: true, gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: <Color>[Theme.of(context).primaryColor.withAlpha(120),Theme.of(context).primaryColor.withAlpha(20)]))

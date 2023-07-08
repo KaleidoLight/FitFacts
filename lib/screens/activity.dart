@@ -1,10 +1,7 @@
 // ACTIVITY VIEW
 
-import 'dart:ffi';
 
-import 'package:fitfacts/database/HeartData.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:fitfacts/database/ActivityData.dart';
 import '../database/DatabaseRepo.dart';
@@ -13,7 +10,6 @@ import '../quizview/QuizBuilder.dart';
 import '../quizview/QuizView.dart';
 import '../themes/blocks.dart';
 import '../themes/theme.dart';
-import 'package:fl_chart/fl_chart.dart';
 
 
 class activityPage extends StatelessWidget {
@@ -53,10 +49,6 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    var themeMode = context.watch<ThemeModel>().mode;
-
-
     return Padding(
       padding: const EdgeInsets.only(top: 25, bottom: 0),
       child: Consumer<DatabaseRepository>(
@@ -107,6 +99,7 @@ class activityTile extends StatelessWidget {
             title: largeBlock(
                 title: data[index].name + '          ' + data[index].date,
                 icon: getIcon(data[index].name),
+                showBk: false,
                 body: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [Column(
@@ -123,7 +116,7 @@ class activityTile extends StatelessWidget {
 
                       Row(
                         children: [
-                          Icon(Icons.flag_outlined, color: Colors.black),
+                          Icon(Icons.flag_outlined, color: Colors.blueGrey[500]),
                           Text(' ${(data[index].distance*100).round()/100} ' + ((data[index].distanceUnit=='Kilometer') ? 'Km' :  data[index].distanceUnit), style: TextStyle(fontSize: 17),),
                       ]),
 

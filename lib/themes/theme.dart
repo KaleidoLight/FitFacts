@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 /// LIGHT THEME
 ThemeData appLight = FlexThemeData.light(scheme: FlexScheme.deepPurple).copyWith(
   //primaryColor: Colors.blue[400],
+  splashColor: Colors.transparent,
+  highlightColor: Colors.transparent,
   appBarTheme:  AppBarTheme(
       backgroundColor: Colors.purple[900],
       systemOverlayStyle: const SystemUiOverlayStyle(
@@ -20,6 +22,8 @@ ThemeData appLight = FlexThemeData.light(scheme: FlexScheme.deepPurple).copyWith
 /// DARK THEME
 ThemeData appDark = FlexThemeData.dark(scheme: FlexScheme.deepPurple).copyWith(
     primaryColor: Colors.deepPurple[200],
+    splashColor: Colors.transparent,
+    highlightColor: Colors.transparent,
     appBarTheme: const AppBarTheme(
         backgroundColor: Colors.white12,
         systemOverlayStyle: SystemUiOverlayStyle(

@@ -82,8 +82,9 @@ class largeBlock extends StatefulWidget {
   Widget body;
   int extraHeight;
   dynamic data;
+  bool showBk;
 
-  largeBlock({Key? key, required this.title, required this.icon, this.date = '', required this.body, this.data, this.extraHeight = 0}) : super(key: key);
+  largeBlock({Key? key, required this.title, required this.icon, this.date = '', required this.body, this.data, this.extraHeight = 0, this.showBk = true}) : super(key: key);
 
   @override
   State<largeBlock> createState() => _largeBlockState();
@@ -96,8 +97,9 @@ class _largeBlockState extends State<largeBlock> {
     var themeMode = context
         .watch<ThemeModel>()
         .mode;
-    var bkColor = (themeMode == ThemeMode.light) ? Colors.white.withAlpha(200) :
-    Colors.white.withAlpha(40);
+    var bkColor = (widget.showBk) ? (themeMode == ThemeMode.light) ? Colors.white.withAlpha(200) :
+    Colors.white.withAlpha(40) : (themeMode == ThemeMode.light) ? Colors.white.withAlpha(200) :
+    Colors.transparent;
 
     return Column(
       children: [
