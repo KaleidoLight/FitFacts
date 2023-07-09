@@ -114,7 +114,6 @@ class activityView extends StatelessWidget {
                 builder: (context, snapshot){
                 if (snapshot.hasData){
                   final activityDays = snapshot.data as int;
-                  print('Activity Days = ${activityDays}');
                   return Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
