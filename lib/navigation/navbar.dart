@@ -442,6 +442,12 @@ class _BottomBarState extends State<BottomBar> {
                             }else {
                               print('ERROR WHILE RENEWING TOKENS');
                             }
+                          }finally{
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              backgroundColor: Theme.of(context).primaryColor,
+                              content: Center(child: Text('Fitbit Data Refreshed', style: TextStyle(fontSize: 18),)),
+                            ));
                           }
                         },
                         icon: const Icon(Icons.refresh))
