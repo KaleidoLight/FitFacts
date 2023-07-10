@@ -200,8 +200,8 @@ class _QuizOutcomeState extends State<QuizOutcome> {
                         Container(height: 10,),
                         Text(
                           (personalRef >  reference)
-                              ? '${widget.quizActivityData.positive} (${personalRef.roundToDouble()} > ${reference.roundToDouble()}) ${widget.quizActivityData.unit}'
-                              : '${widget.quizActivityData.negative} (${personalRef.roundToDouble()} < ${reference.roundToDouble()}) ${widget.quizActivityData.unit}',
+                              ? '${widget.quizActivityData.positive} (${roundToTwoDecimals(personalRef)} > ${roundToTwoDecimals(reference)}) ${widget.quizActivityData.unit}'
+                              : '${widget.quizActivityData.negative} (${roundToTwoDecimals(personalRef)} < ${roundToTwoDecimals(reference)}) ${widget.quizActivityData.unit}',
                           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
                           maxLines: null,
                           textAlign: TextAlign.center,
@@ -319,4 +319,8 @@ void showModalQuiz(QuizTopic topic, BuildContext context){
       return QuizView(topic: topic,);
     },
   );
+}
+
+double roundToTwoDecimals(num num) {
+  return double.parse(num.toStringAsFixed(2));
 }

@@ -41,7 +41,7 @@ QuizData createQuizDatabase(BuildContext context) {
           QuizQuestion(body: 'Maximum lungs capacity'),
           QuizQuestion(body: 'Maximum Respiration Rate')
         ],
-        answer: 'VO2 Max is the maximum volume of oxigen consumed in ml/Kg/min',
+        answer: 'VO2 Max is the maximum volume of oxygen consumed in ml/Kg/min',
         link: 'https://doi.org/10.1016/j.pcad.2017.03.002',
         unit: 'ml/kg/min',
         positive: 'Good Job! Your VO2Max is better than average',
@@ -73,7 +73,7 @@ QuizData createQuizDatabase(BuildContext context) {
         ),
 
     QuizActivity(
-        title: 'What is the average RMR (resting metabolic rate) for men ?',
+        title: 'What is the average RMR (resting metabolic rate) for someone like you?',
         topic: QuizTopic.calorie,
         questions: [
           QuizQuestion(body: '1600 - 2000 Kcal/day', isCorrect: true),
@@ -115,7 +115,7 @@ QuizData createQuizDatabase(BuildContext context) {
         link: 'https://www.researchgate.net/profile/Velayudhan-Kumar-2/publication/5241469_Sleep_and_sleep_disorders/links/00b4953b62a1fcc5f8000000/Sleep-and-sleep-disorders.pdf',
         unit: 'hours',
         positive: 'Your hours are better than average',
-        negative: 'Try to sleep more ! ; It can help you to : get sick less often, stay at a healthy weight, lower your risk for serious health problems (like diabetes and heart disease) , reduce stress and improve your mood, think more clearly and do better at school and at work, get along better with people. \n',
+        negative: 'Try to sleep more!\nIt can help you to : get sick less often, stay at a healthy weight, lower your risk for serious health problems (like diabetes and heart disease) , reduce stress and improve your mood, think more clearly and do better at school and at work, get along better with people. \n',
         getReference: () async {
           return 7;
         },
@@ -165,7 +165,7 @@ QuizData createQuizDatabase(BuildContext context) {
     ),
 
 
-    QuizActivity(
+/*    QuizActivity(
         title: 'What is the average RMR (resting metabolic rate) for women ?',
         topic: QuizTopic.calorie,
         questions: [
@@ -194,7 +194,7 @@ QuizData createQuizDatabase(BuildContext context) {
 
           return RMR;
         }
-    ),
+    ),*/
 
     QuizActivity(
         title: 'Which is the usual speed of an experienced runner (18-40yr)?',
@@ -235,7 +235,7 @@ QuizData createQuizDatabase(BuildContext context) {
           QuizQuestion(body: 'It represents a drug'),
           QuizQuestion(body: 'It represents an index of an individual’s fatness', isCorrect: true),
         ],
-        answer: ' The common interpretation is that it represents an index of an individual’s fatness. It also is widely used as a risk factor for the development of or the prevalence of several health issues. In addition, it is widely used in determining public health policies.',
+        answer: 'BMI represents an index of an individual’s fatness. It also is widely used as a risk factor for the development of or the prevalence of several health issues. In addition, it is widely used in determining public health policies.',
         link: 'https://doi.org/10.1097%2FNT.0000000000000092',
         unit: 'Kg/m^2',
         positive: '',
@@ -296,7 +296,7 @@ QuizData createQuizDatabase(BuildContext context) {
           QuizQuestion(body: '10 h per week of strength training'),
           QuizQuestion(body: '2 h of extreme cardio once a week')
         ],
-        answer: '30 min of low intensity aerobic exercise per day will be enougth',
+        answer: '30 min of low intensity aerobic exercise per day will be enough',
         link: 'https://doi.org/10.1007/s11906-005-0026-z',
         unit: '',
         positive: 'Good Job! You are constant with your exercise',
@@ -321,7 +321,7 @@ QuizData createQuizDatabase(BuildContext context) {
         answer: 'During deep sleep, your body releases growth hormone and works to build and repair muscles, bones, and tissue. Deep sleep also promotes immune system functioning',
         link: 'https://www.sleepfoundation.org/stages-of-sleep/deep-sleep#:~:text=It%20usually%20takes%20between%2090,to%20six%20cycles%20per%20night.',
         unit: 'times',
-        positive: 'Last nigth you hit the righ amount of deep sleep phases',
+        positive: 'This week you hit the right amount of deep sleep phases',
         negative: 'Try to sleep more! You need more sleep cycles to stay healthy',
         getReference: () async {
           return 4;
@@ -352,12 +352,12 @@ QuizData createQuizDatabase(BuildContext context) {
           QuizQuestion(body: '40-50 bpm',),
           QuizQuestion(body: '60-80 bpm', isCorrect: true)
         ],
-        answer: '60-80 bpm, higher heart rate can be symtom of stres or some deseas',
+        answer: '60-80 bpm, higher heart rate can be symptom of stress or some disease',
         link: 'https://www.whoop.com/thelocker/resting-heart-rate-by-age-and-gender/',
         unit: 'bpm',
         //here is the contrary
         positive: 'Your average bpm is too high, maybe there\'s something wrong',
-        negative: 'Great! You have an healthy heart reate',
+        negative: 'Great! You have an healthy heart rate',
         getReference: () async {
           return 80;
         },

@@ -253,7 +253,12 @@ class stepsView extends StatelessWidget {
                         dailySteps = element.steps;
                       }
                     });
-                    double stepPercentage = dailySteps / stepGoal;
+                    double stepPercentage = 0;
+                    try {
+                      stepPercentage = dailySteps / stepGoal;
+                    }catch(error) {
+                      print(error);
+                    };
                     if (stepPercentage > 1 || stepPercentage.isInfinite){
                       stepPercentage = 1;
                     }
@@ -327,7 +332,10 @@ class calorieView extends StatelessWidget {
                         dayCalorie = element.calorie;
                       }
                     });
-                    double caloriePercentage = dayCalorie / calorieGoal;
+                    double caloriePercentage = 0;
+                    try {
+                      caloriePercentage = dayCalorie / calorieGoal;
+                    }catch(error){print(error);}
                     if (caloriePercentage > 1 || caloriePercentage.isInfinite){
                       caloriePercentage = 1;
                     }

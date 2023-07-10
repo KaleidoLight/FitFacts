@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitfacts/screens/loginPage.dart';
 
 import '../database/DataDownloader.dart';
+import '../screens/impactLogin.dart';
 
 // DRAWER DATE FORMATTER
 DateTime _drawerDate = DateTime.now().subtract(Duration(days: 1));
@@ -417,8 +418,23 @@ class _BottomBarState extends State<BottomBar> {
                     /// REFRESH ACTION HERE
                     IconButton(
                         onPressed: () async {
-                          print('${await TokenManager.accessToken(context)}');
-                          await downloadAndStoreData(context);
+                          try {
+                            print('TOKEN: ${await TokenManager.accessToken(
+                                context)}');
+                            await downloadAndStoreData(context);
+                          }catch(error){ // can't refresh
+                            print(error);
+                            final tokenResult = await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                              return ImpactLogin();
+                            }),
+                            );
+                            if (tokenResult == 200){
+                              print('TOKENS RENEWED');
+                              await downloadAndStoreData(context);
+                            }else {
+                              print('ERROR WHILE RENEWING TOKENS');
+                            }
+                          }
                         },
                         icon: const Icon(Icons.refresh))
                   ],
