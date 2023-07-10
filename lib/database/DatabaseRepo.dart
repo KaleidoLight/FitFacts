@@ -7,7 +7,7 @@ import 'package:fitfacts/database/UserInfo.dart';
 import 'Database.dart';
 import 'package:flutter/material.dart';
 
-class DatabaseRepository extends ChangeNotifier{
+class DatabaseRepository extends ChangeNotifier {
   final AppDatabase database;
 
   DatabaseRepository({required this.database});

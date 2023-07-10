@@ -115,14 +115,26 @@ QuizData createQuizDatabase(BuildContext context) {
         link: 'https://www.researchgate.net/profile/Velayudhan-Kumar-2/publication/5241469_Sleep_and_sleep_disorders/links/00b4953b62a1fcc5f8000000/Sleep-and-sleep-disorders.pdf',
         unit: 'hours',
         positive: 'Your hours are better than average',
-        negative: 'Try to sleep more ! ; It can help you to : get sick less often, stay at a healthy weight, lower your risk for serious health problems (like diabetes and heart disease) , reduce stress and improve your mood, think more clearly and do better in school and at work, get along better with people. \n',
+        negative: 'Try to sleep more ! ; It can help you to : get sick less often, stay at a healthy weight, lower your risk for serious health problems (like diabetes and heart disease) , reduce stress and improve your mood, think more clearly and do better at school and at work, get along better with people. \n',
         getReference: () async {
           return 7;
         },
         getPersonalData: () async {
-          final sleep_raw = await Provider.of<DatabaseRepository>(context, listen: false).getSleepDataOfDay(DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 1))));
+          final sleep_raw = await Provider.of<DatabaseRepository>(context, listen: false).getSleepData();
+
+          /*List<num> sleep_array = [];
+          sleep_raw.forEach((element) {
+            if (element.speed > 0 && element.name == 'Corsa') {
+              velocity_array.add(element.speed);
+            }
+          });
+          num velocityMean = 0;
+          velocity_array.forEach((element) {velocityMean += element;});
+          return (velocityMean/velocity_array.length)/3.6;*/
+
+          List<double> sleep_array = [];
           String sleepTime = '';
-          sleep_raw.forEach((element) {sleepTime = element.duration;});
+          sleep_raw.forEach((element) {sleepTime = element.duration;
           RegExp regex = RegExp(r'(\d+) hr, (\d+) min');
           Match? match = regex.firstMatch(sleepTime);
           String hours = '';
@@ -141,8 +153,14 @@ QuizData createQuizDatabase(BuildContext context) {
             minutes = '0';
             tot_sleep = '0';
           }
-          print(tot_sleep);
-          return  double.parse(tot_sleep) ;
+          sleep_array.add(double.parse(tot_sleep));
+          sleep_array[sleep_raw.indexOf(element)] = double.parse(tot_sleep);
+          });
+
+          num sleepMean = 0;
+          sleep_array.forEach((element) {sleepMean += element;});
+          return (sleepMean/sleep_array.length);
+
         }
     ),
 
@@ -179,7 +197,7 @@ QuizData createQuizDatabase(BuildContext context) {
     ),
 
     QuizActivity(
-        title: 'Which is the range of velocity for a male , well conditioned and experienced distance runners (age 18-40 yr)?',
+        title: 'Which is the usual speed of an experienced runner (18-40yr)?',
         topic: QuizTopic.activity,
         questions: [
           QuizQuestion(body: '1-2 m/s'),
@@ -211,7 +229,7 @@ QuizData createQuizDatabase(BuildContext context) {
 
     QuizActivity(
         title: 'Which is the common representation of BMI??',
-        topic: QuizTopic.activity,
+        topic: QuizTopic.calorie,
         questions: [
           QuizQuestion(body: 'It represent an index of intake calories'),
           QuizQuestion(body: 'It represents a drug'),
@@ -234,8 +252,143 @@ QuizData createQuizDatabase(BuildContext context) {
         }
     ),
 
+    QuizActivity(
+      title:
+      'How many kilometers you should walk per day to stay healthy?',
+      link:
+      'https://www.verywellfit.com/set-pedometer-better-accuracy-3432895',
+      unit: 'Km',
+      topic: QuizTopic.step,
+      answer: 'The step length can be calculated approximately as height(cm)*0.415',
+      positive: 'Wonderful!, Yesterday you walked a longer distance ',
+      negative: 'Come on! that\' s not such a long distance',
+      getReference: () async {
+        final sex_raw = await Provider.of<DatabaseRepository>(context, listen: false).getSex();
+        final height = await Provider.of<DatabaseRepository>(context, listen: false).getHeight();
+        final sex = (sex_raw == 'Male') ? 0.415 : 0.412;
+        var distance = 7000*sex*height; //cm
+        distance = distance.round()/100; //km
+        return distance;
+      },
+      getPersonalData: () async {
+        final stepsData = await Provider.of<DatabaseRepository>(context).getStepsData();
+        final sex_raw = await Provider.of<DatabaseRepository>(context, listen: false).getSex();
+        final heigth = await Provider.of<DatabaseRepository>(context, listen: false).getHeight();
+        final sex = (sex_raw == 'Male') ? 0.415 : 0.412;
+        var distance = stepsData[0].steps*sex*heigth; //cm
+        distance = distance.round()/100000; //km
+        return distance;
+      },
+      questions: [
+        QuizQuestion(body: '10'),
+        QuizQuestion(body: '5', isCorrect: true),
+        QuizQuestion(body: '8')
+      ],
+    ),
 
 
+
+    QuizActivity(
+        title: 'How much time of aerobic exercise can control hypertension?',
+        topic: QuizTopic.activity,
+        questions: [
+          QuizQuestion(body: '30 min per day (low intensity)', isCorrect: true),
+          QuizQuestion(body: '10 h per week of strength training'),
+          QuizQuestion(body: '2 h of extreme cardio once a week')
+        ],
+        answer: '30 min of low intensity aerobic exercise per day will be enougth',
+        link: 'https://doi.org/10.1007/s11906-005-0026-z',
+        unit: '',
+        positive: 'Good Job! You are constant with your exercise',
+        negative: 'you are not so active, let\'s start with some easy walk!',
+        getReference: () async {
+          return 6;
+        },
+        getPersonalData: () async {
+          final activityDays = await Provider.of<DatabaseRepository>(context, listen: false).getActivityDays();
+          return activityDays;
+        }
+    ),
+
+    QuizActivity(
+        title: 'Which sleep phase provides physical and mental benefits?',
+        topic: QuizTopic.sleep,
+        questions: [
+          QuizQuestion(body: 'REM', ),
+          QuizQuestion(body: 'Deep', isCorrect: true),
+          QuizQuestion(body: 'Light')
+        ],
+        answer: 'During deep sleep, your body releases growth hormone and works to build and repair muscles, bones, and tissue. Deep sleep also promotes immune system functioning',
+        link: 'https://www.sleepfoundation.org/stages-of-sleep/deep-sleep#:~:text=It%20usually%20takes%20between%2090,to%20six%20cycles%20per%20night.',
+        unit: 'times',
+        positive: 'Last nigth you hit the righ amount of deep sleep phases',
+        negative: 'Try to sleep more! You need more sleep cycles to stay healthy',
+        getReference: () async {
+          return 4;
+        },
+        getPersonalData: () async {
+          final sleepData = await Provider.of<DatabaseRepository>(context, listen: false).getSleepData();
+          List<num> deep_sleepArray = [];
+          sleepData.forEach((element) {
+            print(element);
+            if (element.deep_count > 0 ) {
+              deep_sleepArray.add(element.deep_count);
+            }
+          });
+          print(deep_sleepArray);
+          num deepMean = 0;
+          deep_sleepArray.forEach((element) {deepMean += element;});
+          return deepMean/deep_sleepArray.length;
+
+        }
+    ),
+
+
+    QuizActivity(
+        title: 'What is the appropriate average heart bit of an healthy person',
+        topic: QuizTopic.heart,
+        questions: [
+          QuizQuestion(body: '90-100 bpm', ),
+          QuizQuestion(body: '40-50 bpm',),
+          QuizQuestion(body: '60-80 bpm', isCorrect: true)
+        ],
+        answer: '60-80 bpm, higher heart rate can be symtom of stres or some deseas',
+        link: 'https://www.whoop.com/thelocker/resting-heart-rate-by-age-and-gender/',
+        unit: 'bpm',
+        //here is the contrary
+        positive: 'Your average bpm is too high, maybe there\'s something wrong',
+        negative: 'Great! You have an healthy heart reate',
+        getReference: () async {
+          return 80;
+        },
+        getPersonalData: () async {
+          List<int> avg_bpm = [];
+          int effective_day = 1;
+          for (var day_subtract = 1; day_subtract < 8; day_subtract++) {
+
+            final heartData = await Provider.of<DatabaseRepository>(context, listen: false).getHeartDataOfDay(DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: day_subtract))));
+            double dayBPM = 0.1;
+            int dayCounts = 0;
+            heartData.forEach((element) {
+              dayBPM = dayBPM + element.beats;
+              dayCounts = dayCounts + 1;
+            });
+
+            try {
+              avg_bpm.add((dayBPM / dayCounts ).round());
+              effective_day = effective_day + 1;
+            } catch (error) {
+              avg_bpm[day_subtract] = 0;
+            }
+
+          }
+          int sum_hr = 0;
+          avg_bpm.forEach((element) {
+            sum_hr = sum_hr + element;
+          });
+          return (sum_hr/effective_day - 1).round();
+        }
+    ),
 
   ]);
 }

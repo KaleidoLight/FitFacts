@@ -248,7 +248,7 @@ class _DefaultInfoItemState extends State<DefaultInfoItem> {
                 ),
                 actions: <Widget>[
                   TextButton(onPressed: (){Navigator.of(context).pop();},
-                  child: const Text('Cancel'),),
+                    child: const Text('Cancel'),),
                   TextButton(onPressed: () async {
                     final valid = _fbKey.currentState?.saveAndValidate() ?? true;
                     if(valid) {
@@ -639,9 +639,7 @@ class _GenderSelectorStyledState extends State<GenderSelectorStyled> {
                   TextButton(onPressed: () async {
                     final valid = _fbKey.currentState?.saveAndValidate() ?? true;
                     if(valid) {
-                      setState(() {
-
-                      });
+                      setState(() {});
                       Navigator.of(context).pop();
                       print('popped');
                     }
