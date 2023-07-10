@@ -19,7 +19,6 @@ class ProfilePage extends StatefulWidget {
 
   final String watchUser;
 
-
   ProfilePage({Key? key,  this.watchUser = 'User'}) : super(key: key);
 
   static const routename = 'UserPage';
@@ -610,8 +609,7 @@ class _GenderSelectionWidgetState extends State<GenderSelectionWidget> {
   }
 }
 
-/// #### Default Info Item
-/// Draws default info item widget
+/// #### GenderSelectorStyled
 ///
 /// [badgeIcon]: The Icon representing the Measure
 ///
