@@ -147,11 +147,13 @@ class _DateInfoItemState extends State<DateInfoItem> {
                               builder: ((context, snapshot) { //snapshot = observer of the state of the features variable
                                 if(snapshot.hasData){
                                   final sp = snapshot.data as String;
+                                  dynamic date_disp = calculateStringAge(sp);
+                                  date_disp??= '';
                                   return Row(
                                     children: [
                                       Text(sp,style: const TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),),
                                       Container(width: 3,),
-                                      Text('(${calculateStringAge(sp)} yo)', style: const TextStyle(fontSize: 16,),)
+                                      Text('(${date_disp} yo)', style: const TextStyle(fontSize: 16,),)
                                       ],
                                     );
                                 }
@@ -698,7 +700,7 @@ class _GenderSelectorStyledState extends State<GenderSelectorStyled> {
 }
 
 
-int calculateStringAge(String birthday) {
+int? calculateStringAge(String birthday) {
   // Parse the birthday string to a DateTime object
   DateTime birthDate = DateFormat('dd-MM-yyyy').parse(birthday);
   print(birthDate);
@@ -710,7 +712,11 @@ int calculateStringAge(String birthday) {
 
   // Convert the difference to years and return it as an integer
   int age = (difference.inDays / 365).floor();
-  return age;
+  if (age <= 110) {
+    return age;
+  }else{
+    return null;
+  }
 }
 
 /// SignOutVerification

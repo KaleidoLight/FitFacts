@@ -268,14 +268,22 @@ class _NavListState extends State<NavList> {
                   title: 'Activity',
                   destinationView: '/activity',
                   color: widget.primaryColor),
-              Container(height: 30,),
+            ],
+          ),
+          Container(height: 30,),
+          const Text('SETTINGS'),
+          Container(
+            height: 10,
+          ),
+          Column(
+            children: [
               NavItem(
                   icon: Icons.account_circle,
                   title: 'Profile',
                   destinationView: '/profile',
                   color: widget.primaryColor),
             ],
-          ),
+          )
         ],
       ),
     );

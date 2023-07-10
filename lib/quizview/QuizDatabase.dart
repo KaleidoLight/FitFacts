@@ -52,7 +52,7 @@ QuizData createQuizDatabase(BuildContext context) {
           final weight_raw = await Provider.of<DatabaseRepository>(context, listen: false).getWeight();
 
           final sex = (sex_raw == 'Male') ? 0 : 13.7;
-          final age = calculateStringAge(age_raw) * 0.39;
+          final age = calculateStringAge(age_raw)! * 0.39;
           final weight = weight_raw * 0.127 * 2.2;
 
           return 79.9 - age - sex - weight;
@@ -96,8 +96,8 @@ QuizData createQuizDatabase(BuildContext context) {
           final height_raw = await Provider.of<DatabaseRepository>(context, listen: false).getHeight();
 
 
-          final RMR = (sex_raw == 'Male') ? 66.473 + 5.003 * height_raw + 13.75 * weight_raw - 6.75 * calculateStringAge(age_raw):
-          665.09 + 9.56 * height_raw + 1.84 * weight_raw - 4.67 * calculateStringAge(age_raw);
+          final RMR = (sex_raw == 'Male') ? 66.473 + 5.003 * height_raw + 13.75 * weight_raw - 6.75 * calculateStringAge(age_raw)!:
+          665.09 + 9.56 * height_raw + 1.84 * weight_raw - 4.67 * calculateStringAge(age_raw)!;
 
           return RMR;
         }
@@ -231,15 +231,15 @@ QuizData createQuizDatabase(BuildContext context) {
         title: 'Which is the common representation of BMI??',
         topic: QuizTopic.calorie,
         questions: [
-          QuizQuestion(body: 'It represent an index of intake calories'),
-          QuizQuestion(body: 'It represents a drug'),
-          QuizQuestion(body: 'It represents an index of an individual’s fatness', isCorrect: true),
+          QuizQuestion(body: 'Index of intake calories'),
+          QuizQuestion(body: 'Index of burnt calories'),
+          QuizQuestion(body: 'Index of an individual’s fatness', isCorrect: true),
         ],
-        answer: 'BMI represents an index of an individual’s fatness. It also is widely used as a risk factor for the development of or the prevalence of several health issues. In addition, it is widely used in determining public health policies.',
+        answer: 'BMI represents an index of fatness. It is widely used as a risk factor for the development of several health issues.\nIn addition, it is widely used in determining public health policies.',
         link: 'https://doi.org/10.1097%2FNT.0000000000000092',
         unit: 'Kg/m^2',
         positive: '',
-        negative: 'your BMI is perfect ! ',
+        negative: 'Your BMI is within range! ',
         getReference: () async {
           return 25;
         },
@@ -259,9 +259,9 @@ QuizData createQuizDatabase(BuildContext context) {
       'https://www.verywellfit.com/set-pedometer-better-accuracy-3432895',
       unit: 'Km',
       topic: QuizTopic.step,
-      answer: 'The step length can be calculated approximately as height(cm)*0.415',
+      answer: 'A research shows 5km is a good daily walking distance.\nThe step length can be calculated approximately as height(cm)*0.415',
       positive: 'Wonderful!, Yesterday you walked a longer distance ',
-      negative: 'Come on! that\' s not such a long distance',
+      negative: 'Come on! That\'s not such a long distance',
       getReference: () async {
         final sex_raw = await Provider.of<DatabaseRepository>(context, listen: false).getSex();
         final height = await Provider.of<DatabaseRepository>(context, listen: false).getHeight();
@@ -280,21 +280,19 @@ QuizData createQuizDatabase(BuildContext context) {
         return distance;
       },
       questions: [
-        QuizQuestion(body: '10'),
-        QuizQuestion(body: '5', isCorrect: true),
-        QuizQuestion(body: '8')
+        QuizQuestion(body: '10 km'),
+        QuizQuestion(body: '5 km', isCorrect: true),
+        QuizQuestion(body: '8 km')
       ],
     ),
 
-
-
     QuizActivity(
-        title: 'How much time of aerobic exercise can control hypertension?',
+        title: 'How much time of aerobic exercise reduces the risk of hypertension?',
         topic: QuizTopic.activity,
         questions: [
-          QuizQuestion(body: '30 min per day (low intensity)', isCorrect: true),
-          QuizQuestion(body: '10 h per week of strength training'),
-          QuizQuestion(body: '2 h of extreme cardio once a week')
+          QuizQuestion(body: '30 min/day (low intensity)', isCorrect: true),
+          QuizQuestion(body: '10 hr/week of strength training'),
+          QuizQuestion(body: '2 hr/week of HIT training')
         ],
         answer: '30 min of low intensity aerobic exercise per day will be enough',
         link: 'https://doi.org/10.1007/s11906-005-0026-z',
@@ -356,7 +354,7 @@ QuizData createQuizDatabase(BuildContext context) {
         link: 'https://www.whoop.com/thelocker/resting-heart-rate-by-age-and-gender/',
         unit: 'bpm',
         //here is the contrary
-        positive: 'Your average bpm is too high, maybe there\'s something wrong',
+        positive: 'Your average bpm is high, consider talking about it to a doctor',
         negative: 'Great! You have an healthy heart rate',
         getReference: () async {
           return 80;
