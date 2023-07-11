@@ -41,11 +41,8 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       return 'Wrong credentials';
     }
-  }
-  // _loginUser
-  Future<String> _signUpUser(SignupData data) async {
-    return 'To be implemented';
-  }
+  }// _loginUser
+
   // _signUpUser
   Future<String> _recoverPassword(String email) async {
     return 'Recover password functionality needs to be implemented';
@@ -57,7 +54,10 @@ class _LoginPageState extends State<LoginPage> {
       title: 'FitFacts',
       theme: LoginTheme(
           pageColorLight: Theme.of(context).primaryColor,
-          primaryColor: Theme.of(context).primaryColor
+          buttonTheme: LoginButtonTheme(highlightColor: Colors.deepPurple[300], splashColor: Colors.deepPurple[300]),
+          primaryColor: Theme.of(context).primaryColor,
+          accentColor: Colors.deepPurple[200],
+          titleStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)
       ),
       onLogin: _loginUser,
       onRecoverPassword: _recoverPassword,
