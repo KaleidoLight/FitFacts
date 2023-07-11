@@ -149,14 +149,13 @@ class stepsLine extends StatelessWidget {
           child: Consumer<DatabaseRepository>(
             builder: (context, dbr, child){
               return FutureBuilder(
-                  future: Future.wait([Provider.of<DatabaseRepository>(context).getStepsDetail(), Provider.of<DatabaseRepository>(context).getStepGoal()]),
+                  future: Future.wait([Provider.of<DatabaseRepository>(context).getStepsDetailOfDay(setDay_date), Provider.of<DatabaseRepository>(context).getStepGoal()]),
                   builder: (context, snapshot){
                     if (snapshot.hasData){
                       final List<Object> data = snapshot.data!;
                       final stepsDetail = data[0] as List<StepsDetail>;
                       List<FlSpot> lineData =[];
                       stepsDetail.forEach((e) {
-
                         lineData.add(FlSpot(e.hour.toDouble(), e.steps));
                       });
                       return LineChart(LineChartData(

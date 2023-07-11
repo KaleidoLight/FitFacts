@@ -181,7 +181,8 @@ class _QuizOutcomeState extends State<QuizOutcome> {
             builder: (context, snapshot){
           if (snapshot.hasData){
             final personalRef = snapshot.data![0] as num;
-            final reference = snapshot.data![1] as num;// CHANGE DataType to ouput type of Future
+            final reference = snapshot.data![1] as num;
+            final roundType = widget.quizActivityData.roundType;// CHANGE DataType to ouput type of Future
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -200,8 +201,8 @@ class _QuizOutcomeState extends State<QuizOutcome> {
                         Container(height: 10,),
                         Text(
                           (personalRef >  reference)
-                              ? '${widget.quizActivityData.positive} (${roundToTwoDecimals(personalRef)} > ${roundToTwoDecimals(reference)}) ${widget.quizActivityData.unit}'
-                              : '${widget.quizActivityData.negative} (${roundToTwoDecimals(personalRef)} < ${roundToTwoDecimals(reference)}) ${widget.quizActivityData.unit}',
+                              ? '${widget.quizActivityData.positive} (${roundResult(personalRef, roundType)} > ${roundResult(reference, roundType)}) ${widget.quizActivityData.unit}'
+                              : '${widget.quizActivityData.negative} (${roundResult(personalRef, roundType)} < ${roundResult(reference, roundType)}) ${widget.quizActivityData.unit}',
                           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
                           maxLines: null,
                           textAlign: TextAlign.center,
@@ -319,6 +320,19 @@ void showModalQuiz(QuizTopic topic, BuildContext context){
       return QuizView(topic: topic,);
     },
   );
+}
+
+enum Roundings{
+  integer,
+  decimals
+}
+
+num roundResult(num value, Roundings rounding){
+  if (rounding == Roundings.integer){
+    return value.round();
+  }else {
+    return roundToTwoDecimals(value);
+  }
 }
 
 double roundToTwoDecimals(num num) {

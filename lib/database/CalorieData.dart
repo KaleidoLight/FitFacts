@@ -12,14 +12,15 @@ class CalorieData {
   CalorieData(this.dayReference, this.date,this.calorie);
 }
 
-@Entity(tableName: 'CalorieDetail')
+@Entity(tableName: 'CalorieDetail', primaryKeys: ['dayReference', 'hour'])
 class CalorieDetail {
 
-  @primaryKey
+  int dayReference;
+  String date;
   int hour;
   double calorie;
 
-  CalorieDetail(this.hour, this.calorie);
+  CalorieDetail(this.dayReference, this.date, this.hour, this.calorie);
 }
 
 @dao
@@ -34,6 +35,9 @@ abstract class CalorieDataDao {
 
   @Query('SELECT * FROM CalorieDetail')
   Future<List<CalorieDetail>> findCalorieDetail();
+
+  @Query('SELECT * FROM CalorieDetail WHERE date = :date')
+  Future<List<CalorieDetail>> findCalorieDetailOfDate(String date);
 
   //INSERT
   @Insert(onConflict: OnConflictStrategy.replace)

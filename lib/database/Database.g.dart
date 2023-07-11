@@ -99,11 +99,11 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `CalorieData` (`dayReference` INTEGER NOT NULL, `date` TEXT NOT NULL, `calorie` INTEGER NOT NULL, PRIMARY KEY (`dayReference`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `CalorieDetail` (`hour` INTEGER NOT NULL, `calorie` REAL NOT NULL, PRIMARY KEY (`hour`))');
+            'CREATE TABLE IF NOT EXISTS `CalorieDetail` (`dayReference` INTEGER NOT NULL, `date` TEXT NOT NULL, `hour` INTEGER NOT NULL, `calorie` REAL NOT NULL, PRIMARY KEY (`dayReference`, `hour`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `StepsData` (`dayReference` INTEGER NOT NULL, `date` TEXT NOT NULL, `steps` INTEGER NOT NULL, PRIMARY KEY (`dayReference`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `StepsDetail` (`hour` INTEGER NOT NULL, `steps` REAL NOT NULL, PRIMARY KEY (`hour`))');
+            'CREATE TABLE IF NOT EXISTS `StepsDetail` (`dayReference` INTEGER NOT NULL, `date` TEXT NOT NULL, `hour` INTEGER NOT NULL, `steps` REAL NOT NULL, PRIMARY KEY (`dayReference`, `hour`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `HeartData` (`dayReference` INTEGER NOT NULL, `date` TEXT NOT NULL, `time` TEXT NOT NULL, `beats` REAL NOT NULL, PRIMARY KEY (`dayReference`))');
         await database.execute(
@@ -263,8 +263,12 @@ class _$CalorieDataDao extends CalorieDataDao {
         _calorieDetailInsertionAdapter = InsertionAdapter(
             database,
             'CalorieDetail',
-            (CalorieDetail item) =>
-                <String, Object?>{'hour': item.hour, 'calorie': item.calorie}),
+            (CalorieDetail item) => <String, Object?>{
+                  'dayReference': item.dayReference,
+                  'date': item.date,
+                  'hour': item.hour,
+                  'calorie': item.calorie
+                }),
         _calorieDataUpdateAdapter = UpdateAdapter(
             database,
             'CalorieData',
@@ -277,9 +281,13 @@ class _$CalorieDataDao extends CalorieDataDao {
         _calorieDetailUpdateAdapter = UpdateAdapter(
             database,
             'CalorieDetail',
-            ['hour'],
-            (CalorieDetail item) =>
-                <String, Object?>{'hour': item.hour, 'calorie': item.calorie}),
+            ['dayReference', 'hour'],
+            (CalorieDetail item) => <String, Object?>{
+                  'dayReference': item.dayReference,
+                  'date': item.date,
+                  'hour': item.hour,
+                  'calorie': item.calorie
+                }),
         _calorieDataDeletionAdapter = DeletionAdapter(
             database,
             'CalorieData',
@@ -292,9 +300,13 @@ class _$CalorieDataDao extends CalorieDataDao {
         _calorieDetailDeletionAdapter = DeletionAdapter(
             database,
             'CalorieDetail',
-            ['hour'],
-            (CalorieDetail item) =>
-                <String, Object?>{'hour': item.hour, 'calorie': item.calorie});
+            ['dayReference', 'hour'],
+            (CalorieDetail item) => <String, Object?>{
+                  'dayReference': item.dayReference,
+                  'date': item.date,
+                  'hour': item.hour,
+                  'calorie': item.calorie
+                });
 
   final sqflite.DatabaseExecutor database;
 
@@ -336,8 +348,23 @@ class _$CalorieDataDao extends CalorieDataDao {
   @override
   Future<List<CalorieDetail>> findCalorieDetail() async {
     return _queryAdapter.queryList('SELECT * FROM CalorieDetail',
-        mapper: (Map<String, Object?> row) =>
-            CalorieDetail(row['hour'] as int, row['calorie'] as double));
+        mapper: (Map<String, Object?> row) => CalorieDetail(
+            row['dayReference'] as int,
+            row['date'] as String,
+            row['hour'] as int,
+            row['calorie'] as double));
+  }
+
+  @override
+  Future<List<CalorieDetail>> findCalorieDetailOfDate(String date) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM CalorieDetail WHERE date = ?1',
+        mapper: (Map<String, Object?> row) => CalorieDetail(
+            row['dayReference'] as int,
+            row['date'] as String,
+            row['hour'] as int,
+            row['calorie'] as double),
+        arguments: [date]);
   }
 
   @override
@@ -401,8 +428,12 @@ class _$StepsDataDao extends StepsDataDao {
         _stepsDetailInsertionAdapter = InsertionAdapter(
             database,
             'StepsDetail',
-            (StepsDetail item) =>
-                <String, Object?>{'hour': item.hour, 'steps': item.steps}),
+            (StepsDetail item) => <String, Object?>{
+                  'dayReference': item.dayReference,
+                  'date': item.date,
+                  'hour': item.hour,
+                  'steps': item.steps
+                }),
         _stepsDataUpdateAdapter = UpdateAdapter(
             database,
             'StepsData',
@@ -415,9 +446,13 @@ class _$StepsDataDao extends StepsDataDao {
         _stepsDetailUpdateAdapter = UpdateAdapter(
             database,
             'StepsDetail',
-            ['hour'],
-            (StepsDetail item) =>
-                <String, Object?>{'hour': item.hour, 'steps': item.steps}),
+            ['dayReference', 'hour'],
+            (StepsDetail item) => <String, Object?>{
+                  'dayReference': item.dayReference,
+                  'date': item.date,
+                  'hour': item.hour,
+                  'steps': item.steps
+                }),
         _stepsDataDeletionAdapter = DeletionAdapter(
             database,
             'StepsData',
@@ -430,9 +465,13 @@ class _$StepsDataDao extends StepsDataDao {
         _stepsDetailDeletionAdapter = DeletionAdapter(
             database,
             'StepsDetail',
-            ['hour'],
-            (StepsDetail item) =>
-                <String, Object?>{'hour': item.hour, 'steps': item.steps});
+            ['dayReference', 'hour'],
+            (StepsDetail item) => <String, Object?>{
+                  'dayReference': item.dayReference,
+                  'date': item.date,
+                  'hour': item.hour,
+                  'steps': item.steps
+                });
 
   final sqflite.DatabaseExecutor database;
 
@@ -474,8 +513,22 @@ class _$StepsDataDao extends StepsDataDao {
   @override
   Future<List<StepsDetail>> findStepsDetail() async {
     return _queryAdapter.queryList('SELECT * FROM StepsDetail',
-        mapper: (Map<String, Object?> row) =>
-            StepsDetail(row['hour'] as int, row['steps'] as double));
+        mapper: (Map<String, Object?> row) => StepsDetail(
+            row['dayReference'] as int,
+            row['date'] as String,
+            row['hour'] as int,
+            row['steps'] as double));
+  }
+
+  @override
+  Future<List<StepsDetail>> findStepsDetailOfDate(String date) async {
+    return _queryAdapter.queryList('SELECT * FROM StepsDetail WHERE date = ?1',
+        mapper: (Map<String, Object?> row) => StepsDetail(
+            row['dayReference'] as int,
+            row['date'] as String,
+            row['hour'] as int,
+            row['steps'] as double),
+        arguments: [date]);
   }
 
   @override

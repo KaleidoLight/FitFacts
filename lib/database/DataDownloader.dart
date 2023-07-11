@@ -1,7 +1,6 @@
 import 'package:fitfacts/server/Impact.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:fitfacts/database/ActivityData.dart';
 import 'package:fitfacts/database/CalorieData.dart';
@@ -23,12 +22,12 @@ Future<void> downloadAndStoreData(BuildContext context) async {
       print('No Calories Data for time-range');
     }
   }
-
-  final lastCalorieDay = caloriesAPIResponse.day(7).detail();
-  lastCalorieDay.forEach((hour, calorie) {
-    Provider.of<DatabaseRepository>(context, listen: false)
-        .addCalorieDetail(CalorieDetail(hour, calorie));
-  });
+  for (int day = 1; day <=7; day++){
+    final calorieDetail = caloriesAPIResponse.day(day).detail();
+    calorieDetail.forEach((hour, calorie) {
+      Provider.of<DatabaseRepository>(context, listen: false).addCalorieDetail(CalorieDetail(day, caloriesAPIResponse.day(day).date, hour, calorie));
+    });
+  };
 
   // Steps Download and Storing
   final stepsAPIResponse = await Impact().getSteps(context);
@@ -41,11 +40,12 @@ Future<void> downloadAndStoreData(BuildContext context) async {
       print('No Steps Data for time-range');
     }
   }
-  final lastStepsDay = stepsAPIResponse.day(7).detail();
-  lastStepsDay.forEach((hour, steps) {
-    Provider.of<DatabaseRepository>(context, listen: false)
-        .addStepsDetail(StepsDetail(hour, steps));
-  });
+  for (int day = 1; day <=7; day++){
+    final dayDetail = stepsAPIResponse.day(day).detail();
+    dayDetail.forEach((hour, steps) {
+      Provider.of<DatabaseRepository>(context, listen: false).addStepsDetail(StepsDetail(day, stepsAPIResponse.day(day).date, hour, steps));
+    });
+  };
 
   // HeartRate Download and Storing
   final heartAPIResponse = await Impact().getHeartRate(context);

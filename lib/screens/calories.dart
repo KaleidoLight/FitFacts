@@ -168,7 +168,7 @@ class stepsLine extends StatelessWidget {
             builder: (context, dbr, child) {
               return FutureBuilder(
                   future: Future.wait([
-                    Provider.of<DatabaseRepository>(context).getCalorieDetail(),
+                    Provider.of<DatabaseRepository>(context).getCalorieDetailOfDate(setDay_date),
                     Provider.of<DatabaseRepository>(context).getCalorieGoal()
                   ]),
                   builder: (context, snapshot) {
