@@ -11,6 +11,7 @@ import '../quizview/QuizView.dart';
 import '../themes/blocks.dart';
 import '../themes/theme.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'dart:math';
 
 class HeartPage extends StatelessWidget {
   const HeartPage({Key? key}) : super(key: key);
@@ -123,16 +124,16 @@ class HeartView extends StatelessWidget {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       final data = snapshot.data as List<HeartData>;
-                      Map<int, int> avg_bpm = {};
+
+                      //daily mean hr
+                    /* Map<int, int> avg_bpm = {};
                       for (var day_subtract = 1;
                           day_subtract < 8;
                           day_subtract++) {
                         double dayBPM = 0.1;
                         int dayCounts = 0;
                         data.forEach((element) {
-                          if (element.date ==
-                              DateFormat('yyyy-MM-dd').format(DateTime.now()
-                                  .subtract(Duration(days: day_subtract)))) {
+                          if (element.date == DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: day_subtract)))) {
                             dayBPM = dayBPM + element.beats;
                             dayCounts = dayCounts + 1;
                           }
@@ -147,8 +148,33 @@ class HeartView extends StatelessWidget {
                       avg_bpm.keys.forEach((key) {
                         dataBars.add(BarChartGroupData(x: key, barRods: [
                           BarChartRodData(
-                              fromY: avg_bpm[8 - key]!.toDouble() -1,
+                              fromY: avg_bpm[8 - key]!.toDouble()-1,
                               toY: avg_bpm[8 - key]!.toDouble(),
+                              width: 15,
+                              color: Theme.of(context).primaryColor)
+                        ]));
+                      });
+                      */
+                      //min max hr
+                      Map<int, int> min_hr = {};
+                      Map<int, int> max_hr = {};
+                      for (var day_subtract = 1; day_subtract < 8; day_subtract++) {
+                        List<int> day_beats = [];
+                        data.forEach((element) {
+                          if (element.date == DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: day_subtract)))) {
+                            day_beats.add(element.beats.toInt());
+                          }
+                        });
+                        min_hr[day_subtract] = day_beats.reduce(min);
+                        max_hr[day_subtract] = day_beats.reduce(max);
+                      }
+
+                      List<BarChartGroupData> dataBars = [];
+                      min_hr.keys.forEach((key) {
+                        dataBars.add(BarChartGroupData(x: key, barRods: [
+                          BarChartRodData(
+                              fromY: min_hr[8 - key]!.toDouble(),
+                              toY: max_hr[8 - key]!.toDouble(),
                               width: 15,
                               color: Theme.of(context).primaryColor)
                         ]));
@@ -156,8 +182,6 @@ class HeartView extends StatelessWidget {
                       return BarChart(BarChartData(
                           borderData: FlBorderData(show: false),
                           barGroups: dataBars,
-                          minY: 25,
-                          maxY: 140,
                           titlesData: FlTitlesData(
                               topTitles: AxisTitles(
                                   sideTitles: SideTitles(showTitles: false)),

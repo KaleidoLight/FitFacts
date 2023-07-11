@@ -483,9 +483,6 @@ class _BottomBarState extends State<BottomBar> {
 
 // to leave user logged in
 void _toLoginPage(BuildContext context) async{
-  //Unset the 'username' filed in SharedPreference
-  final sp = await SharedPreferences.getInstance();
-  sp.remove('logged');
   //Pop the drawer first
   Navigator.pop(context);
   //Then pop the HomePage

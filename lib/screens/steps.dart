@@ -50,6 +50,13 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
+  int setDay = 1;
+
+  @override
+  void initState() {
+    setDay = 1;
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -59,7 +66,30 @@ class _BodyState extends State<Body> {
           children: [
             Container(height: 15,),
             stepsView(),
-            stepsLine(),
+            stepsLine(setDay: setDay,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                    onPressed: () {
+                      setState(() {
+                        if (setDay < 7) {
+                          setDay = setDay + 1;
+                        }
+                      });
+                    },
+                    child: Icon(Icons.arrow_back)),
+                TextButton(
+                    onPressed: () {
+                      setState(() {
+                        if (setDay > 1) {
+                          setDay = setDay - 1;
+                        }
+                      });
+                    },
+                    child: Icon(Icons.arrow_forward)),
+              ],
+            )
           ],
         )
       ],
@@ -129,15 +159,15 @@ class stepsView extends StatelessWidget {
 
 // Line View
 class stepsLine extends StatelessWidget {
-  const stepsLine({Key? key}) : super(key: key);
+  final int setDay;
+  const stepsLine({Key? key, required this.setDay}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var themeMode = context
         .watch<ThemeModel>()
         .mode;
-    final String setDay_date = DateFormat('yyyy-MM-dd')
-        .format(DateTime.now().subtract(Duration(days: 1)));
+    final String setDay_date = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: setDay)));
     final Color? greyColor = (themeMode == ThemeMode.light) ? Colors.grey[200] : Colors.grey[800];
     return largeBlock(
         title: 'Daily Steps Detail',
@@ -168,6 +198,10 @@ class stepsLine extends StatelessWidget {
                             barWidth: 3,
                             belowBarData: BarAreaData(show: true, gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: <Color>[Theme.of(context).primaryColor.withAlpha(120),Theme.of(context).primaryColor.withAlpha(20)]))
                         )],
+                        gridData: FlGridData(
+                            show: true,
+                            drawHorizontalLine: true,
+                            drawVerticalLine: false),
                         lineTouchData: LineTouchData(touchTooltipData: LineTouchTooltipData(tooltipBgColor: greyColor)),
                       ));
                     }else{

@@ -52,6 +52,13 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
+  int setDay = 1;
+
+  @override
+  void initState() {
+    setDay = 1;
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -62,7 +69,30 @@ class _BodyState extends State<Body> {
               height: 15,
             ),
             caloriesView(),
-            stepsLine(),
+            caloriesLine(setDay: setDay,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                    onPressed: () {
+                      setState(() {
+                        if (setDay < 7) {
+                          setDay = setDay + 1;
+                        }
+                      });
+                    },
+                    child: Icon(Icons.arrow_back)),
+                TextButton(
+                    onPressed: () {
+                      setState(() {
+                        if (setDay > 1) {
+                          setDay = setDay - 1;
+                        }
+                      });
+                    },
+                    child: Icon(Icons.arrow_forward)),
+              ],
+            )
           ],
         )
       ],
@@ -146,14 +176,14 @@ class caloriesView extends StatelessWidget {
   }
 }
 
-// Steps View
-class stepsLine extends StatelessWidget {
-  const stepsLine({Key? key}) : super(key: key);
+// calories line
+class caloriesLine extends StatelessWidget {
+  final int setDay;
+  const caloriesLine({Key? key, required this.setDay}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final String setDay_date = DateFormat('yyyy-MM-dd')
-        .format(DateTime.now().subtract(Duration(days: 1)));
+    final String setDay_date = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: setDay)));
     var themeMode = context.watch<ThemeModel>().mode;
     final Color? greyColor =
         (themeMode == ThemeMode.light) ? Colors.grey[200] : Colors.grey[800];
@@ -167,14 +197,11 @@ class stepsLine extends StatelessWidget {
           child: Consumer<DatabaseRepository>(
             builder: (context, dbr, child) {
               return FutureBuilder(
-                  future: Future.wait([
+                  future:
                     Provider.of<DatabaseRepository>(context).getCalorieDetailOfDate(setDay_date),
-                    Provider.of<DatabaseRepository>(context).getCalorieGoal()
-                  ]),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      final List<Object> data = snapshot.data!;
-                      final stepsDetail = data[0] as List<CalorieDetail>;
+                      final stepsDetail = snapshot.data as List<CalorieDetail>;
                       List<FlSpot> lineData = [];
                       stepsDetail.forEach((e) {
                         lineData.add(FlSpot(e.hour.toDouble(), e.calorie));
@@ -204,6 +231,10 @@ class stepsLine extends StatelessWidget {
                                             .withAlpha(20)
                                       ])))
                         ],
+                        gridData: FlGridData(
+                            show: true,
+                            drawHorizontalLine: true,
+                            drawVerticalLine: false),
                         lineTouchData: LineTouchData(
                             touchTooltipData: LineTouchTooltipData(
                                 tooltipBgColor: greyColor)),
