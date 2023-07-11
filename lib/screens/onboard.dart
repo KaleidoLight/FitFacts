@@ -10,11 +10,18 @@ import 'package:visibility_detector/visibility_detector.dart';
 import 'package:fitfacts/database/DatabaseRepo.dart';
 import '../database/UserInfo.dart';
 
-class Onboard extends StatelessWidget {
+class Onboard extends StatefulWidget {
   Onboard({Key? key}) : super(key: key);
 
   static const routename = 'Onboard';
+
+  @override
+  State<Onboard> createState() => _OnboardState();
+}
+
+class _OnboardState extends State<Onboard> {
   final _introKey = GlobalKey<IntroductionScreenState>();
+  int _currentPageIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +32,25 @@ class Onboard extends StatelessWidget {
 
     return Scaffold(
         body: IntroductionScreen(
-      showNextButton: false,
-      showBackButton: false,
+      showNextButton: _currentPageIndex != 0,
+      showBackButton: _currentPageIndex != 3,
       showSkipButton: false,
       showDoneButton: false,
+      next: Text(
+        'Next',
+        style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+      ),
+      back: Text(
+        'Back',
+        style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+      ),
       freeze: true,
       key: _introKey,
+      onChange: (index) {
+        setState(() {
+          _currentPageIndex = index;
+        });
+      },
       onDone: () {},
       onSkip: () {},
       pages: [
@@ -66,8 +86,9 @@ class Onboard extends StatelessWidget {
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                       child: FormBuilderTextField(
                         name: 'Username',
-                        decoration:
-                            const InputDecoration(labelText: 'Username', focusedBorder: InputBorder.none),
+                        decoration: const InputDecoration(
+                            labelText: 'Username',
+                            focusedBorder: InputBorder.none),
                         initialValue: 'MMmxITaSML',
                       ),
                     )),
@@ -89,8 +110,9 @@ class Onboard extends StatelessWidget {
                                 const BorderRadius.all(Radius.circular(10)),
                             child: FormBuilderTextField(
                               name: 'Password',
-                              decoration:
-                                  const InputDecoration(labelText: 'Password', focusedBorder: InputBorder.none),
+                              decoration: const InputDecoration(
+                                  labelText: 'Password',
+                                  focusedBorder: InputBorder.none),
                               obscureText: true,
                               initialValue: '12345678!',
                             ),
@@ -115,7 +137,10 @@ class Onboard extends StatelessWidget {
                                 await Impact().authorize(context, user, pass);
                             if (response == 200) {
                               print('AUTHORIZED');
-                              Provider.of<DatabaseRepository>(context, listen: false).registerUser(UserInfo('', '00-00-0000', '', 0, 0, 0, 0, 0));
+                              Provider.of<DatabaseRepository>(context,
+                                      listen: false)
+                                  .registerUser(UserInfo(
+                                      '', '00-00-0000', '', 0, 0, 0, 0, 0));
                               _introKey.currentState?.next();
                             }
                           }))
@@ -137,44 +162,43 @@ class Onboard extends StatelessWidget {
           )),
         ),
         PageViewModel(
-            image: Center(
-                child: Column(
-              children: [
-                Container(
-                  height: 60,
-                ),
-                Image.asset(
-                  'assets/images/personalInfo.png',
-                  scale: 1,
-                ),
-              ],
-            )),
-            title: "About You",
-            decoration: const PageDecoration(
-              bodyFlex: 1,
-              imagePadding: const EdgeInsets.only(bottom: 0),
-              titleTextStyle:
-                  TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-            ),
-            bodyWidget: Column(
-              children: [
-                const Text(
-                  'It will let us better understand your activity',
-                  style: TextStyle(fontSize: 18),
-                  textAlign: TextAlign.center,
-                ),
-                DefaultInfoItem(
-                  badgeIcon: Icons.person_rounded,
-                  title: 'Username',
-                  validator: Validators.required,
-                  queryString: 'Username',
-                ),
-                GenderSelectorStyled(
-                    badgeIcon: Icons.transgender, title: 'Gender'),
-                DateInfoItem(),
-                proceedButton(route: _introKey)
-              ],
-            ),
+          image: Center(
+              child: Column(
+            children: [
+              Container(
+                height: 60,
+              ),
+              Image.asset(
+                'assets/images/personalInfo.png',
+                scale: 1,
+              ),
+            ],
+          )),
+          title: "About You",
+          decoration: const PageDecoration(
+            bodyFlex: 1,
+            imagePadding: const EdgeInsets.only(bottom: 0),
+            titleTextStyle:
+                TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+          ),
+          bodyWidget: Column(
+            children: [
+              const Text(
+                'It will let us better understand your activity',
+                style: TextStyle(fontSize: 18),
+                textAlign: TextAlign.center,
+              ),
+              DefaultInfoItem(
+                badgeIcon: Icons.person_rounded,
+                title: 'Username',
+                validator: Validators.required,
+                queryString: 'Username',
+              ),
+              GenderSelectorStyled(
+                  badgeIcon: Icons.transgender, title: 'Gender'),
+              DateInfoItem(),
+            ],
+          ),
         ),
         PageViewModel(
             image: Center(
@@ -224,7 +248,6 @@ class Onboard extends StatelessWidget {
                   title: 'Steps Goal',
                   queryString: 'StepGoal',
                 ),
-                proceedButton(route: _introKey)
               ],
             )),
         PageViewModel(
@@ -269,59 +292,17 @@ class Onboard extends StatelessWidget {
             ))
       ],
     ));
-  } //build
-}
-
-class proceedButton extends StatefulWidget {
-  proceedButton({Key? key, required this.route, this.title = 'Next'})
-      : super(key: key);
-
-  final String title;
-  final GlobalKey<IntroductionScreenState> route;
-  @override
-  State<proceedButton> createState() => _proceedButtonState();
-}
-
-class _proceedButtonState extends State<proceedButton> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-        child: InkWell(
-          child: Container(
-            height: 60,
-            color: Theme.of(context).primaryColor,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Next',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                )
-              ],
-            ),
-          ),
-          onTap: () {
-            widget.route.currentState?.next();
-            print('pressed');
-          },
-        ),
-      ),
-    );
   }
 }
 
 void performLoginSetup(BuildContext context) async {
-
   await downloadAndStoreData(context);
 
   //Perform Redirection to App
   await Future.delayed(Duration(seconds: 2));
-  Navigator.of(context).push(MaterialPageRoute (
-    builder: (BuildContext context) => const HomePage(),
-  ),);
+  Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (BuildContext context) => const HomePage(),
+    ),
+  );
 }
-
-

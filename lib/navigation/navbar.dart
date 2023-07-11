@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:fitfacts/database/DatabaseRepo.dart';
 import 'package:fitfacts/server/NetworkUtils.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:fitfacts/themes/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitfacts/screens/loginPage.dart';
-
 import '../database/DataDownloader.dart';
 import '../screens/impactLogin.dart';
 
@@ -446,7 +444,7 @@ class _BottomBarState extends State<BottomBar> {
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               backgroundColor: Theme.of(context).primaryColor,
-                              content: Center(child: Text('Fitbit Data Refreshed', style: TextStyle(fontSize: 18),)),
+                              content: Center(child: Text('Fitbit Data Refreshed', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),)),
                             ));
                           }
                         },
@@ -491,8 +489,7 @@ void _toLoginPage(BuildContext context) async{
   //Pop the drawer first
   Navigator.pop(context);
   //Then pop the HomePage
-  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)
-  => LoginPage()));
+  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
 }//_toCalendarPage
 
 
