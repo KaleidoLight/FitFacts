@@ -184,8 +184,10 @@ class stepsLine extends StatelessWidget {
                     if (snapshot.hasData){
                       final List<Object> data = snapshot.data!;
                       final stepsDetail = data[0] as List<StepsDetail>;
+                      List<StepsDetail> stepSorted = List.from(stepsDetail);
+                      stepSorted.sort((a,b) => a.hour.compareTo(b.hour)); // order bug solving
                       List<FlSpot> lineData =[];
-                      stepsDetail.forEach((e) {
+                      stepSorted.forEach((e) {
                         lineData.add(FlSpot(e.hour.toDouble(), e.steps));
                       });
                       return LineChart(LineChartData(

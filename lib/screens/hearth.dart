@@ -126,7 +126,7 @@ class HeartView extends StatelessWidget {
                       final data = snapshot.data as List<HeartData>;
 
                       //daily mean hr
-                    /* Map<int, int> avg_bpm = {};
+                    Map<int, int> avg_bpm = {};
                       for (var day_subtract = 1;
                           day_subtract < 8;
                           day_subtract++) {
@@ -145,16 +145,7 @@ class HeartView extends StatelessWidget {
                         }
                       }
                       List<BarChartGroupData> dataBars = [];
-                      avg_bpm.keys.forEach((key) {
-                        dataBars.add(BarChartGroupData(x: key, barRods: [
-                          BarChartRodData(
-                              fromY: avg_bpm[8 - key]!.toDouble()-1,
-                              toY: avg_bpm[8 - key]!.toDouble(),
-                              width: 15,
-                              color: Theme.of(context).primaryColor)
-                        ]));
-                      });
-                      */
+                      
                       //min max hr
                       Map<int, int> min_hr = {};
                       Map<int, int> max_hr = {};
@@ -169,13 +160,18 @@ class HeartView extends StatelessWidget {
                         max_hr[day_subtract] = day_beats.reduce(max);
                       }
 
-                      List<BarChartGroupData> dataBars = [];
-                      min_hr.keys.forEach((key) {
+                      avg_bpm.forEach((key, value) {
                         dataBars.add(BarChartGroupData(x: key, barRods: [
                           BarChartRodData(
-                              fromY: min_hr[8 - key]!.toDouble(),
-                              toY: max_hr[8 - key]!.toDouble(),
+                              fromY: avg_bpm[8 - key]!.toDouble() - 1,
+                              toY: avg_bpm[8 - key]!.toDouble() + 1,
                               width: 15,
+                              backDrawRodData: BackgroundBarChartRodData(
+                                fromY: min_hr[8-key]!.toDouble(),
+                                toY: max_hr[8-key]!.toDouble(),
+                                show: true,
+                                color: Theme.of(context).primaryColor.withAlpha(100)
+                              ),
                               color: Theme.of(context).primaryColor)
                         ]));
                       });
