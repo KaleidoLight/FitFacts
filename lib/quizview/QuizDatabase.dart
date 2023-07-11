@@ -73,14 +73,14 @@ QuizData createQuizDatabase(BuildContext context) {
         ),
 
     QuizActivity(
-        title: 'What is the average RMR (resting metabolic rate) for someone like you?',
+        title: 'What is the average RMR (resting metabolic rate) ?',
         topic: QuizTopic.calorie,
         questions: [
-          QuizQuestion(body: '1600 - 2000 Kcal/day', isCorrect: true),
+          QuizQuestion(body: '1200 - 2000 Kcal/day', isCorrect: true),
           QuizQuestion(body: '600 - 1200 Kcal/day'),
           QuizQuestion(body: '2000- 2500 Kcal/day')
         ],
-        answer: 'RMR  normally ranges from 1,200 to 2,000 kcal/day (from 1,600 - 2000 kcal/day in men). Heavier people have higher RMR because they have more mass to support. Each pound of muscle burns to produce 6-7 kcal/day.',
+        answer: 'RMR  normally ranges from 1,200 to 2,000 kcal/day (from 1600 - 2000 kcal/day in men and from 1200 - 1800 in women). Heavier people have higher RMR because they have more mass to support. Each pound of muscle burns to produce 6-7 kcal/day.',
         link: 'https://doi.org/10.5717/jenb.2014.18.1.25',
         unit: 'Kcal/day',
         positive: 'Your RMR is better than average',
@@ -164,8 +164,8 @@ QuizData createQuizDatabase(BuildContext context) {
         }
     ),
 
-
-/*    QuizActivity(
+/*
+    QuizActivity(
         title: 'What is the average RMR (resting metabolic rate) for women ?',
         topic: QuizTopic.calorie,
         questions: [
@@ -194,8 +194,8 @@ QuizData createQuizDatabase(BuildContext context) {
 
           return RMR;
         }
-    ),*/
-
+    ),
+*/
     QuizActivity(
         title: 'Which is the usual speed of an experienced runner (18-40yr)?',
         topic: QuizTopic.activity,
