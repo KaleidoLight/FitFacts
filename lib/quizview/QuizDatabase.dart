@@ -343,7 +343,7 @@ QuizData createQuizDatabase(BuildContext context) {
 
 
     QuizActivity(
-        title: 'What is the appropriate average heart bit of an healthy person',
+        title: 'What is the appropriate average heart beat of an healthy person',
         topic: QuizTopic.heart,
         questions: [
           QuizQuestion(body: '90-100 bpm', ),
