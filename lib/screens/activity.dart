@@ -97,7 +97,8 @@ class activityTile extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: ExpansionTile(
             title: largeBlock(
-                title: data[index].name + '          ' + data[index].date,
+                title: data[index].name,
+                date: data[index].date,
                 icon: getIcon(data[index].name),
                 showBk: false,
                 body: Row(

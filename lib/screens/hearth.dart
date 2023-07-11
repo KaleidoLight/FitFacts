@@ -110,7 +110,7 @@ class HeartView extends StatelessWidget {
     final Color? greyColor =
         (themeMode == ThemeMode.light) ? Colors.grey[200] : Colors.grey[800];
     return largeBlock(
-        title: 'Weekly mean heartbeat',
+        title: 'Weekly Mean Heart Beat',
         icon: Icons.event_note_rounded,
         extraHeight: 100,
         body: Padding(
@@ -147,6 +147,7 @@ class HeartView extends StatelessWidget {
                       avg_bpm.keys.forEach((key) {
                         dataBars.add(BarChartGroupData(x: key, barRods: [
                           BarChartRodData(
+                              fromY: avg_bpm[8 - key]!.toDouble() -1,
                               toY: avg_bpm[8 - key]!.toDouble(),
                               width: 15,
                               color: Theme.of(context).primaryColor)
@@ -155,6 +156,8 @@ class HeartView extends StatelessWidget {
                       return BarChart(BarChartData(
                           borderData: FlBorderData(show: false),
                           barGroups: dataBars,
+                          minY: 25,
+                          maxY: 140,
                           titlesData: FlTitlesData(
                               topTitles: AxisTitles(
                                   sideTitles: SideTitles(showTitles: false)),
@@ -192,7 +195,8 @@ class heartLine extends StatelessWidget {
     final Color? greyColor =
         (themeMode == ThemeMode.light) ? Colors.grey[200] : Colors.grey[800];
     return largeBlock(
-      title: 'Daily heart Detail of  $setDay_date ',
+      title: 'Daily Heart Beat Detail',
+      date: setDay_date,
       icon: Icons.watch_later_rounded,
       extraHeight: 180,
       body: Padding(

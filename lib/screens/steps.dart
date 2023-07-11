@@ -136,9 +136,12 @@ class stepsLine extends StatelessWidget {
     var themeMode = context
         .watch<ThemeModel>()
         .mode;
+    final String setDay_date = DateFormat('yyyy-MM-dd')
+        .format(DateTime.now().subtract(Duration(days: 1)));
     final Color? greyColor = (themeMode == ThemeMode.light) ? Colors.grey[200] : Colors.grey[800];
     return largeBlock(
         title: 'Daily Steps Detail',
+        date: setDay_date,
         icon: Icons.watch_later_rounded,
         extraHeight: 150,
         body: Padding(

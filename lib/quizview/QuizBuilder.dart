@@ -38,7 +38,7 @@ class QuizActivity{
   String answer; // string answer
   String positive; // outcome if positive
   String negative; // outcome if negative
-  num reference; // decision threshold
+  Future<num> reference; // decision threshold
   String unit; // unit of measure
   Future<num>? personalRef; // personal health metric (from the database -> future)
 
@@ -48,10 +48,11 @@ class QuizActivity{
     required this.answer,
     required this.positive,
     required this.negative,
-    required this.reference,
     this.unit = '',
     this.link = '',
-    required Future<num> Function() getPersonalData}) : personalRef = getPersonalData();
+    required Future<num> Function() getPersonalData,
+    required Future<num> Function() getReference
+  }) : personalRef = getPersonalData(), reference = getReference();
 
 }
 

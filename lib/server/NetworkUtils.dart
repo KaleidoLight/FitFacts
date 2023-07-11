@@ -63,6 +63,8 @@ class TokenManager {
     String encryptedRefresh = encryptToken(tokens['refresh'], secretKey); //encrypt token
     await sp.setString('access', encryptedAccess); // save
     await sp.setString('refresh', encryptedRefresh); // save
+    print('ACCESS-EXP ${JwtDecoder.getExpirationDate(tokens['access'])}');
+    print('REFRESH-EXP ${JwtDecoder.getExpirationDate(tokens['refresh'])}');
   }
 
   /// refreshToken
@@ -74,9 +76,7 @@ class TokenManager {
     var token = decryptToken(sp.getString('refresh')!, secretKey);
     if (JwtDecoder.isExpired(token)){
       print('REFRESH TOKEN EXPIRED');
-      final tokenResult = await Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) {
+      final tokenResult = await Navigator.push(context, MaterialPageRoute(builder: (context) {
           return ImpactLogin();
         }),
       );
@@ -95,8 +95,8 @@ class TokenManager {
   /// If expired automatically requests a new one
   static Future<String?> accessToken(BuildContext context) async {
     final sp = await SharedPreferences.getInstance();
-    String secretKey = sp.getString('firstLoginTime') ?? 'secret_key_missing';
-    var token = decryptToken(sp.getString('access')!, secretKey);
+    String? secretKey = sp.getString('firstLoginTime');
+    var token = decryptToken(sp.getString('access')!, secretKey!);
     if (JwtDecoder.isExpired(token)){
       await Impact().updateTokens(context);
       token = decryptToken(sp.getString('access')!, secretKey);

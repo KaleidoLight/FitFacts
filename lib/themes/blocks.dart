@@ -128,7 +128,7 @@ class _largeBlockState extends State<largeBlock> {
                           ),
                           Row(
                             children: [
-                              Text(widget.date),
+                              Text(widget.date, style: TextStyle(fontWeight: FontWeight.w600),),
                               Container(width: 5,),
                             ],
                           )

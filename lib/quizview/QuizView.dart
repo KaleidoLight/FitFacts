@@ -177,10 +177,11 @@ class _QuizOutcomeState extends State<QuizOutcome> {
     return Consumer<DatabaseRepository>( // link the consumer of the provider
       builder: (context, dbr, child){
         return FutureBuilder( // Call Future builder
-            future: widget.quizActivityData.personalRef, /// <= GET THE DATA FROM THE DATABASE with the desider function
+            future: Future.wait([widget.quizActivityData.personalRef!, widget.quizActivityData.reference]), /// <= GET THE DATA FROM THE DATABASE with the desider function
             builder: (context, snapshot){
           if (snapshot.hasData){
-            final personalRef = snapshot.data as num;  // CHANGE DataType to ouput type of Future
+            final personalRef = snapshot.data![0] as num;
+            final reference = snapshot.data![1] as num;// CHANGE DataType to ouput type of Future
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -198,9 +199,9 @@ class _QuizOutcomeState extends State<QuizOutcome> {
                         ),
                         Container(height: 10,),
                         Text(
-                          (personalRef > widget.quizActivityData.reference)
-                              ? '${widget.quizActivityData.positive} $personalRef ${widget.quizActivityData.unit}'
-                              : '${widget.quizActivityData.negative} $personalRef ${widget.quizActivityData.unit}',
+                          (personalRef >  reference)
+                              ? '${widget.quizActivityData.positive} (${roundToTwoDecimals(personalRef)} > ${roundToTwoDecimals(reference)}) ${widget.quizActivityData.unit}'
+                              : '${widget.quizActivityData.negative} (${roundToTwoDecimals(personalRef)} < ${roundToTwoDecimals(reference)}) ${widget.quizActivityData.unit}',
                           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
                           maxLines: null,
                           textAlign: TextAlign.center,
@@ -318,4 +319,8 @@ void showModalQuiz(QuizTopic topic, BuildContext context){
       return QuizView(topic: topic,);
     },
   );
+}
+
+double roundToTwoDecimals(num num) {
+  return double.parse(num.toStringAsFixed(2));
 }

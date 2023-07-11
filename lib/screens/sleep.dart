@@ -110,7 +110,8 @@ class sleepZonesMin extends StatelessWidget {
         .mode;
     final Color? greyColor = (themeMode == ThemeMode.light) ? Colors.grey[200] : Colors.grey[800];
     return largeBlock(
-        title: 'Sleep Zones: Minutes - $setDay_date',
+        title: 'Sleep Zones: Minutes',
+        date: setDay_date,
         icon: Icons.pie_chart_rounded,
         extraHeight: 150,
         body: Padding(
@@ -189,7 +190,8 @@ class sleepZonesTimes extends StatelessWidget {
         .mode;
     final Color? greyColor = (themeMode == ThemeMode.light) ? Colors.grey[200] : Colors.grey[800];
     return largeBlock(
-        title: 'Sleep Zones: Counts - $setDay_date',
+        title: 'Sleep Zones: Counts',
+        date: setDay_date,
         icon: Icons.pie_chart_rounded,
         extraHeight: 150,
         body: Padding(

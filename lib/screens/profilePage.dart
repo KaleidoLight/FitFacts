@@ -19,7 +19,6 @@ class ProfilePage extends StatefulWidget {
 
   final String watchUser;
 
-
   ProfilePage({Key? key,  this.watchUser = 'User'}) : super(key: key);
 
   static const routename = 'UserPage';
@@ -68,26 +67,6 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 }
 
-
-/// Age Calculator
-///
-calculateAge(DateTime birthDate) {
-  DateTime currentDate = DateTime.now();
-  int age = currentDate.year - birthDate.year;
-  int month1 = currentDate.month;
-  int month2 = birthDate.month;
-  if (month2 > month1) {
-    age--;  // is the current year - 1
-  } else if (month1 == month2) {
-    int day1 = currentDate.day;
-    int day2 = birthDate.day;
-    if (day2 > day1) { // until the day before birthday
-      age--;
-    }
-  }
-  
-  return age;
-}
 
 
 /// Today Getter
@@ -168,11 +147,13 @@ class _DateInfoItemState extends State<DateInfoItem> {
                               builder: ((context, snapshot) { //snapshot = observer of the state of the features variable
                                 if(snapshot.hasData){
                                   final sp = snapshot.data as String;
+                                  dynamic date_disp = calculateStringAge(sp);
+                                  date_disp??= '';
                                   return Row(
                                     children: [
                                       Text(sp,style: const TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),),
                                       Container(width: 3,),
-                                      Text('(${calculateStringAge(sp)} yo)', style: const TextStyle(fontSize: 16,),)
+                                      Text('(${date_disp} yo)', style: const TextStyle(fontSize: 16,),)
                                       ],
                                     );
                                 }
@@ -269,7 +250,7 @@ class _DefaultInfoItemState extends State<DefaultInfoItem> {
                 ),
                 actions: <Widget>[
                   TextButton(onPressed: (){Navigator.of(context).pop();},
-                  child: const Text('Cancel'),),
+                    child: const Text('Cancel'),),
                   TextButton(onPressed: () async {
                     final valid = _fbKey.currentState?.saveAndValidate() ?? true;
                     if(valid) {
@@ -610,8 +591,7 @@ class _GenderSelectionWidgetState extends State<GenderSelectionWidget> {
   }
 }
 
-/// #### Default Info Item
-/// Draws default info item widget
+/// #### GenderSelectorStyled
 ///
 /// [badgeIcon]: The Icon representing the Measure
 ///
@@ -661,9 +641,7 @@ class _GenderSelectorStyledState extends State<GenderSelectorStyled> {
                   TextButton(onPressed: () async {
                     final valid = _fbKey.currentState?.saveAndValidate() ?? true;
                     if(valid) {
-                      setState(() {
-
-                      });
+                      setState(() {});
                       Navigator.of(context).pop();
                       print('popped');
                     }
@@ -722,7 +700,7 @@ class _GenderSelectorStyledState extends State<GenderSelectorStyled> {
 }
 
 
-int calculateStringAge(String birthday) {
+int? calculateStringAge(String birthday) {
   // Parse the birthday string to a DateTime object
   DateTime birthDate = DateFormat('dd-MM-yyyy').parse(birthday);
   print(birthDate);
@@ -734,7 +712,11 @@ int calculateStringAge(String birthday) {
 
   // Convert the difference to years and return it as an integer
   int age = (difference.inDays / 365).floor();
-  return age;
+  if (age <= 110) {
+    return age;
+  }else{
+    return null;
+  }
 }
 
 /// SignOutVerification

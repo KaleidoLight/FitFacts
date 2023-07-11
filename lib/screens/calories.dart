@@ -152,13 +152,15 @@ class stepsLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String setDay_date = DateFormat('yyyy-MM-dd')
+        .format(DateTime.now().subtract(Duration(days: 1)));
     var themeMode = context.watch<ThemeModel>().mode;
     final Color? greyColor =
         (themeMode == ThemeMode.light) ? Colors.grey[200] : Colors.grey[800];
     return largeBlock(
         title: 'Daily Calories Detail',
         icon: Icons.watch_later_rounded,
-        date: '(kcal)',
+        date: setDay_date,
         extraHeight: 150,
         body: Padding(
           padding: const EdgeInsets.only(top: 20),

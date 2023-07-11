@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:fitfacts/database/DatabaseRepo.dart';
 import 'package:fitfacts/server/NetworkUtils.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:fitfacts/themes/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fitfacts/screens/loginPage.dart';
-
 import '../database/DataDownloader.dart';
+import '../screens/impactLogin.dart';
 
 // DRAWER DATE FORMATTER
 DateTime _drawerDate = DateTime.now().subtract(Duration(days: 1));
@@ -267,14 +266,22 @@ class _NavListState extends State<NavList> {
                   title: 'Activity',
                   destinationView: '/activity',
                   color: widget.primaryColor),
-              Container(height: 30,),
+            ],
+          ),
+          Container(height: 30,),
+          const Text('SETTINGS'),
+          Container(
+            height: 10,
+          ),
+          Column(
+            children: [
               NavItem(
                   icon: Icons.account_circle,
                   title: 'Profile',
                   destinationView: '/profile',
                   color: widget.primaryColor),
             ],
-          ),
+          )
         ],
       ),
     );
@@ -417,8 +424,29 @@ class _BottomBarState extends State<BottomBar> {
                     /// REFRESH ACTION HERE
                     IconButton(
                         onPressed: () async {
-                          print('${await TokenManager.accessToken(context)}');
-                          await downloadAndStoreData(context);
+                          try {
+                            print('TOKEN: ${await TokenManager.accessToken(
+                                context)}');
+                            await downloadAndStoreData(context);
+                          }catch(error){ // can't refresh
+                            print(error);
+                            final tokenResult = await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                              return ImpactLogin();
+                            }),
+                            );
+                            if (tokenResult == 200){
+                              print('TOKENS RENEWED');
+                              await downloadAndStoreData(context);
+                            }else {
+                              print('ERROR WHILE RENEWING TOKENS');
+                            }
+                          }finally{
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              backgroundColor: Theme.of(context).primaryColor,
+                              content: Center(child: Text('Fitbit Data Refreshed', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),)),
+                            ));
+                          }
                         },
                         icon: const Icon(Icons.refresh))
                   ],
@@ -461,8 +489,7 @@ void _toLoginPage(BuildContext context) async{
   //Pop the drawer first
   Navigator.pop(context);
   //Then pop the HomePage
-  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)
-  => LoginPage()));
+  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
 }//_toCalendarPage
 
 
