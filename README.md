@@ -1,3 +1,4 @@
+![Screenshot](https://github.com/KaleidoLight/FitFacts/blob/main/assets/images/github_bk.png)
 # FitFacts App
 
 The Official Source Code of FitFacts App. 
