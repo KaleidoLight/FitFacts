@@ -1,5 +1,3 @@
-import 'package:fitfacts/database/DataDownloader.dart';
-import 'package:fitfacts/screens/homePage.dart';
 import 'package:fitfacts/server/Impact.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -176,15 +174,5 @@ class _proceedButtonState extends State<proceedButton> {
   }
 }
 
-void performLoginSetup(BuildContext context) async {
-
-  await downloadAndStoreData(context);
-
-  //Perform Redirection to App
-  await Future.delayed(Duration(seconds: 2));
-  Navigator.of(context).push(MaterialPageRoute (
-    builder: (BuildContext context) => const HomePage(),
-  ),);
-}
 
 

@@ -7,7 +7,6 @@ import 'package:fitfacts/database/CalorieData.dart';
 import 'package:fitfacts/database/HeartData.dart';
 import 'package:fitfacts/database/SleepData.dart';
 import 'package:fitfacts/database/StepsData.dart';
-
 import 'DatabaseRepo.dart';
 
 Future<void> downloadAndStoreData(BuildContext context) async {
