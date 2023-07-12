@@ -206,6 +206,9 @@ class caloriesLine extends StatelessWidget {
                       stepsDetail.forEach((e) {
                         lineData.add(FlSpot(e.hour.toDouble(), e.calorie));
                       });
+                      if (lineData.isEmpty){
+                        return const Center(child: Text('No Daily Detail'));
+                        } else{
                       return LineChart(LineChartData(
                         borderData: FlBorderData(show: false),
                         titlesData: FlTitlesData(
@@ -238,7 +241,7 @@ class caloriesLine extends StatelessWidget {
                         lineTouchData: LineTouchData(
                             touchTooltipData: LineTouchTooltipData(
                                 tooltipBgColor: greyColor)),
-                      ));
+                      ));}
                     } else {
                       return Container();
                     }

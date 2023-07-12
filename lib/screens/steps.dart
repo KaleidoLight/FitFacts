@@ -190,6 +190,9 @@ class stepsLine extends StatelessWidget {
                       stepSorted.forEach((e) {
                         lineData.add(FlSpot(e.hour.toDouble(), e.steps));
                       });
+                      if (lineData.isEmpty){
+                        return const Center(child: Text('No Daily Detail'));
+                      } else{
                       return LineChart(LineChartData(
                         borderData: FlBorderData(show: false),
                         titlesData: FlTitlesData(topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false))),
@@ -205,7 +208,7 @@ class stepsLine extends StatelessWidget {
                             drawHorizontalLine: true,
                             drawVerticalLine: false),
                         lineTouchData: LineTouchData(touchTooltipData: LineTouchTooltipData(tooltipBgColor: greyColor)),
-                      ));
+                      ));}
                     }else{
                       return Container();
                     }

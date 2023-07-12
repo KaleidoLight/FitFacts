@@ -71,7 +71,9 @@ QuizData createQuizDatabase(BuildContext context) {
 
           num vo2Mean = 0;
           vo2maxArray.forEach((element) {vo2Mean += element;});
-          return vo2Mean/vo2maxArray.length;
+          final result = vo2Mean/vo2maxArray.length;
+          if (result.isNaN){return 0;}
+          return result;
         }
         ),
 
