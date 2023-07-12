@@ -139,36 +139,5 @@ Future<void> downloadAndStoreData(BuildContext context) async {
       print('No Activities for this time range');
     }
   }
-
-  //showSnackBarAsBottomSheet(context, 'Data Refreshed, Last Update ${DateFormat('yyyy-MM-dd').format(DateTime.now())}'); IT IS BUGGED FOR NOW -- DO NOT UNCOMMENT
-
 }
 
-void showSnackBarAsBottomSheet(BuildContext context, String message) {
-  showModalBottomSheet<void>(
-    context: context,
-    barrierColor: const Color.fromRGBO(0, 0, 0, 0),
-    builder: (BuildContext context) {
-      Future.delayed(const Duration(seconds: 4), () {
-        try {
-          Navigator.pop(context);
-        } on Exception {}
-      });
-      return Container(
-          color: Colors.purple[400],
-          padding: const EdgeInsets.all(20),
-          child: Wrap(children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  message,
-                  style:
-                      TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600),
-                ),
-              ],
-            )
-          ]));
-    },
-  );
-}
