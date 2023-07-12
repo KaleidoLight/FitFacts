@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fitfacts/screens/profilePage.dart';
+import 'QuizView.dart';
 
 
 
@@ -18,6 +19,7 @@ QuizData createQuizDatabase(BuildContext context) {
         answer: 'Health benefits are present above 7000 steps per day',
         positive: 'Wonderful!, Yesterday you did better than average with',
         negative: 'Don\'t give up! This week you did ',
+        roundType: Roundings.integer,
         getReference: () async {return 7000;},
         unit: 'steps', getPersonalData: () async {
       final stepsData =
@@ -68,7 +70,9 @@ QuizData createQuizDatabase(BuildContext context) {
 
           num vo2Mean = 0;
           vo2maxArray.forEach((element) {vo2Mean += element;});
-          return vo2Mean/vo2maxArray.length;
+          final result = vo2Mean/vo2maxArray.length;
+          if (result.isNaN){return 0;}
+          return result;
         }
         ),
 
@@ -85,6 +89,7 @@ QuizData createQuizDatabase(BuildContext context) {
         unit: 'Kcal/day',
         positive: 'Your RMR is better than average',
         negative: 'Keep Working on your RMR',
+        roundType: Roundings.integer,
         getReference: () async {
           final sex_raw = await Provider.of<DatabaseRepository>(context, listen: false).getSex();
           return (sex_raw == 'Male') ? 1800:1600;
@@ -98,7 +103,6 @@ QuizData createQuizDatabase(BuildContext context) {
 
           final RMR = (sex_raw == 'Male') ? 66.473 + 5.003 * height_raw + 13.75 * weight_raw - 6.75 * calculateStringAge(age_raw)!:
           665.09 + 9.56 * height_raw + 1.84 * weight_raw - 4.67 * calculateStringAge(age_raw)!;
-
           return RMR;
         }
     ),
@@ -121,16 +125,6 @@ QuizData createQuizDatabase(BuildContext context) {
         },
         getPersonalData: () async {
           final sleep_raw = await Provider.of<DatabaseRepository>(context, listen: false).getSleepData();
-
-          /*List<num> sleep_array = [];
-          sleep_raw.forEach((element) {
-            if (element.speed > 0 && element.name == 'Corsa') {
-              velocity_array.add(element.speed);
-            }
-          });
-          num velocityMean = 0;
-          velocity_array.forEach((element) {velocityMean += element;});
-          return (velocityMean/velocity_array.length)/3.6;*/
 
           List<double> sleep_array = [];
           String sleepTime = '';
@@ -164,38 +158,6 @@ QuizData createQuizDatabase(BuildContext context) {
         }
     ),
 
-/*
-    QuizActivity(
-        title: 'What is the average RMR (resting metabolic rate) for women ?',
-        topic: QuizTopic.calorie,
-        questions: [
-          QuizQuestion(body: '600 - 1200 Kcal/day'),
-          QuizQuestion(body: '2000- 2500 Kcal/day'),
-          QuizQuestion(body: '1200 - 1800 Kcal/day', isCorrect: true),
-        ],
-        answer: 'RMR normally ranges from 1,200 to 2,000 kcal/day (from 1,200 - 1800 kcal/day in women). Heavier people have higher RMR because they have more mass to support. Each pound of muscle burns to produce 6-7 kcal/day.',
-        link: 'https://doi.org/10.5717/jenb.2014.18.1.25',
-        unit: 'Kcal/day',
-        positive: 'Your RMR is better than average',
-        negative: 'Keep Working on your RMR',
-        getReference: () async {
-          final sex_raw = await Provider.of<DatabaseRepository>(context, listen: false).getSex();
-          return (sex_raw == 'Male') ? 1800:1600;
-        },
-        getPersonalData: () async {
-          final sex_raw = await Provider.of<DatabaseRepository>(context, listen: false).getSex();
-          final age_raw = await Provider.of<DatabaseRepository>(context, listen: false).getBirthday();
-          final weight_raw = await Provider.of<DatabaseRepository>(context, listen: false).getWeight();
-          final height_raw = await Provider.of<DatabaseRepository>(context, listen: false).getHeight();
-
-
-          final RMR = (sex_raw == 'Male') ? 66.473 + 5.003 * height_raw + 13.75 * weight_raw - 6.75 * calculateStringAge(age_raw):
-          665.09 + 9.56 * height_raw + 1.84 * weight_raw - 4.67 * calculateStringAge(age_raw);
-
-          return RMR;
-        }
-    ),
-*/
     QuizActivity(
         title: 'Which is the usual speed of an experienced runner (18-40yr)?',
         topic: QuizTopic.activity,
@@ -298,6 +260,7 @@ QuizData createQuizDatabase(BuildContext context) {
         answer: '30 min of low intensity aerobic exercise per day will be enough',
         link: 'https://doi.org/10.1007/s11906-005-0026-z',
         unit: '',
+        roundType: Roundings.integer,
         positive: 'Good Job! You are constant with your exercise',
         negative: 'you are not so active, let\'s start with some easy walk!',
         getReference: () async {
@@ -320,6 +283,7 @@ QuizData createQuizDatabase(BuildContext context) {
         answer: 'During deep sleep, your body releases growth hormone and works to build and repair muscles, bones, and tissue. Deep sleep also promotes immune system functioning',
         link: 'https://www.sleepfoundation.org/stages-of-sleep/deep-sleep#:~:text=It%20usually%20takes%20between%2090,to%20six%20cycles%20per%20night.',
         unit: 'times',
+        roundType: Roundings.integer,
         positive: 'This week you hit the right amount of deep sleep phases',
         negative: 'Try to sleep more! You need more sleep cycles to stay healthy',
         getReference: () async {
@@ -354,6 +318,7 @@ QuizData createQuizDatabase(BuildContext context) {
         answer: '60-80 bpm, higher heart rate can be symptom of stress or some disease',
         link: 'https://www.whoop.com/thelocker/resting-heart-rate-by-age-and-gender/',
         unit: 'bpm',
+        roundType: Roundings.integer,
         //here is the contrary
         positive: 'Your average bpm is high, consider talking about it to a doctor',
         negative: 'Great! You have an healthy heart rate',

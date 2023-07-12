@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:floor/floor.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
-
 import 'package:fitfacts/database/UserInfo.dart';
 import 'package:fitfacts/database/CalorieData.dart';
 import 'package:fitfacts/database/StepsData.dart';

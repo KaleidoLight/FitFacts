@@ -11,6 +11,7 @@ import '../quizview/QuizView.dart';
 import '../themes/blocks.dart';
 import '../themes/theme.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'dart:math';
 
 class HeartPage extends StatelessWidget {
   const HeartPage({Key? key}) : super(key: key);
@@ -123,6 +124,8 @@ class HeartView extends StatelessWidget {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       final data = snapshot.data as List<HeartData>;
+
+                      //daily mean hr
                       Map<int, int> avg_bpm = {};
                       for (var day_subtract = 1;
                           day_subtract < 8;
@@ -144,20 +147,44 @@ class HeartView extends StatelessWidget {
                         }
                       }
                       List<BarChartGroupData> dataBars = [];
-                      avg_bpm.keys.forEach((key) {
+
+                      //min max hr
+                      Map<int, int> min_hr = {};
+                      Map<int, int> max_hr = {};
+                      for (var day_subtract = 1;
+                          day_subtract < 8;
+                          day_subtract++) {
+                        List<int> day_beats = [];
+                        data.forEach((element) {
+                          if (element.date ==
+                              DateFormat('yyyy-MM-dd').format(DateTime.now()
+                                  .subtract(Duration(days: day_subtract)))) {
+                            day_beats.add(element.beats.toInt());
+                          }
+                        });
+                        min_hr[day_subtract] = day_beats.reduce(min);
+                        max_hr[day_subtract] = day_beats.reduce(max);
+                      }
+
+                      avg_bpm.forEach((key, value) {
                         dataBars.add(BarChartGroupData(x: key, barRods: [
                           BarChartRodData(
-                              fromY: avg_bpm[8 - key]!.toDouble() -1,
-                              toY: avg_bpm[8 - key]!.toDouble(),
+                              fromY: avg_bpm[8 - key]!.toDouble() - 1,
+                              toY: avg_bpm[8 - key]!.toDouble() + 1,
                               width: 15,
+                              backDrawRodData: BackgroundBarChartRodData(
+                                  fromY: min_hr[8 - key]!.toDouble(),
+                                  toY: max_hr[8 - key]!.toDouble(),
+                                  show: true,
+                                  color: Theme.of(context)
+                                      .primaryColor
+                                      .withAlpha(100)),
                               color: Theme.of(context).primaryColor)
                         ]));
                       });
                       return BarChart(BarChartData(
                           borderData: FlBorderData(show: false),
                           barGroups: dataBars,
-                          minY: 25,
-                          maxY: 140,
                           titlesData: FlTitlesData(
                               topTitles: AxisTitles(
                                   sideTitles: SideTitles(showTitles: false)),
@@ -216,42 +243,46 @@ class heartLine extends StatelessWidget {
                         lineData.add(FlSpot(double.parse(temp), e.beats));
                       }
                     });
-                    return LineChart(LineChartData(
-                      borderData: FlBorderData(show: false),
-                      titlesData: FlTitlesData(
-                          topTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false))),
-                      lineBarsData: [
-                        LineChartBarData(
-                            spots: lineData,
-                            isCurved: false,
-                            color: Theme.of(context).primaryColor,
-                            barWidth: 3,
-                            dotData: FlDotData(
-                              show: false,
-                            ),
-                            belowBarData: BarAreaData(
-                                show: true,
-                                gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: <Color>[
-                                      Theme.of(context)
-                                          .primaryColor
-                                          .withAlpha(120),
-                                      Theme.of(context)
-                                          .primaryColor
-                                          .withAlpha(20)
-                                    ])))
-                      ],
-                      gridData: FlGridData(
-                          show: true,
-                          drawHorizontalLine: true,
-                          drawVerticalLine: false),
-                      lineTouchData: LineTouchData(
-                          touchTooltipData:
-                              LineTouchTooltipData(tooltipBgColor: greyColor)),
-                    ));
+                    if (lineData.isEmpty) {
+                      return const Center(child: Text('No Daily Detail'));
+                    } else {
+                      return LineChart(LineChartData(
+                        borderData: FlBorderData(show: false),
+                        titlesData: FlTitlesData(
+                            topTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false))),
+                        lineBarsData: [
+                          LineChartBarData(
+                              spots: lineData,
+                              isCurved: false,
+                              color: Theme.of(context).primaryColor,
+                              barWidth: 3,
+                              dotData: FlDotData(
+                                show: false,
+                              ),
+                              belowBarData: BarAreaData(
+                                  show: true,
+                                  gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: <Color>[
+                                        Theme.of(context)
+                                            .primaryColor
+                                            .withAlpha(120),
+                                        Theme.of(context)
+                                            .primaryColor
+                                            .withAlpha(20)
+                                      ])))
+                        ],
+                        gridData: FlGridData(
+                            show: true,
+                            drawHorizontalLine: true,
+                            drawVerticalLine: false),
+                        lineTouchData: LineTouchData(
+                            touchTooltipData: LineTouchTooltipData(
+                                tooltipBgColor: greyColor)),
+                      ));
+                    }
                   } else {
                     return Container();
                   }

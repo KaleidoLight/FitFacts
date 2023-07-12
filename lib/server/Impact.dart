@@ -10,7 +10,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:fitfacts/server/NetworkUtils.dart';
 import 'package:intl/intl.dart';
-
 import '../Models/Activity.dart';
 import '../Models/HeartRate.dart';
 

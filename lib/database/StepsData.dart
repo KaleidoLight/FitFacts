@@ -12,14 +12,15 @@ class StepsData {
   StepsData(this.dayReference, this.date,this.steps);
 }
 
-@Entity(tableName: 'StepsDetail')
+@Entity(tableName: 'StepsDetail', primaryKeys: ['dayReference', 'hour'])
 class StepsDetail {
 
-  @primaryKey
+  int dayReference;
+  String date;
   int hour;
   double steps;
 
-  StepsDetail(this.hour, this.steps);
+  StepsDetail(this.dayReference, this.date, this.hour, this.steps);
 }
 
 @dao
@@ -34,6 +35,9 @@ abstract class StepsDataDao {
 
   @Query('SELECT * FROM StepsDetail')
   Future<List<StepsDetail>> findStepsDetail();
+
+  @Query('SELECT * FROM StepsDetail WHERE date = :date')
+  Future<List<StepsDetail>> findStepsDetailOfDate(String date);
 
   //INSERT
   @Insert(onConflict: OnConflictStrategy.replace)

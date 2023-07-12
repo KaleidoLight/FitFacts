@@ -1,5 +1,4 @@
 import 'package:floor/floor.dart';
-import 'dart:ffi';
 
 @Entity(tableName: 'SleepData')
 class SleepData {

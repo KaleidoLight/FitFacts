@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'QuizView.dart';
 
 enum QuizTopic {
   step,
@@ -41,6 +42,7 @@ class QuizActivity{
   Future<num> reference; // decision threshold
   String unit; // unit of measure
   Future<num>? personalRef; // personal health metric (from the database -> future)
+  Roundings roundType;
 
   QuizActivity({required this.title,
     required this.topic ,
@@ -50,6 +52,7 @@ class QuizActivity{
     required this.negative,
     this.unit = '',
     this.link = '',
+    this.roundType = Roundings.decimals,
     required Future<num> Function() getPersonalData,
     required Future<num> Function() getReference
   }) : personalRef = getPersonalData(), reference = getReference();

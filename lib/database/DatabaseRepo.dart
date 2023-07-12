@@ -123,6 +123,11 @@ class DatabaseRepository extends ChangeNotifier {
     return result;
   }
 
+  Future<List<CalorieDetail>> getCalorieDetailOfDate(String date) async {
+    final result = await database.calorieDataDao.findCalorieDetailOfDate(date);
+    return result;
+  }
+
   Future<void> addCalorieData(CalorieData withInfo) async {
     await database.calorieDataDao.addCalorieData(withInfo);
   }
@@ -160,6 +165,11 @@ class DatabaseRepository extends ChangeNotifier {
 
   Future<List<StepsDetail>> getStepsDetail() async {
     final result = await database.stepsDataDao.findStepsDetail();
+    return result;
+  }
+
+  Future<List<StepsDetail>> getStepsDetailOfDay(String date) async {
+    final result = await database.stepsDataDao.findStepsDetailOfDate(date);
     return result;
   }
 

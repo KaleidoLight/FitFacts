@@ -100,7 +100,7 @@ class HeartData {
 
   /// fiveMinuteMean
   ///
-  /// Returns the weighted mean heartbeat every 5 minutes of fay
+  /// Returns the weighted mean heartbeat every 5 minutes of day
   Map<String, double> fiveMinuteMean() {
     Map<String, List<int>> meanByFiveMinute = {};
     Map<String, double> meanResult = {};
