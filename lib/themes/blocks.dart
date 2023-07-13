@@ -2,8 +2,6 @@ import 'package:fitfacts/themes/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
-
 class smallBlock extends StatefulWidget {
 
   String title;

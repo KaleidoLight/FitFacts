@@ -24,8 +24,6 @@ QuizData createQuizDatabase(BuildContext context) {
         unit: 'steps', getPersonalData: () async {
       final stepsData =
           await Provider.of<DatabaseRepository>(context).getStepsData();
-      print(
-          'STEPS DATA FOUND: ${stepsData.last.date} - ${stepsData.last.steps}');
       return stepsData[0].steps;
     },
         questions: [
@@ -170,7 +168,7 @@ QuizData createQuizDatabase(BuildContext context) {
         link: 'https://www.researchgate.net/profile/Rodger-Kram/publication/20480832_Stride_length_in_distance_running_velocity_body_dimensions_and_added_mass_effects/links/59df5ce90f7e9b2dba831716/Stride-length-in-distance-running-velocity-body-dimensions-and-added-mass-effects.pdf',
         unit: 'm/s',
         positive: 'Your medium velocity is better than a male experienced runner',
-        negative: 'don \' t give up ! ',
+        negative: 'Don\'t give up!',
         getReference: () async {
           return 2;
         },
@@ -184,7 +182,12 @@ QuizData createQuizDatabase(BuildContext context) {
           });
           num velocityMean = 0;
           velocity_array.forEach((element) {velocityMean += element;});
-          return (velocityMean/velocity_array.length)/3.6;
+          final result = (velocityMean/velocity_array.length)/3.6;
+          if (result.isNaN){
+            return 0;
+          }else{
+            return result;
+          }
         }
     ),
 
@@ -261,14 +264,28 @@ QuizData createQuizDatabase(BuildContext context) {
         link: 'https://doi.org/10.1007/s11906-005-0026-z',
         unit: '',
         roundType: Roundings.integer,
-        positive: 'Good Job! You are constant with your exercise',
-        negative: 'you are not so active, let\'s start with some easy walk!',
+        positive: 'Good Job! You are getting the right amount of low intensity training',
+        negative: 'Focus more on low intensity training, let\'s start with some easy walk!',
         getReference: () async {
           return 6;
         },
         getPersonalData: () async {
-          final activityDays = await Provider.of<DatabaseRepository>(context, listen: false).getActivityDays();
-          return activityDays;
+          // final activityDays = await Provider.of<DatabaseRepository>(context, listen: false).getActivityDays();
+          // return activityDays;
+          final activityData = await Provider.of<DatabaseRepository>(context).getActivityData();
+          int dayCounter = 0;
+          for(int day =1; day < 8; day ++) {
+            num timeCounter = 0;
+            activityData.forEach((activity) {
+              if( activity.date == DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: day)))) {
+                timeCounter += activity.hl1_time + activity.hl2_time;
+              }
+            });
+            if (timeCounter >= 30) {
+              dayCounter++;
+            }
+          }
+          return dayCounter;
         }
     ),
 
@@ -293,12 +310,10 @@ QuizData createQuizDatabase(BuildContext context) {
           final sleepData = await Provider.of<DatabaseRepository>(context, listen: false).getSleepData();
           List<num> deep_sleepArray = [];
           sleepData.forEach((element) {
-            print(element);
             if (element.deep_count > 0 ) {
               deep_sleepArray.add(element.deep_count);
             }
           });
-          print(deep_sleepArray);
           num deepMean = 0;
           deep_sleepArray.forEach((element) {deepMean += element;});
           return deepMean/deep_sleepArray.length;

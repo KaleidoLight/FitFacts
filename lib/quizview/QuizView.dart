@@ -199,7 +199,7 @@ class _QuizOutcomeState extends State<QuizOutcome> {
                         ),
                         Container(height: 10,),
                         Text(
-                          (personalRef >  reference)
+                          (personalRef >= reference)
                               ? '${widget.quizActivityData.positive} (${roundResult(personalRef, roundType)} > ${roundResult(reference, roundType)}) ${widget.quizActivityData.unit}'
                               : '${widget.quizActivityData.negative} (${roundResult(personalRef, roundType)} < ${roundResult(reference, roundType)}) ${widget.quizActivityData.unit}',
                           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),

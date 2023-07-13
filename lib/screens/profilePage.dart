@@ -643,7 +643,6 @@ class _GenderSelectorStyledState extends State<GenderSelectorStyled> {
                     if(valid) {
                       setState(() {});
                       Navigator.of(context).pop();
-                      print('popped');
                     }
                   },
                     child: const Text("Save"),
@@ -703,7 +702,6 @@ class _GenderSelectorStyledState extends State<GenderSelectorStyled> {
 int? calculateStringAge(String birthday) {
   // Parse the birthday string to a DateTime object
   DateTime birthDate = DateFormat('dd-MM-yyyy').parse(birthday);
-  print(birthDate);
   // Get the current date
   DateTime currentDate = DateTime.now();
 

@@ -57,16 +57,10 @@ class Body extends StatelessWidget {
         builder: (context, snapshot){
         if (snapshot.hasData){
           final activity_data = snapshot.data as List<ActivityData>;
-          List<int> activityReference_ = [];
-          activity_data.forEach((element) {
-            activityReference_.add(element.activityReference);
-          });
-          //liste con gli argomenti
           return ListView.builder(
-                itemCount: activityReference_.length,
+                itemCount: activity_data.length,
                 itemBuilder: (context, index){
-                  print(index);
-                  return activityTile(data: activity_data, index: index);
+                  return activityTile(data: activity_data, index: activity_data.length - index -1);
                   //widget che usa idati dei vettori
                 },
           );
@@ -169,7 +163,9 @@ class activityTile extends StatelessWidget {
 
                       Text('Zone 2  ' + data[index].hl2_range, style: TextStyle(fontSize: 17, color: Colors.orange),),
 
-                      Text('Zone 3  '+ data[index].hl3_range, style: TextStyle(fontSize: 17, color: Colors.red),),
+                      Text('Zone 3  '+ data[index].hl3_range, style: TextStyle(fontSize: 17, color: Colors.deepOrange),),
+
+                      Text('Zone 4  '+ data[index].hl4_range, style: TextStyle(fontSize: 17, color: Colors.red),),
                     ]
                 ),
                   Column(
@@ -191,6 +187,11 @@ class activityTile extends StatelessWidget {
                       Row(
                           children: [
                             Text(data[index].hl3_time.toString() + ' min' ,style: TextStyle(fontSize: 17),),
+                          ]
+                      ),
+                      Row(
+                          children: [
+                            Text(data[index].hl4_time.toString() + ' min' ,style: TextStyle(fontSize: 17),),
                           ]
                       ),
 
