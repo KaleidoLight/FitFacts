@@ -393,7 +393,7 @@ class _MainInfoItemState extends State<MainInfoItem> {
                             );}
                           ),
                           Container(height: 3,),
-                          const Text('name.surname@fit.com', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w200),),
+                          const Text('demo@fitfacts.com', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w200),),
                           Container(height: 10,),
                           Row(
                             children: [

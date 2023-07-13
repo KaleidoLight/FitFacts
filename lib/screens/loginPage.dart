@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
   }//_checkLogin
 
   Future<String> _loginUser(LoginData data) async {
-    if(data.name == 'name@name.com' && data.password == 'psw'){
+    if(data.name == 'demo@fitfacts.com' && data.password == 'demo'){
       final sp = await SharedPreferences.getInstance();
       sp.setBool('logged', true);
       String firstLoginTime = DateTime.now().toString().replaceAll(' ', '').substring(0,16); // to be saved as encrypt key.

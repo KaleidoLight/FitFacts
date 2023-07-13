@@ -89,7 +89,6 @@ class _OnboardState extends State<Onboard> {
                         decoration: const InputDecoration(
                             labelText: 'Username',
                             focusedBorder: InputBorder.none),
-                        initialValue: 'MMmxITaSML',
                       ),
                     )),
               ),
@@ -114,7 +113,6 @@ class _OnboardState extends State<Onboard> {
                                   labelText: 'Password',
                                   focusedBorder: InputBorder.none),
                               obscureText: true,
-                              initialValue: '12345678!',
                             ),
                           )),
                     ),

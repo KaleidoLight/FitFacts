@@ -20,9 +20,6 @@ class Impact{
   static String tokenEndpoint = 'gate/v1/token/';
   static String refreshEndpoint = 'gate/v1/refresh/';
 
-  static String username = 'MMmxITaSML';
-  static String password = '12345678!';
-
   // DATA
   static String patientUsername    = 'Jpefaq6m58';
 
