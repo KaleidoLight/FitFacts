@@ -63,6 +63,8 @@ class _ProfilePageState extends State<ProfilePage> {
               DefaultInfoItem(badgeIcon: Icons.local_fire_department_rounded, title: 'Calories Goal', unit: '(kCal)', queryString: 'CalorieGoal'),
 
               DefaultInfoItem(badgeIcon: Icons.directions_walk_rounded, title: 'Steps Goal', queryString: 'StepGoal',),
+              
+              Center(heightFactor: 5, child: Text('FitFacts 1.0.0 (beta)'))
             ],
           ),
       ],),

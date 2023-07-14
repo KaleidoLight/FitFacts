@@ -164,10 +164,10 @@ QuizData createQuizDatabase(BuildContext context) {
           QuizQuestion(body: '2-6 m/s', isCorrect: true),
           QuizQuestion(body: '6-8 m/s'),
         ],
-        answer: 'Distance running speed may be said to range from 2 to 6 m/s',
+        answer: 'Distance running speed may range from 2 to 6 m/s',
         link: 'https://www.researchgate.net/profile/Rodger-Kram/publication/20480832_Stride_length_in_distance_running_velocity_body_dimensions_and_added_mass_effects/links/59df5ce90f7e9b2dba831716/Stride-length-in-distance-running-velocity-body-dimensions-and-added-mass-effects.pdf',
         unit: 'm/s',
-        positive: 'Your medium velocity is better than a male experienced runner',
+        positive: 'Your medium velocity is better than an experienced runner',
         negative: 'Don\'t give up!',
         getReference: () async {
           return 2;
