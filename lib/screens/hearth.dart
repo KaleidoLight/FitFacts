@@ -254,6 +254,7 @@ class HeartLine extends StatelessWidget {
                         titlesData: FlTitlesData(
                             topTitles: AxisTitles(
                                 sideTitles: SideTitles(showTitles: false))),
+                        clipData: FlClipData(top: true, bottom: true, left: false, right: false),
                         lineBarsData: [
                           LineChartBarData(
                               spots: lineData,
