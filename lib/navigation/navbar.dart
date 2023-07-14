@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:fitfacts/database/DatabaseRepo.dart';
 import 'package:fitfacts/server/NetworkUtils.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,7 @@ import '../database/DataDownloader.dart';
 import '../screens/impactLogin.dart';
 
 // DRAWER DATE FORMATTER
-DateTime _drawerDate = DateTime.now().subtract(Duration(days: 1));
+DateTime _drawerDate = DateTime.now().subtract(const Duration(days: 1));
 
 /// NAVBAR MAIN WIDGET
 /// Returns a Drawer to display
@@ -47,9 +46,7 @@ class _NavbarState extends State<Navbar> {
                 children: [
                   Column(
                     children: [
-                      NavHeader(
-
-                      ),
+                      const NavHeader(),
                       const ServerStatus(),
                       NavList(primaryColor: Theme.of(context).primaryColor)
                     ],
@@ -88,7 +85,7 @@ class _NavHeaderState extends State<NavHeader> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "${DateFormat('EEEE, d MMMM').format(_drawerDate)}",
+              DateFormat('EEEE, d MMMM').format(_drawerDate),
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             Row(
@@ -163,7 +160,7 @@ class _ServerStatusState extends State<ServerStatus> {
       margin: const EdgeInsets.fromLTRB(20, 5, 20, 5),
       padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(8)),
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
           color: Theme.of(context).primaryColor.withAlpha(30)
           ),
       height: 50,
@@ -188,9 +185,9 @@ class _ServerStatusState extends State<ServerStatus> {
                         future: Provider.of<DatabaseRepository>(context).getSmartStars(),
                         builder: (context, snapshot){
                           if (snapshot.hasData){
-                            return  Text('${snapshot.data}', style: TextStyle( fontSize: 24,fontWeight:  FontWeight.w700),);
+                            return  Text('${snapshot.data}', style: const TextStyle( fontSize: 24,fontWeight:  FontWeight.w700),);
                           } else {
-                            return  Text('--', style: TextStyle( fontSize: 24,fontWeight:  FontWeight.w700),);
+                            return  const Text('--', style: TextStyle( fontSize: 24,fontWeight:  FontWeight.w700),);
                           }
                         });
                   }),
@@ -443,8 +440,9 @@ class _BottomBarState extends State<BottomBar> {
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               backgroundColor: Theme.of(context).primaryColor,
-                              content: Center(child: Text('Fitbit Data Refreshed', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),)),
+                              content: const Center(child: Text('Fitbit Data Refreshed', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),)),
                             ));
+                            setState(() {}); // refresh ui
                           }
                         },
                         icon: const Icon(Icons.refresh))
@@ -485,13 +483,15 @@ void _toLoginPage(BuildContext context) async{
   //Pop the drawer first
   Navigator.pop(context);
   //Then pop the HomePage
-  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
+  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginPage()));
 }//_toCalendarPage
 
 
 /// SignOutVerification
 ///
 class SignOutAlertDialog extends StatelessWidget {
+  
+  const SignOutAlertDialog({super.key});
   @override
   Widget build(BuildContext context) {
     return AlertDialog(

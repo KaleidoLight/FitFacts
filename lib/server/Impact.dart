@@ -131,8 +131,8 @@ class Impact{
 
   Future<Steps> getSteps(BuildContext context) async {
 
-    String endDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 1)));
-    String fromDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 8)));
+    String endDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 1)));
+    String fromDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 8)));
 
     final url = '${Impact.baseUrl}${Impact.stepsEndpoint}${Impact.patientUsername}/daterange/start_date/$fromDate/end_date/$endDate/';
     final headers = {HttpHeaders.authorizationHeader: 'Bearer ${await TokenManager.accessToken(context)}'};
@@ -154,8 +154,8 @@ class Impact{
 
   Future<HeartRate> getHeartRate(BuildContext context) async {
 
-    String endDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 1)));
-    String fromDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 8)));
+    String endDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 1)));
+    String fromDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 8)));
 
     final url = '${Impact.baseUrl}${Impact.heartEndpoint}${Impact.patientUsername}/daterange/start_date/$fromDate/end_date/$endDate/';
     final headers = {HttpHeaders.authorizationHeader: 'Bearer ${await TokenManager.accessToken(context)}'};
@@ -177,8 +177,8 @@ class Impact{
 
   Future<Sleep> getSleep(BuildContext context) async {
 
-    String endDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 1)));
-    String fromDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 8)));
+    String endDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 1)));
+    String fromDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 8)));
 
     final url = '${Impact.baseUrl}${Impact.sleepEndpoint}${Impact.patientUsername}/daterange/start_date/$fromDate/end_date/$endDate/';
     final headers = {HttpHeaders.authorizationHeader: 'Bearer ${await TokenManager.accessToken(context)}'};
@@ -200,8 +200,8 @@ class Impact{
 
   Future<Activity> getActivity(BuildContext context) async {
 
-    String endDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 1)));
-    String fromDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: 8)));
+    String endDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 1)));
+    String fromDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 8)));
 
     final url = '${Impact.baseUrl}${Impact.activityEndpoint}${Impact.patientUsername}/daterange/start_date/$fromDate/end_date/$endDate/';
     final headers = {HttpHeaders.authorizationHeader: 'Bearer ${await TokenManager.accessToken(context)}'};

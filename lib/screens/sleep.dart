@@ -37,14 +37,16 @@ class SleepPage extends StatelessWidget {
         onPressed: (){
           showModalQuiz(QuizTopic.sleep, context);
         },
-        child: Icon(Icons.play_arrow_rounded, size: 30,),
         tooltip: 'Take Quiz',
+        child: const Icon(Icons.play_arrow_rounded, size: 30,),
       ),
     );
   } //build
 }
 
 class Body extends StatefulWidget {
+
+  const Body({super.key});
   @override
   State<Body> createState() => _BodyState();
 }
@@ -54,6 +56,7 @@ class _BodyState extends State<Body> {
 
   @override
   void initState() {
+    super.initState();
     setDay = 1;
   }
 
@@ -65,8 +68,8 @@ class _BodyState extends State<Body> {
         Wrap(
           children: [
             Container(height: 15,),
-            sleepZonesMin(setDay: setDay,),
-            sleepZonesTimes(setDay: setDay,),
+            SleepZonesMin(setDay: setDay,),
+            SleepZonesTimes(setDay: setDay,),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -78,7 +81,7 @@ class _BodyState extends State<Body> {
                         }
                       });
                     },
-                    child: Icon(Icons.arrow_back)),
+                    child: const Icon(Icons.arrow_back)),
                 TextButton(
                     onPressed: () {
                       setState(() {
@@ -87,7 +90,7 @@ class _BodyState extends State<Body> {
                         }
                       });
                     },
-                    child: Icon(Icons.arrow_forward)),
+                    child: const Icon(Icons.arrow_forward)),
               ],
             )
           ],
@@ -98,20 +101,20 @@ class _BodyState extends State<Body> {
 }
 
 // SleepZones View Minutes
-class sleepZonesMin extends StatelessWidget {
+class SleepZonesMin extends StatelessWidget {
   final int setDay;
-  sleepZonesMin({Key? key, required this.setDay}) : super(key: key);
+  const SleepZonesMin({Key? key, required this.setDay}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    final String setDay_date = DateFormat('yyyy-MM-dd')
+    final String setdayDate = DateFormat('yyyy-MM-dd')
         .format(DateTime.now().subtract(Duration(days: setDay)));
     var themeMode = context
         .watch<ThemeModel>()
         .mode;
     final Color? greyColor = (themeMode == ThemeMode.light) ? Colors.grey[200] : Colors.grey[800];
-    return largeBlock(
+    return LargeBlock(
         title: 'Sleep Zones: Minutes',
-        date: setDay_date,
+        date: setdayDate,
         icon: Icons.pie_chart_rounded,
         extraHeight: 150,
         body: Padding(
@@ -135,25 +138,25 @@ class sleepZonesMin extends StatelessWidget {
                               PieChartSectionData(showTitle: false,
                                   value:sleepZonesData.wake_minutes.toDouble(),
                                   title: 'Wake', radius: 60, color: Theme.of(context).primaryColor.withAlpha(80),
-                                  badgeWidget: Chip(label: Text('Wake ${sleepZonesData.wake_minutes} min', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),), backgroundColor: greyColor, elevation: 3,),
+                                  badgeWidget: Chip(label: Text('Wake ${sleepZonesData.wake_minutes} min', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),), backgroundColor: greyColor, elevation: 3,),
                                   badgePositionPercentageOffset: 1
                               ),
                               PieChartSectionData(showTitle: false,
                                   value:sleepZonesData.light_minutes.toDouble(),
                                   title: 'Light', radius: 60, color: Theme.of(context).primaryColor.withAlpha(120),
-                                  badgeWidget: Chip(label: Text('Light ${sleepZonesData.light_minutes} min', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),), backgroundColor: greyColor, elevation: 3,),
+                                  badgeWidget: Chip(label: Text('Light ${sleepZonesData.light_minutes} min', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),), backgroundColor: greyColor, elevation: 3,),
                                   badgePositionPercentageOffset: 1
                               ),
                               PieChartSectionData(showTitle: false,
                                   value:sleepZonesData.rem_minutes.toDouble(),
                                   title: 'Rem', radius: 60, color: Theme.of(context).primaryColor.withAlpha(180),
-                                  badgeWidget: Chip(label: Text('Rem ${sleepZonesData.rem_minutes} min', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),), backgroundColor: greyColor, elevation: 3,),
+                                  badgeWidget: Chip(label: Text('Rem ${sleepZonesData.rem_minutes} min', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),), backgroundColor: greyColor, elevation: 3,),
                                   badgePositionPercentageOffset: 1
                               ),
                               PieChartSectionData(showTitle: false,
                                   value:sleepZonesData.deep_minutes.toDouble(),
                                   title: 'Deep', radius: 60, color: Theme.of(context).primaryColor.withAlpha(220),
-                                  badgeWidget: Chip(label: Text('Deep ${sleepZonesData.deep_minutes} min', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),), backgroundColor: greyColor, elevation: 3,),
+                                  badgeWidget: Chip(label: Text('Deep ${sleepZonesData.deep_minutes} min', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),), backgroundColor: greyColor, elevation: 3,),
                                   badgePositionPercentageOffset: 1
                               ),
                             ]
@@ -162,7 +165,7 @@ class sleepZonesMin extends StatelessWidget {
                       }
                       catch(error){
                         print(error);
-                        return Center(child: Text('No Sleep Data found for this day'));
+                        return const Center(child: Text('No Sleep Data found for this day'));
                       }
                     }else{
                       return Container();
@@ -176,22 +179,22 @@ class sleepZonesMin extends StatelessWidget {
 }
 
 // SleepZones View Minutes
-class sleepZonesTimes extends StatelessWidget {
+class SleepZonesTimes extends StatelessWidget {
   final int setDay;
 
-  sleepZonesTimes({Key? key, required this.setDay}) : super(key: key);
+  const SleepZonesTimes({Key? key, required this.setDay}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final String setDay_date = DateFormat('yyyy-MM-dd')
+    final String setdayDate = DateFormat('yyyy-MM-dd')
         .format(DateTime.now().subtract(Duration(days: setDay)));
     var themeMode = context
         .watch<ThemeModel>()
         .mode;
     final Color? greyColor = (themeMode == ThemeMode.light) ? Colors.grey[200] : Colors.grey[800];
-    return largeBlock(
+    return LargeBlock(
         title: 'Sleep Zones: Counts',
-        date: setDay_date,
+        date: setdayDate,
         icon: Icons.pie_chart_rounded,
         extraHeight: 150,
         body: Padding(
@@ -225,7 +228,7 @@ class sleepZonesTimes extends StatelessWidget {
                         ));
                       } catch (error){
                         print(error);
-                        return Center(child: Text('No Sleep Data found for this day'));
+                        return const Center(child: Text('No Sleep Data found for this day'));
                       }
                     }else{
                       return Container();
@@ -239,19 +242,19 @@ class sleepZonesTimes extends StatelessWidget {
 }
 
 Widget getTitles(double value, TitleMeta meta){
-  Widget text = Text('');
+  Widget text = const Text('');
   switch (value.toInt()) {
     case 0:
-      text =  Text('AWAKE');
+      text =  const Text('AWAKE');
       break;
     case 1:
-      text =  Text('LIGHT');
+      text =  const Text('LIGHT');
       break;
     case 2:
-      text = Text('REM');
+      text = const Text('REM');
       break;
     case 3:
-      text =  Text('DEEP');
+      text =  const Text('DEEP');
       break;
   }
   return SideTitleWidget(

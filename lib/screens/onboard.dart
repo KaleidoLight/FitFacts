@@ -11,7 +11,7 @@ import 'package:fitfacts/database/DatabaseRepo.dart';
 import '../database/UserInfo.dart';
 
 class Onboard extends StatefulWidget {
-  Onboard({Key? key}) : super(key: key);
+  const Onboard({Key? key}) : super(key: key);
 
   static const routename = 'Onboard';
 
@@ -27,8 +27,8 @@ class _OnboardState extends State<Onboard> {
   Widget build(BuildContext context) {
     print('${Onboard.routename} built'); // REMOVE BEFORE PRODUCTION
 
-    final _username = GlobalKey<FormBuilderState>();
-    final _password = GlobalKey<FormBuilderState>();
+    final username = GlobalKey<FormBuilderState>();
+    final password = GlobalKey<FormBuilderState>();
 
     return Scaffold(
         body: IntroductionScreen(
@@ -36,11 +36,11 @@ class _OnboardState extends State<Onboard> {
       showBackButton: _currentPageIndex != 3,
       showSkipButton: false,
       showDoneButton: false,
-      next: Text(
+      next: const Text(
         'Next',
         style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
       ),
-      back: Text(
+      back: const Text(
         'Back',
         style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
       ),
@@ -77,10 +77,10 @@ class _OnboardState extends State<Onboard> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: FormBuilder(
-                    key: _username,
+                    key: username,
                     autovalidateMode: AutovalidateMode.always,
                     onChanged: () {
-                      _username.currentState!.save();
+                      username.currentState!.save();
                     },
                     child: ClipRRect(
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -99,10 +99,10 @@ class _OnboardState extends State<Onboard> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: FormBuilder(
-                          key: _password,
+                          key: password,
                           autovalidateMode: AutovalidateMode.always,
                           onChanged: () {
-                            _password.currentState!.save();
+                            password.currentState!.save();
                           },
                           child: ClipRRect(
                             borderRadius:
@@ -127,18 +127,15 @@ class _OnboardState extends State<Onboard> {
                           ),
                           onPressed: () async {
                             String user =
-                                _username.currentState?.value['Username'] ?? '';
+                                username.currentState?.value['Username'] ?? '';
                             String pass =
-                                _password.currentState?.value['Password'] ?? '';
+                                password.currentState?.value['Password'] ?? '';
                             print('$user .. $pass');
                             int response =
                                 await Impact().authorize(context, user, pass);
                             if (response == 200) {
                               print('AUTHORIZED');
-                              Provider.of<DatabaseRepository>(context,
-                                      listen: false)
-                                  .registerUser(UserInfo('User', '00-00-0000',
-                                      'Male', 0, 0, 0, 0, 0));
+                              Provider.of<DatabaseRepository>(context, listen: false).registerUser(UserInfo('User', '00-00-0000', 'Male', 0, 0, 0, 0, 0));
                               _introKey.currentState?.next();
                             }
                           }))
@@ -159,7 +156,7 @@ class _OnboardState extends State<Onboard> {
             ],
           )),
         ),
-        PageViewModel(
+        PageViewModel( // PAGE 2
           image: Center(
               child: Column(
             children: [
@@ -175,13 +172,13 @@ class _OnboardState extends State<Onboard> {
           title: "About You",
           decoration: const PageDecoration(
             bodyFlex: 1,
-            imagePadding: const EdgeInsets.only(bottom: 0),
+            imagePadding: EdgeInsets.only(bottom: 0),
             titleTextStyle:
                 TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
           ),
           bodyWidget: Column(
-            children: [
-              const Text(
+            children: const [
+              Text(
                 'It will let us better understand your activity',
                 style: TextStyle(fontSize: 18),
                 textAlign: TextAlign.center,
@@ -217,31 +214,31 @@ class _OnboardState extends State<Onboard> {
                   TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             bodyWidget: Column(
-              children: [
-                const Text(
+              children: const [
+                Text(
                   'Tell us a bit more...',
                   style: TextStyle(fontSize: 18),
                   textAlign: TextAlign.center,
                 ),
-                const DefaultInfoItem(
+                DefaultInfoItem(
                   badgeIcon: Icons.height_rounded,
                   title: 'Height',
                   unit: '(cm)',
                   queryString: 'Height',
                 ),
-                const DefaultInfoItem(
+                DefaultInfoItem(
                   badgeIcon: Icons.monitor_weight_outlined,
                   title: 'Weight',
                   unit: '(kg)',
                   queryString: 'Weight',
                 ),
-                const DefaultInfoItem(
+                DefaultInfoItem(
                   badgeIcon: Icons.local_fire_department_rounded,
                   title: 'Calories Goal',
                   unit: '(kCal)',
                   queryString: 'CalorieGoal',
                 ),
-                const DefaultInfoItem(
+                DefaultInfoItem(
                   badgeIcon: Icons.directions_walk_rounded,
                   title: 'Steps Goal',
                   queryString: 'StepGoal',
@@ -267,7 +264,7 @@ class _OnboardState extends State<Onboard> {
                   TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             bodyWidget: VisibilityDetector(
-              key: Key('your_widget_key'),
+              key: const Key('your_widget_key'),
               onVisibilityChanged: (visibilityInfo) {
                 if (visibilityInfo.visibleFraction == 1.0) {
                   performLoginSetup(context);
@@ -297,7 +294,7 @@ void performLoginSetup(BuildContext context) async {
   await downloadAndStoreData(context);
 
   //Perform Redirection to App
-  await Future.delayed(Duration(seconds: 2));
+  await Future.delayed(const Duration(seconds: 2));
   Navigator.of(context).push(
     MaterialPageRoute(
       builder: (BuildContext context) => const HomePage(),

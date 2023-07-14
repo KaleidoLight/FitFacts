@@ -26,13 +26,14 @@ Future<void> main() async {
 
   runApp(ChangeNotifierProvider<DatabaseRepository>(
     create: (context) => databaseRepository,
-    child: MyApp(),
+    child: const MyApp(),
   ));
 
 } //main
 
 class MyApp extends StatelessWidget {
 
+  const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<ThemeModel>(
@@ -43,15 +44,15 @@ class MyApp extends StatelessWidget {
             theme: appLight, // Provide light theme.
             darkTheme: appDark, // Provide dark theme.
             themeMode: model.mode, // Decides which theme to show.
-            home:  LoginPage(),
+            home:  const LoginPage(),
             routes: {
               '/home' : (context) => const HomePage(),
               '/heart' : (context) => const HeartPage(),
-              '/profile' : (context) => ProfilePage(),
-              '/sleep' : (context) => SleepPage(),
-              '/calories' : (context) => CaloriesPage(),
-              '/steps' : (context) => StepsPage(),
-              '/activity' : (context) => activityPage()
+              '/profile' : (context) => const ProfilePage(),
+              '/sleep' : (context) => const SleepPage(),
+              '/calories' : (context) => const CaloriesPage(),
+              '/steps' : (context) => const StepsPage(),
+              '/activity' : (context) => const ActivityPage()
             },
           );
         },

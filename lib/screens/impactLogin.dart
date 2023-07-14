@@ -13,8 +13,8 @@ class ImpactLogin extends StatelessWidget {
   Widget build(BuildContext context) {
     print('${ImpactLogin.routename} built'); // REMOVE BEFORE PRODUCTION
 
-    final _username = GlobalKey<FormBuilderState>();
-    final _password = GlobalKey<FormBuilderState>();
+    final username = GlobalKey<FormBuilderState>();
+    final password = GlobalKey<FormBuilderState>();
 
     return Scaffold(
         body: IntroductionScreen(
@@ -49,10 +49,10 @@ class ImpactLogin extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: FormBuilder(
-                        key: _username,
+                        key: username,
                         autovalidateMode: AutovalidateMode.always,
                         onChanged: () {
-                          _username.currentState!.save();
+                          username.currentState!.save();
                         },
                         child: ClipRRect(
                           borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -71,10 +71,10 @@ class ImpactLogin extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: FormBuilder(
-                              key: _password,
+                              key: password,
                               autovalidateMode: AutovalidateMode.always,
                               onChanged: () {
-                                _password.currentState!.save();
+                                password.currentState!.save();
                               },
                               child: ClipRRect(
                                 borderRadius:
@@ -84,7 +84,6 @@ class ImpactLogin extends StatelessWidget {
                                   decoration:
                                   const InputDecoration(labelText: 'Password', focusedBorder: InputBorder.none),
                                   obscureText: true,
-                                  initialValue: '12345678!',
                                 ),
                               )),
                         ),
@@ -99,9 +98,9 @@ class ImpactLogin extends StatelessWidget {
                               ),
                               onPressed: () async {
                                 String user =
-                                    _username.currentState?.value['Username'] ?? '';
+                                    username.currentState?.value['Username'] ?? '';
                                 String pass =
-                                    _password.currentState?.value['Password'] ?? '';
+                                    password.currentState?.value['Password'] ?? '';
                                 print('$user .. $pass');
                                 int response =
                                 await Impact().authorize(context, user, pass);
@@ -133,30 +132,29 @@ class ImpactLogin extends StatelessWidget {
   } //build
 }
 
-class proceedButton extends StatefulWidget {
-  proceedButton({Key? key, required this.route, this.title = 'Next'})
-      : super(key: key);
+class ProceedButton extends StatefulWidget {
+  const ProceedButton({Key? key, required this.route, this.title = 'Next'}) : super(key: key);
 
   final String title;
   final GlobalKey<IntroductionScreenState> route;
   @override
-  State<proceedButton> createState() => _proceedButtonState();
+  State<ProceedButton> createState() => _ProceedButtonState();
 }
 
-class _proceedButtonState extends State<proceedButton> {
+class _ProceedButtonState extends State<ProceedButton> {
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: ClipRRect(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
         child: InkWell(
           child: Container(
             height: 60,
             color: Theme.of(context).primaryColor,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: const [
                 Text(
                   'Next',
                   style: TextStyle(fontSize: 20, color: Colors.white),

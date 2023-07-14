@@ -47,27 +47,27 @@ QuizData createQuizDatabase(BuildContext context) {
         positive: 'Good Job! Your VO2Max is better than average',
         negative: 'Keep Working on your VO2Max',
         getReference: () async {
-          final sex_raw = await Provider.of<DatabaseRepository>(context, listen: false).getSex();
-          final age_raw = await Provider.of<DatabaseRepository>(context, listen: false).getBirthday();
-          final weight_raw = await Provider.of<DatabaseRepository>(context, listen: false).getWeight();
+          final sexRaw = await Provider.of<DatabaseRepository>(context, listen: false).getSex();
+          final ageRaw = await Provider.of<DatabaseRepository>(context, listen: false).getBirthday();
+          final weightRaw = await Provider.of<DatabaseRepository>(context, listen: false).getWeight();
 
-          final sex = (sex_raw == 'Male') ? 0 : 13.7;
-          final age = calculateStringAge(age_raw)! * 0.39;
-          final weight = weight_raw * 0.127 * 2.2;
+          final sex = (sexRaw == 'Male') ? 0 : 13.7;
+          final age = calculateStringAge(ageRaw)! * 0.39;
+          final weight = weightRaw * 0.127 * 2.2;
 
           return 79.9 - age - sex - weight;
         },
         getPersonalData: () async {
           final activityData = await Provider.of<DatabaseRepository>(context, listen: false).getActivityData();
           List<num> vo2maxArray = [];
-          activityData.forEach((element) {
+          for (var element in activityData) {
             if (element.vo2max > 0 ) {
               vo2maxArray.add(element.vo2max);
             }
-          });
+          }
 
           num vo2Mean = 0;
-          vo2maxArray.forEach((element) {vo2Mean += element;});
+          for (var element in vo2maxArray) {vo2Mean += element;}
           final result = vo2Mean/vo2maxArray.length;
           if (result.isNaN){return 0;}
           return result;
@@ -89,19 +89,19 @@ QuizData createQuizDatabase(BuildContext context) {
         negative: 'Keep Working on your RMR',
         roundType: Roundings.integer,
         getReference: () async {
-          final sex_raw = await Provider.of<DatabaseRepository>(context, listen: false).getSex();
-          return (sex_raw == 'Male') ? 1800:1600;
+          final sexRaw = await Provider.of<DatabaseRepository>(context, listen: false).getSex();
+          return (sexRaw == 'Male') ? 1800:1600;
         },
         getPersonalData: () async {
-          final sex_raw = await Provider.of<DatabaseRepository>(context, listen: false).getSex();
-          final age_raw = await Provider.of<DatabaseRepository>(context, listen: false).getBirthday();
-          final weight_raw = await Provider.of<DatabaseRepository>(context, listen: false).getWeight();
-          final height_raw = await Provider.of<DatabaseRepository>(context, listen: false).getHeight();
+          final sexRaw = await Provider.of<DatabaseRepository>(context, listen: false).getSex();
+          final ageRaw = await Provider.of<DatabaseRepository>(context, listen: false).getBirthday();
+          final weightRaw = await Provider.of<DatabaseRepository>(context, listen: false).getWeight();
+          final heightRaw = await Provider.of<DatabaseRepository>(context, listen: false).getHeight();
 
 
-          final RMR = (sex_raw == 'Male') ? 66.473 + 5.003 * height_raw + 13.75 * weight_raw - 6.75 * calculateStringAge(age_raw)!:
-          665.09 + 9.56 * height_raw + 1.84 * weight_raw - 4.67 * calculateStringAge(age_raw)!;
-          return RMR;
+          final rmr = (sexRaw == 'Male') ? 66.473 + 5.003 * heightRaw + 13.75 * weightRaw - 6.75 * calculateStringAge(ageRaw)!:
+          665.09 + 9.56 * heightRaw + 1.84 * weightRaw - 4.67 * calculateStringAge(ageRaw)!;
+          return rmr;
         }
     ),
 
@@ -122,36 +122,36 @@ QuizData createQuizDatabase(BuildContext context) {
           return 7;
         },
         getPersonalData: () async {
-          final sleep_raw = await Provider.of<DatabaseRepository>(context, listen: false).getSleepData();
+          final sleepRaw = await Provider.of<DatabaseRepository>(context, listen: false).getSleepData();
 
-          List<double> sleep_array = [];
+          List<double> sleepArray = [];
           String sleepTime = '';
-          sleep_raw.forEach((element) {sleepTime = element.duration;
+          for (var element in sleepRaw) {sleepTime = element.duration;
           RegExp regex = RegExp(r'(\d+) hr, (\d+) min');
           Match? match = regex.firstMatch(sleepTime);
           String hours = '';
           String minutes = '';
-          String tot_sleep = '';
+          String totSleep = '';
           if (match != null) {
           // Extract hours and minutes as strings
           hours = match.group(1)!;
           minutes = match.group(2)!;
-          tot_sleep = hours + '.' + minutes;
+          totSleep = '$hours.$minutes';
           } else {
             print('Invalid time string');
           }
           if (hours == '') {
             hours = '0';
             minutes = '0';
-            tot_sleep = '0';
+            totSleep = '0';
           }
-          sleep_array.add(double.parse(tot_sleep));
-          sleep_array[sleep_raw.indexOf(element)] = double.parse(tot_sleep);
-          });
+          sleepArray.add(double.parse(totSleep));
+          sleepArray[sleepRaw.indexOf(element)] = double.parse(totSleep);
+          }
 
           num sleepMean = 0;
-          sleep_array.forEach((element) {sleepMean += element;});
-          return (sleepMean/sleep_array.length);
+          for (var element in sleepArray) {sleepMean += element;}
+          return (sleepMean/sleepArray.length);
 
         }
     ),
@@ -174,15 +174,15 @@ QuizData createQuizDatabase(BuildContext context) {
         },
         getPersonalData: () async {
           final activityData = await Provider.of<DatabaseRepository>(context, listen: false).getActivityData();
-          List<num> velocity_array = [];
-          activityData.forEach((element) {
+          List<num> velocityArray = [];
+          for (var element in activityData) {
             if (element.speed > 0 && element.name == 'Corsa') {
-              velocity_array.add(element.speed);
+              velocityArray.add(element.speed);
             }
-          });
+          }
           num velocityMean = 0;
-          velocity_array.forEach((element) {velocityMean += element;});
-          final result = (velocityMean/velocity_array.length)/3.6;
+          for (var element in velocityArray) {velocityMean += element;}
+          final result = (velocityMean/velocityArray.length)/3.6;
           if (result.isNaN){
             return 0;
           }else{
@@ -210,10 +210,10 @@ QuizData createQuizDatabase(BuildContext context) {
         },
         getPersonalData: () async {
 
-          final weight_raw = await Provider.of<DatabaseRepository>(context, listen: false).getWeight();
-          final height_raw = await Provider.of<DatabaseRepository>(context, listen: false).getHeight()/100;
+          final weightRaw = await Provider.of<DatabaseRepository>(context, listen: false).getWeight();
+          final heightRaw = await Provider.of<DatabaseRepository>(context, listen: false).getHeight()/100;
 
-          return weight_raw/(height_raw * height_raw);
+          return weightRaw/(heightRaw * heightRaw);
         }
     ),
 
@@ -228,19 +228,19 @@ QuizData createQuizDatabase(BuildContext context) {
       positive: 'Wonderful!, Yesterday you walked a longer distance ',
       negative: 'Come on! That\'s not such a long distance',
       getReference: () async {
-        final sex_raw = await Provider.of<DatabaseRepository>(context, listen: false).getSex();
+        final sexRaw = await Provider.of<DatabaseRepository>(context, listen: false).getSex();
         final height = await Provider.of<DatabaseRepository>(context, listen: false).getHeight();
-        final sex = (sex_raw == 'Male') ? 0.415 : 0.412;
+        final sex = (sexRaw == 'Male') ? 0.415 : 0.412;
         var distance = 7000 * sex * height; //cm
         distance = distance.round()/100000; //km
         return distance;
       },
       getPersonalData: () async {
         final stepsData = await Provider.of<DatabaseRepository>(context).getStepsData();
-        final sex_raw = await Provider.of<DatabaseRepository>(context, listen: false).getSex();
-        final heigth = await Provider.of<DatabaseRepository>(context, listen: false).getHeight();
-        final sex = (sex_raw == 'Male') ? 0.415 : 0.412;
-        var distance = stepsData[0].steps*sex*heigth; //cm
+        final sexRaw = await Provider.of<DatabaseRepository>(context, listen: false).getSex();
+        final height = await Provider.of<DatabaseRepository>(context, listen: false).getHeight();
+        final sex = (sexRaw == 'Male') ? 0.415 : 0.412;
+        var distance = stepsData[0].steps*sex*height; //cm
         distance = distance.round()/100000; //km
         return distance;
       },
@@ -276,11 +276,11 @@ QuizData createQuizDatabase(BuildContext context) {
           int dayCounter = 0;
           for(int day =1; day < 8; day ++) {
             num timeCounter = 0;
-            activityData.forEach((activity) {
+            for (var activity in activityData) {
               if( activity.date == DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: day)))) {
                 timeCounter += activity.hl1_time + activity.hl2_time;
               }
-            });
+            }
             if (timeCounter >= 30) {
               dayCounter++;
             }
@@ -308,15 +308,15 @@ QuizData createQuizDatabase(BuildContext context) {
         },
         getPersonalData: () async {
           final sleepData = await Provider.of<DatabaseRepository>(context, listen: false).getSleepData();
-          List<num> deep_sleepArray = [];
-          sleepData.forEach((element) {
+          List<num> deepSleepArray = [];
+          for (var element in sleepData) {
             if (element.deep_count > 0 ) {
-              deep_sleepArray.add(element.deep_count);
+              deepSleepArray.add(element.deep_count);
             }
-          });
+          }
           num deepMean = 0;
-          deep_sleepArray.forEach((element) {deepMean += element;});
-          return deepMean/deep_sleepArray.length;
+          for (var element in deepSleepArray) {deepMean += element;}
+          return deepMean/deepSleepArray.length;
 
         }
     ),
@@ -341,31 +341,31 @@ QuizData createQuizDatabase(BuildContext context) {
           return 80;
         },
         getPersonalData: () async {
-          List<int> avg_bpm = [];
-          int effective_day = 1;
-          for (var day_subtract = 1; day_subtract < 8; day_subtract++) {
+          List<int> avgBpm = [];
+          int effectiveDay = 1;
+          for (var daySubtract = 1; daySubtract < 8; daySubtract++) {
 
-            final heartData = await Provider.of<DatabaseRepository>(context, listen: false).getHeartDataOfDay(DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: day_subtract))));
+            final heartData = await Provider.of<DatabaseRepository>(context, listen: false).getHeartDataOfDay(DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: daySubtract))));
             double dayBPM = 0.1;
             int dayCounts = 0;
-            heartData.forEach((element) {
+            for (var element in heartData) {
               dayBPM = dayBPM + element.beats;
               dayCounts = dayCounts + 1;
-            });
+            }
 
             try {
-              avg_bpm.add((dayBPM / dayCounts ).round());
-              effective_day = effective_day + 1;
+              avgBpm.add((dayBPM / dayCounts ).round());
+              effectiveDay = effectiveDay + 1;
             } catch (error) {
-              avg_bpm[day_subtract] = 0;
+              avgBpm[daySubtract] = 0;
             }
 
           }
-          int sum_hr = 0;
-          avg_bpm.forEach((element) {
-            sum_hr = sum_hr + element;
-          });
-          return (sum_hr/effective_day - 1).round();
+          int sumHr = 0;
+          for (var element in avgBpm) {
+            sumHr = sumHr + element;
+          }
+          return (sumHr/effectiveDay - 1).round();
         }
     ),
 

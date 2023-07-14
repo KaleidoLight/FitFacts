@@ -6,7 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../database/DatabaseRepo.dart';
 import '../themes/theme.dart';
 
-
+//ignore: must_be_immutable
 class QuizView extends StatefulWidget {
 
   QuizTopic topic;
@@ -14,7 +14,7 @@ class QuizView extends StatefulWidget {
   QuizView({Key? key, required this.topic}) : super(key: key);
 
   @override
-  _QuizViewState createState() => _QuizViewState();
+  State<QuizView> createState() => _QuizViewState();
 }
 
 class _QuizViewState extends State<QuizView> {
@@ -60,7 +60,7 @@ class _QuizViewState extends State<QuizView> {
               ],),
               Text(
                 quiz.title,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.w600,
                 ),
@@ -92,7 +92,7 @@ class _QuizViewState extends State<QuizView> {
               if (areButtonsEnabled)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+                  children: const [
                     Text('Choose one option',
                       style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
                       maxLines: null,
@@ -152,7 +152,7 @@ class QuestionButton extends StatelessWidget {
             color: color,
             height: 60,
             child: Center(
-              child: Text(questionData, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),),
+              child: Text(questionData, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),),
             ),
           ),
         ),
@@ -161,6 +161,7 @@ class QuestionButton extends StatelessWidget {
   }
 }
 
+//ignore: must_be_immutable
 class QuizOutcome extends StatefulWidget {
   QuizActivity quizActivityData;
 
@@ -176,12 +177,12 @@ class _QuizOutcomeState extends State<QuizOutcome> {
     return Consumer<DatabaseRepository>( // link the consumer of the provider
       builder: (context, dbr, child){
         return FutureBuilder( // Call Future builder
-            future: Future.wait([widget.quizActivityData.personalRef!, widget.quizActivityData.reference]), /// <= GET THE DATA FROM THE DATABASE with the desider function
+            future: Future.wait([widget.quizActivityData.personalRef!, widget.quizActivityData.reference]), /// <= GET THE DATA FROM THE DATABASE with the desired function
             builder: (context, snapshot){
           if (snapshot.hasData){
-            final personalRef = snapshot.data![0] as num;
-            final reference = snapshot.data![1] as num;
-            final roundType = widget.quizActivityData.roundType;// CHANGE DataType to ouput type of Future
+            final personalRef = snapshot.data![0];
+            final reference = snapshot.data![1];
+            final roundType = widget.quizActivityData.roundType;// CHANGE DataType to output type of Future
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -193,7 +194,7 @@ class _QuizOutcomeState extends State<QuizOutcome> {
                       children: [
                         Text(
                           widget.quizActivityData.answer,
-                          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+                          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
                           maxLines: null,
                           textAlign: TextAlign.center,
                         ),
@@ -202,7 +203,7 @@ class _QuizOutcomeState extends State<QuizOutcome> {
                           (personalRef >= reference)
                               ? '${widget.quizActivityData.positive} (${roundResult(personalRef, roundType)} > ${roundResult(reference, roundType)}) ${widget.quizActivityData.unit}'
                               : '${widget.quizActivityData.negative} (${roundResult(personalRef, roundType)} < ${roundResult(reference, roundType)}) ${widget.quizActivityData.unit}',
-                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+                          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
                           maxLines: null,
                           textAlign: TextAlign.center,
                         ),
@@ -225,6 +226,7 @@ class _QuizOutcomeState extends State<QuizOutcome> {
   }
 }
 
+//ignore: must_be_immutable
 class QuizActions extends StatefulWidget {
 
   QuizActivity quizActivityData;
@@ -263,6 +265,7 @@ class _QuizActionsState extends State<QuizActions> {
   }
 }
 
+//ignore: must_be_immutable
 class QuizButton extends StatelessWidget {
 
   void Function()? action;
@@ -289,11 +292,11 @@ class QuizButton extends StatelessWidget {
               children: [ Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.stars_rounded),
+                  const Icon(Icons.stars_rounded),
                   Container(width: 5,),
-                  Text('$points', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                  Text('$points', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
                   Container(width: 10,),
-                  Text(title, style: TextStyle(fontSize: 18),)
+                  Text(title, style: const TextStyle(fontSize: 18),)
                 ],
               ),],
             )

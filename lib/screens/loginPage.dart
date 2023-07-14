@@ -21,6 +21,7 @@ class _LoginPageState extends State<LoginPage> {
     //Check if the user is already logged in before rendering the login page
     _checkLogin();
   }//initState
+
   void _checkLogin() async {
     //Get the SharedPreference instance and check if the value of the 'logged' flag is set or not
     final sp = await SharedPreferences.getInstance();
@@ -43,11 +44,11 @@ class _LoginPageState extends State<LoginPage> {
     }
   }// _loginUser
 
-  // _signUpUser
   Future<String> _recoverPassword(String email) async {
     return 'Recover password functionality needs to be implemented';
   }
   // _recoverPassword
+
   @override
   Widget build(BuildContext context) {
     return FlutterLogin(
@@ -67,6 +68,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
   // build
+
   void _toHomePage(BuildContext context){
     Navigator.pushReplacement(
       context,

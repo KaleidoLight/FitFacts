@@ -17,11 +17,11 @@ class QuizData {
 
   QuizActivity getQuiz(QuizTopic forTopic){
     List<QuizActivity> result = [];
-    data.forEach((quiz) {
+    for (var quiz in data) {
       if (quiz.topic == forTopic) {
         result.add(quiz);
       }
-    });
+    }
 
     final random = Random();
     int randomIndex = random.nextInt(result.length);

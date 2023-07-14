@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:fitfacts/database/DatabaseRepo.dart';
 import 'package:fitfacts/database/UserInfo.dart';
 import 'package:fitfacts/navigation/navbar.dart';
@@ -19,7 +17,7 @@ class ProfilePage extends StatefulWidget {
 
   final String watchUser;
 
-  ProfilePage({Key? key,  this.watchUser = 'User'}) : super(key: key);
+  const ProfilePage({Key? key,  this.watchUser = 'User'}) : super(key: key);
 
   static const routename = 'UserPage';
 
@@ -147,13 +145,13 @@ class _DateInfoItemState extends State<DateInfoItem> {
                               builder: ((context, snapshot) { //snapshot = observer of the state of the features variable
                                 if(snapshot.hasData){
                                   final sp = snapshot.data as String;
-                                  dynamic date_disp = calculateStringAge(sp);
-                                  date_disp??= '';
+                                  dynamic dateDisp = calculateStringAge(sp);
+                                  dateDisp??= '';
                                   return Row(
                                     children: [
                                       Text(sp,style: const TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),),
                                       Container(width: 3,),
-                                      Text('(${date_disp} yo)', style: const TextStyle(fontSize: 16,),)
+                                      Text('($dateDisp yo)', style: const TextStyle(fontSize: 16,),)
                                       ],
                                     );
                                 }
@@ -215,7 +213,7 @@ class _DefaultInfoItemState extends State<DefaultInfoItem> {
     var greyColor = (themeMode == ThemeMode.light) ? Colors.grey[700] : Colors.grey[300];
     var bkColor = (themeMode == ThemeMode.light) ? Colors.black.withAlpha(10): Colors.white12;
 
-    final _fbKey = GlobalKey<FormBuilderState>();
+    final fbKey = GlobalKey<FormBuilderState>();
     
     // View Builder
     return Container(
@@ -234,10 +232,10 @@ class _DefaultInfoItemState extends State<DefaultInfoItem> {
                     SizedBox(
                       width: 2*(MediaQuery.of(context).size.width)/3,
                       child: FormBuilder(
-                          key:  _fbKey,
+                          key:  fbKey,
                           autovalidateMode: AutovalidateMode.always,
                           onChanged: () {
-                            _fbKey.currentState!.save();
+                            fbKey.currentState!.save();
                           },
                           child:
                           FormBuilderTextField(
@@ -252,22 +250,22 @@ class _DefaultInfoItemState extends State<DefaultInfoItem> {
                   TextButton(onPressed: (){Navigator.of(context).pop();},
                     child: const Text('Cancel'),),
                   TextButton(onPressed: () async {
-                    final valid = _fbKey.currentState?.saveAndValidate() ?? true;
+                    final valid = fbKey.currentState?.saveAndValidate() ?? true;
                     if(valid) {
                       setState(() {
                         Provider.of<DatabaseRepository>(context, listen: false).updateUserInfo((instance) {
                           if (widget.queryString == 'Username'){
-                            instance.username = _fbKey.currentState?.value[widget.title];
+                            instance.username = fbKey.currentState?.value[widget.title];
                           } else if (widget.queryString == 'Birthday'){
-                            instance.birthDay = _fbKey.currentState?.value[widget.title];
+                            instance.birthDay = fbKey.currentState?.value[widget.title];
                           } else if (widget.queryString == 'CalorieGoal') {
-                            instance.calorieGoal = int.parse(_fbKey.currentState?.value[widget.title]);
+                            instance.calorieGoal = int.parse(fbKey.currentState?.value[widget.title]);
                           } else if (widget.queryString == 'StepGoal'){
-                            instance.stepGoal = int.parse(_fbKey.currentState?.value[widget.title]);
+                            instance.stepGoal = int.parse(fbKey.currentState?.value[widget.title]);
                           } else if (widget.queryString == 'Weight'){
-                            instance.weight = int.parse(_fbKey.currentState?.value[widget.title]);
+                            instance.weight = int.parse(fbKey.currentState?.value[widget.title]);
                           } else if (widget.queryString == 'Height'){
-                            instance.height = int.parse(_fbKey.currentState?.value[widget.title]);
+                            instance.height = int.parse(fbKey.currentState?.value[widget.title]);
                           }
                         });
                       });
@@ -308,7 +306,7 @@ class _DefaultInfoItemState extends State<DefaultInfoItem> {
                               builder: ((context, snapshot) { //snapshot = observer of the state of the features variable
                                 if(snapshot.hasData){
                                   final sp = snapshot.data;
-                                  return Text('${sp}',style: TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),);
+                                  return Text('$sp',style: const TextStyle(letterSpacing: 1,fontSize: 16,fontWeight: FontWeight.bold),);
                                 }
                                 else{
                                   return const Text('--');
@@ -350,7 +348,7 @@ class _MainInfoItemState extends State<MainInfoItem> {
     var themeMode = context.watch<ThemeModel>().mode;
     var bkColor = (themeMode == ThemeMode.light) ? Colors.black.withAlpha(10): Colors.white12;
 
-    final _fbKey = GlobalKey<FormBuilderState>();
+    final fbKey = GlobalKey<FormBuilderState>();
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -397,7 +395,7 @@ class _MainInfoItemState extends State<MainInfoItem> {
                           Container(height: 10,),
                           Row(
                             children: [
-                              Container(
+                              SizedBox(
                                 width: 100,
                                 child: OutlinedButton(
                                     onPressed:  (){
@@ -415,10 +413,10 @@ class _MainInfoItemState extends State<MainInfoItem> {
                                                     SizedBox(
                                                       width: 2*(MediaQuery.of(context).size.width)/3,
                                                       child: FormBuilder(
-                                                          key:  _fbKey,
+                                                          key:  fbKey,
                                                           autovalidateMode: AutovalidateMode.always,
                                                           onChanged: () {
-                                                            _fbKey.currentState!.save();
+                                                            fbKey.currentState!.save();
                                                           },
                                                           child:
                                                           Consumer<DatabaseRepository>(
@@ -445,7 +443,7 @@ class _MainInfoItemState extends State<MainInfoItem> {
                                                     ),
                                                   ],
                                                 ),
-                                                GenderSelectionWidget(),
+                                                const GenderSelectionWidget(),
                                               ],
                                             ),
                                           ),
@@ -453,11 +451,11 @@ class _MainInfoItemState extends State<MainInfoItem> {
                                             TextButton(onPressed: (){Navigator.of(context).pop();},
                                               child: const Text('Cancel'),),
                                             TextButton(onPressed: () async {
-                                              final valid = _fbKey.currentState?.saveAndValidate() ?? true;
+                                              final valid = fbKey.currentState?.saveAndValidate() ?? true;
                                               if(valid) {
                                                 setState(() {
                                                   Provider.of<DatabaseRepository>(context, listen: false).updateUserInfo((instance) {
-                                                    instance.username = _fbKey.currentState?.value['Username'] as String;
+                                                    instance.username = fbKey.currentState?.value['Username'] as String;
                                                   });
                                                 });
                                                 Navigator.of(context).pop();
@@ -470,30 +468,28 @@ class _MainInfoItemState extends State<MainInfoItem> {
                                     },
                                     style: OutlinedButton.styleFrom(foregroundColor: Theme.of(context).primaryColor),
                                     child: Row(
-                                      children: [const Icon(Icons.edit), Container(width: 5,), Text('Edit')],
+                                      children: [const Icon(Icons.edit), Container(width: 5,), const Text('Edit')],
                                 )),
                               ),
                               Container(width: 5,),
-                              Container(
-                                child: OutlinedButton(
-                                    onPressed: (){
-                                      showDialog(context: context, builder: (BuildContext context){
-                                        return SignOutAlertDialog();
-                                      }).then((value) async {
-                                        if (value != null && value == true) {
-                                          await Provider.of<DatabaseRepository>(context, listen: false).wipeDatabase();
-                                          clearSharedPreferences();
-                                          _toLoginPage(context);
-                                        } else {
-                                          // User canceled sign out
-                                        }
-                                      });
-                                    },
-                                    style: OutlinedButton.styleFrom(foregroundColor: Theme.of(context).primaryColor),
-                                    child: Row(
-                                      children: const [Icon(Icons.logout)],
-                                )),
-                              ),
+                              OutlinedButton(
+                                  onPressed: (){
+                                    showDialog(context: context, builder: (BuildContext context){
+                                      return SignOutAlertDialog();
+                                    }).then((value) async {
+                                      if (value != null && value == true) {
+                                        await Provider.of<DatabaseRepository>(context, listen: false).wipeDatabase();
+                                        clearSharedPreferences();
+                                        _toLoginPage(context);
+                                      } else {
+                                        // User canceled sign out
+                                      }
+                                    });
+                                  },
+                                  style: OutlinedButton.styleFrom(foregroundColor: Theme.of(context).primaryColor),
+                                  child: Row(
+                                    children: const [Icon(Icons.logout)],
+                              )),
                             ],
                           )
                         ],
@@ -524,8 +520,10 @@ class _MainInfoItemState extends State<MainInfoItem> {
 /// Displays selector for gender
 ///
 class GenderSelectionWidget extends StatefulWidget {
+
+  const GenderSelectionWidget({super.key});
   @override
-  _GenderSelectionWidgetState createState() => _GenderSelectionWidgetState();
+  State<GenderSelectionWidget> createState() => _GenderSelectionWidgetState();
 }
 
 class _GenderSelectionWidgetState extends State<GenderSelectionWidget> {
@@ -620,7 +618,7 @@ class _GenderSelectorStyledState extends State<GenderSelectorStyled> {
     var greyColor = (themeMode == ThemeMode.light) ? Colors.grey[700] : Colors.grey[300];
     var bkColor = (themeMode == ThemeMode.light) ? Colors.black.withAlpha(10): Colors.white12;
 
-    final _fbKey = GlobalKey<FormBuilderState>();
+    final fbKey = GlobalKey<FormBuilderState>();
 
     // View Builder
     return Container(
@@ -634,12 +632,12 @@ class _GenderSelectorStyledState extends State<GenderSelectorStyled> {
               builder: (context) => AlertDialog(
                 content: Container(
                     constraints: const BoxConstraints(maxHeight: 100),
-                    child:GenderSelectionWidget()),
+                    child:const GenderSelectionWidget()),
                 actions: <Widget>[
                   TextButton(onPressed: (){Navigator.of(context).pop();},
                     child: const Text('Cancel'),),
                   TextButton(onPressed: () async {
-                    final valid = _fbKey.currentState?.saveAndValidate() ?? true;
+                    final valid = fbKey.currentState?.saveAndValidate() ?? true;
                     if(valid) {
                       setState(() {});
                       Navigator.of(context).pop();
@@ -720,6 +718,8 @@ int? calculateStringAge(String birthday) {
 /// SignOutVerification
 ///
 class SignOutAlertDialog extends StatelessWidget {
+
+  const SignOutAlertDialog({super.key});
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -752,6 +752,5 @@ void _toLoginPage(BuildContext context) async{
   //Pop the drawer first
   Navigator.pop(context);
   //Then pop the HomePage
-  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)
-  => LoginPage()));
+  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginPage()));
 }//_toCalendarPage

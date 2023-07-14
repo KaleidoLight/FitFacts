@@ -28,7 +28,7 @@ class CaloriesPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Calories'),
       ),
-      body: Body(),
+      body: const Body(),
       backgroundColor: bkColor,
       drawer: const Navbar(),
       floatingActionButton: FloatingActionButton(
@@ -36,17 +36,19 @@ class CaloriesPage extends StatelessWidget {
         onPressed: () {
           showModalQuiz(QuizTopic.calorie, context);
         },
-        child: Icon(
+        tooltip: 'Take Quiz',
+        child: const Icon(
           Icons.play_arrow_rounded,
           size: 30,
         ),
-        tooltip: 'Take Quiz',
       ),
     );
   } //build
 }
 
 class Body extends StatefulWidget {
+
+  const Body({super.key});
   @override
   State<Body> createState() => _BodyState();
 }
@@ -56,6 +58,7 @@ class _BodyState extends State<Body> {
 
   @override
   void initState() {
+    super.initState();
     setDay = 1;
   }
 
@@ -68,8 +71,8 @@ class _BodyState extends State<Body> {
             Container(
               height: 15,
             ),
-            caloriesView(),
-            caloriesLine(setDay: setDay,),
+            const CaloriesView(),
+            CaloriesLine(setDay: setDay,),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -81,7 +84,7 @@ class _BodyState extends State<Body> {
                         }
                       });
                     },
-                    child: Icon(Icons.arrow_back)),
+                    child: const Icon(Icons.arrow_back)),
                 TextButton(
                     onPressed: () {
                       setState(() {
@@ -90,7 +93,7 @@ class _BodyState extends State<Body> {
                         }
                       });
                     },
-                    child: Icon(Icons.arrow_forward)),
+                    child: const Icon(Icons.arrow_forward)),
               ],
             )
           ],
@@ -101,15 +104,15 @@ class _BodyState extends State<Body> {
 }
 
 // Calories Weekly View
-class caloriesView extends StatelessWidget {
-  const caloriesView({Key? key}) : super(key: key);
+class CaloriesView extends StatelessWidget {
+  const CaloriesView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var themeMode = context.watch<ThemeModel>().mode;
     final Color? greyColor =
         (themeMode == ThemeMode.light) ? Colors.grey[200] : Colors.grey[800];
-    return largeBlock(
+    return LargeBlock(
         title: 'Weekly Calories',
         icon: Icons.event_note_rounded,
         extraHeight: 100,
@@ -128,7 +131,7 @@ class caloriesView extends StatelessWidget {
                       final calorieDetail = data[0] as List<CalorieData>;
                       final calorieGoal = data[1] as int;
                       List<BarChartGroupData> dataBars = [];
-                      calorieDetail.forEach((e) {
+                      for (var e in calorieDetail) {
                         dataBars
                             .add(BarChartGroupData(x: e.dayReference, barRods: [
                           BarChartRodData(
@@ -136,7 +139,7 @@ class caloriesView extends StatelessWidget {
                               width: 15,
                               color: Theme.of(context).primaryColor)
                         ]));
-                      });
+                      }
                       return BarChart(BarChartData(
                           borderData: FlBorderData(show: false),
                           gridData: FlGridData(
@@ -177,20 +180,20 @@ class caloriesView extends StatelessWidget {
 }
 
 // calories line
-class caloriesLine extends StatelessWidget {
+class CaloriesLine extends StatelessWidget {
   final int setDay;
-  const caloriesLine({Key? key, required this.setDay}) : super(key: key);
+  const CaloriesLine({Key? key, required this.setDay}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final String setDay_date = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: setDay)));
+    final String setdayDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: setDay)));
     var themeMode = context.watch<ThemeModel>().mode;
     final Color? greyColor =
         (themeMode == ThemeMode.light) ? Colors.grey[200] : Colors.grey[800];
-    return largeBlock(
+    return LargeBlock(
         title: 'Daily Calories Detail',
         icon: Icons.watch_later_rounded,
-        date: setDay_date,
+        date: setdayDate,
         extraHeight: 150,
         body: Padding(
           padding: const EdgeInsets.only(top: 20),
@@ -198,14 +201,14 @@ class caloriesLine extends StatelessWidget {
             builder: (context, dbr, child) {
               return FutureBuilder(
                   future:
-                    Provider.of<DatabaseRepository>(context).getCalorieDetailOfDate(setDay_date),
+                    Provider.of<DatabaseRepository>(context).getCalorieDetailOfDate(setdayDate),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       final stepsDetail = snapshot.data as List<CalorieDetail>;
                       List<FlSpot> lineData = [];
-                      stepsDetail.forEach((e) {
+                      for (var e in stepsDetail) {
                         lineData.add(FlSpot(e.hour.toDouble(), e.calorie));
-                      });
+                      }
                       if (lineData.isEmpty){
                         return const Center(child: Text('No Daily Detail'));
                         } else{
@@ -253,35 +256,35 @@ class caloriesLine extends StatelessWidget {
 }
 
 Widget getTitles(double value, TitleMeta meta) {
-  Widget text = Text('');
+  Widget text = const Text('');
   switch (value.toInt()) {
     case 7:
       text = Text(
-          DateFormat('E').format(DateTime.now().subtract(Duration(days: 1))));
+          DateFormat('E').format(DateTime.now().subtract(const Duration(days: 1))));
       break;
     case 6:
       text = Text(
-          DateFormat('E').format(DateTime.now().subtract(Duration(days: 2))));
+          DateFormat('E').format(DateTime.now().subtract(const Duration(days: 2))));
       break;
     case 5:
       text = Text(
-          DateFormat('E').format(DateTime.now().subtract(Duration(days: 3))));
+          DateFormat('E').format(DateTime.now().subtract(const Duration(days: 3))));
       break;
     case 4:
       text = Text(
-          DateFormat('E').format(DateTime.now().subtract(Duration(days: 4))));
+          DateFormat('E').format(DateTime.now().subtract(const Duration(days: 4))));
       break;
     case 3:
       text = Text(
-          DateFormat('E').format(DateTime.now().subtract(Duration(days: 5))));
+          DateFormat('E').format(DateTime.now().subtract(const Duration(days: 5))));
       break;
     case 2:
       text = Text(
-          DateFormat('E').format(DateTime.now().subtract(Duration(days: 6))));
+          DateFormat('E').format(DateTime.now().subtract(const Duration(days: 6))));
       break;
     case 1:
       text = Text(
-          DateFormat('E').format(DateTime.now().subtract(Duration(days: 7))));
+          DateFormat('E').format(DateTime.now().subtract(const Duration(days: 7))));
       break;
   }
   return SideTitleWidget(

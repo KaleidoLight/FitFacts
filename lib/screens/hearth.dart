@@ -29,7 +29,7 @@ class HeartPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Heart'),
       ),
-      body: Body(),
+      body: const Body(),
       backgroundColor: bkColor,
       drawer: const Navbar(),
       floatingActionButton: FloatingActionButton(
@@ -37,17 +37,19 @@ class HeartPage extends StatelessWidget {
         onPressed: () {
           showModalQuiz(QuizTopic.heart, context);
         },
-        child: Icon(
+        tooltip: 'Take Quiz',
+        child: const Icon(
           Icons.play_arrow_rounded,
           size: 30,
         ),
-        tooltip: 'Take Quiz',
       ),
     );
   } //build
 }
 
 class Body extends StatefulWidget {
+
+  const Body({super.key});
   @override
   State<Body> createState() => _BodyState();
 }
@@ -57,6 +59,7 @@ class _BodyState extends State<Body> {
 
   @override
   void initState() {
+    super.initState();
     setDay = 1;
   }
 
@@ -69,8 +72,8 @@ class _BodyState extends State<Body> {
             Container(
               height: 15,
             ),
-            HeartView(),
-            heartLine(setDay: setDay),
+            const HeartView(),
+            HeartLine(setDay: setDay),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -82,7 +85,7 @@ class _BodyState extends State<Body> {
                         }
                       });
                     },
-                    child: Icon(Icons.arrow_back)),
+                    child: const Icon(Icons.arrow_back)),
                 TextButton(
                     onPressed: () {
                       setState(() {
@@ -91,7 +94,7 @@ class _BodyState extends State<Body> {
                         }
                       });
                     },
-                    child: Icon(Icons.arrow_forward)),
+                    child: const Icon(Icons.arrow_forward)),
               ],
             )
           ],
@@ -110,7 +113,7 @@ class HeartView extends StatelessWidget {
     var themeMode = context.watch<ThemeModel>().mode;
     final Color? greyColor =
         (themeMode == ThemeMode.light) ? Colors.grey[200] : Colors.grey[800];
-    return largeBlock(
+    return LargeBlock(
         title: 'Weekly Mean Heart Beat',
         icon: Icons.event_note_rounded,
         extraHeight: 100,
@@ -126,55 +129,55 @@ class HeartView extends StatelessWidget {
                       final data = snapshot.data as List<HeartData>;
 
                       //daily mean hr
-                      Map<int, int> avg_bpm = {};
-                      for (var day_subtract = 1;
-                          day_subtract < 8;
-                          day_subtract++) {
+                      Map<int, int> avgBpm = {};
+                      for (var daySubtract = 1;
+                          daySubtract < 8;
+                          daySubtract++) {
                         double dayBPM = 0.1;
                         int dayCounts = 0;
-                        data.forEach((element) {
+                        for (var element in data) {
                           if (element.date ==
                               DateFormat('yyyy-MM-dd').format(DateTime.now()
-                                  .subtract(Duration(days: day_subtract)))) {
+                                  .subtract(Duration(days: daySubtract)))) {
                             dayBPM = dayBPM + element.beats;
                             dayCounts = dayCounts + 1;
                           }
-                        });
+                        }
                         try {
-                          avg_bpm[day_subtract] = (dayBPM / dayCounts).round();
+                          avgBpm[daySubtract] = (dayBPM / dayCounts).round();
                         } catch (error) {
-                          avg_bpm[day_subtract] = 0;
+                          avgBpm[daySubtract] = 0;
                         }
                       }
                       List<BarChartGroupData> dataBars = [];
 
                       //min max hr
-                      Map<int, int> min_hr = {};
-                      Map<int, int> max_hr = {};
-                      for (var day_subtract = 1;
-                          day_subtract < 8;
-                          day_subtract++) {
-                        List<int> day_beats = [];
-                        data.forEach((element) {
+                      Map<int, int> minHr = {};
+                      Map<int, int> maxHr = {};
+                      for (var daySubtract = 1;
+                          daySubtract < 8;
+                          daySubtract++) {
+                        List<int> dayBeats = [];
+                        for (var element in data) {
                           if (element.date ==
                               DateFormat('yyyy-MM-dd').format(DateTime.now()
-                                  .subtract(Duration(days: day_subtract)))) {
-                            day_beats.add(element.beats.toInt());
+                                  .subtract(Duration(days: daySubtract)))) {
+                            dayBeats.add(element.beats.toInt());
                           }
-                        });
-                        min_hr[day_subtract] = day_beats.reduce(min);
-                        max_hr[day_subtract] = day_beats.reduce(max);
+                        }
+                        minHr[daySubtract] = dayBeats.reduce(min);
+                        maxHr[daySubtract] = dayBeats.reduce(max);
                       }
 
-                      avg_bpm.forEach((key, value) {
+                      avgBpm.forEach((key, value) {
                         dataBars.add(BarChartGroupData(x: key, barRods: [
                           BarChartRodData(
-                              fromY: avg_bpm[8 - key]!.toDouble() - 1,
-                              toY: avg_bpm[8 - key]!.toDouble() + 1,
+                              fromY: avgBpm[8 - key]!.toDouble() - 1,
+                              toY: avgBpm[8 - key]!.toDouble() + 1,
                               width: 15,
                               backDrawRodData: BackgroundBarChartRodData(
-                                  fromY: min_hr[8 - key]!.toDouble(),
-                                  toY: max_hr[8 - key]!.toDouble(),
+                                  fromY: minHr[8 - key]!.toDouble(),
+                                  toY: maxHr[8 - key]!.toDouble(),
                                   show: true,
                                   color: Theme.of(context)
                                       .primaryColor
@@ -210,20 +213,20 @@ class HeartView extends StatelessWidget {
 }
 
 // heart line
-class heartLine extends StatelessWidget {
+class HeartLine extends StatelessWidget {
   final int setDay;
-  const heartLine({Key? key, required this.setDay}) : super(key: key);
+  const HeartLine({Key? key, required this.setDay}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var themeMode = context.watch<ThemeModel>().mode;
-    final String setDay_date = DateFormat('yyyy-MM-dd')
+    final String setdayDate = DateFormat('yyyy-MM-dd')
         .format(DateTime.now().subtract(Duration(days: setDay)));
     final Color? greyColor =
         (themeMode == ThemeMode.light) ? Colors.grey[200] : Colors.grey[800];
-    return largeBlock(
+    return LargeBlock(
       title: 'Daily Heart Beat Detail',
-      date: setDay_date,
+      date: setdayDate,
       icon: Icons.watch_later_rounded,
       extraHeight: 180,
       body: Padding(
@@ -236,13 +239,13 @@ class heartLine extends StatelessWidget {
                   if (snapshot.hasData) {
                     final heartDetail = snapshot.data as List<HeartData>;
                     List<FlSpot> lineData = [];
-                    heartDetail.forEach((e) {
-                      if (e.date == setDay_date) {
+                    for (var e in heartDetail) {
+                      if (e.date == setdayDate) {
                         String temp = e.time.replaceAll(':', '.');
                         //print(temp);
                         lineData.add(FlSpot(double.parse(temp), e.beats));
                       }
-                    });
+                    }
                     if (lineData.isEmpty) {
                       return const Center(child: Text('No Daily Detail'));
                     } else {
@@ -295,35 +298,35 @@ class heartLine extends StatelessWidget {
 }
 
 Widget getTitles(double value, TitleMeta meta) {
-  Widget text = Text('');
+  Widget text = const Text('');
   switch (value.toInt()) {
     case 7:
       text = Text(
-          DateFormat('E').format(DateTime.now().subtract(Duration(days: 1))));
+          DateFormat('E').format(DateTime.now().subtract(const Duration(days: 1))));
       break;
     case 6:
       text = Text(
-          DateFormat('E').format(DateTime.now().subtract(Duration(days: 2))));
+          DateFormat('E').format(DateTime.now().subtract(const Duration(days: 2))));
       break;
     case 5:
       text = Text(
-          DateFormat('E').format(DateTime.now().subtract(Duration(days: 3))));
+          DateFormat('E').format(DateTime.now().subtract(const Duration(days: 3))));
       break;
     case 4:
       text = Text(
-          DateFormat('E').format(DateTime.now().subtract(Duration(days: 4))));
+          DateFormat('E').format(DateTime.now().subtract(const Duration(days: 4))));
       break;
     case 3:
       text = Text(
-          DateFormat('E').format(DateTime.now().subtract(Duration(days: 5))));
+          DateFormat('E').format(DateTime.now().subtract(const Duration(days: 5))));
       break;
     case 2:
       text = Text(
-          DateFormat('E').format(DateTime.now().subtract(Duration(days: 6))));
+          DateFormat('E').format(DateTime.now().subtract(const Duration(days: 6))));
       break;
     case 1:
       text = Text(
-          DateFormat('E').format(DateTime.now().subtract(Duration(days: 7))));
+          DateFormat('E').format(DateTime.now().subtract(const Duration(days: 7))));
       break;
   }
   return SideTitleWidget(

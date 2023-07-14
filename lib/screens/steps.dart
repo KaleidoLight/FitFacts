@@ -29,7 +29,7 @@ class StepsPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Steps'),
       ),
-      body: Body(),
+      body: const Body(),
       backgroundColor: bkColor,
       drawer: const Navbar(),
       floatingActionButton: FloatingActionButton(
@@ -37,14 +37,16 @@ class StepsPage extends StatelessWidget {
         onPressed: (){
           showModalQuiz(QuizTopic.step, context);
         },
-        child: Icon(Icons.play_arrow_rounded, size: 30,),
         tooltip: 'Take Quiz',
+        child: const Icon(Icons.play_arrow_rounded, size: 30,),
       ),
     );
   } //build
 }
 
 class Body extends StatefulWidget {
+
+  const Body({super.key});
   @override
   State<Body> createState() => _BodyState();
 }
@@ -54,6 +56,7 @@ class _BodyState extends State<Body> {
 
   @override
   void initState() {
+    super.initState();
     setDay = 1;
   }
 
@@ -65,8 +68,8 @@ class _BodyState extends State<Body> {
         Wrap(
           children: [
             Container(height: 15,),
-            stepsView(),
-            stepsLine(setDay: setDay,),
+            const StepsView(),
+            StepsLine(setDay: setDay,),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -78,7 +81,7 @@ class _BodyState extends State<Body> {
                         }
                       });
                     },
-                    child: Icon(Icons.arrow_back)),
+                    child: const Icon(Icons.arrow_back)),
                 TextButton(
                     onPressed: () {
                       setState(() {
@@ -87,7 +90,7 @@ class _BodyState extends State<Body> {
                         }
                       });
                     },
-                    child: Icon(Icons.arrow_forward)),
+                    child: const Icon(Icons.arrow_forward)),
               ],
             )
           ],
@@ -98,8 +101,8 @@ class _BodyState extends State<Body> {
 }
 
 // Steps View
-class stepsView extends StatelessWidget {
-  const stepsView({Key? key}) : super(key: key);
+class StepsView extends StatelessWidget {
+  const StepsView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +110,7 @@ class stepsView extends StatelessWidget {
         .watch<ThemeModel>()
         .mode;
     final Color? greyColor = (themeMode == ThemeMode.light) ? Colors.grey[200] : Colors.grey[800];
-    return largeBlock(
+    return LargeBlock(
         title: 'Weekly Steps',
         icon: Icons.event_note_rounded,
         extraHeight: 100,
@@ -123,11 +126,11 @@ class stepsView extends StatelessWidget {
                       final stepsDetail = data[0] as List<StepsData>;
                       final stepsGoal = data[1] as int;
                       List<BarChartGroupData> dataBars = [];
-                      stepsDetail.forEach((e) {
+                      for (var e in stepsDetail) {
                         dataBars.add(
                           BarChartGroupData(x: e.dayReference, barRods: [BarChartRodData(toY: e.steps.toDouble(), width: 15, color: Theme.of(context).primaryColor)])
                         );
-                      });
+                      }
                       return BarChart(BarChartData(
                         borderData: FlBorderData(show: false),
                         barGroups: dataBars,
@@ -158,20 +161,20 @@ class stepsView extends StatelessWidget {
 }
 
 // Line View
-class stepsLine extends StatelessWidget {
+class StepsLine extends StatelessWidget {
   final int setDay;
-  const stepsLine({Key? key, required this.setDay}) : super(key: key);
+  const StepsLine({Key? key, required this.setDay}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var themeMode = context
         .watch<ThemeModel>()
         .mode;
-    final String setDay_date = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: setDay)));
+    final String setdayDate = DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(Duration(days: setDay)));
     final Color? greyColor = (themeMode == ThemeMode.light) ? Colors.grey[200] : Colors.grey[800];
-    return largeBlock(
+    return LargeBlock(
         title: 'Daily Steps Detail',
-        date: setDay_date,
+        date: setdayDate,
         icon: Icons.watch_later_rounded,
         extraHeight: 150,
         body: Padding(
@@ -179,7 +182,7 @@ class stepsLine extends StatelessWidget {
           child: Consumer<DatabaseRepository>(
             builder: (context, dbr, child){
               return FutureBuilder(
-                  future: Future.wait([Provider.of<DatabaseRepository>(context).getStepsDetailOfDay(setDay_date), Provider.of<DatabaseRepository>(context).getStepGoal()]),
+                  future: Future.wait([Provider.of<DatabaseRepository>(context).getStepsDetailOfDay(setdayDate), Provider.of<DatabaseRepository>(context).getStepGoal()]),
                   builder: (context, snapshot){
                     if (snapshot.hasData){
                       final List<Object> data = snapshot.data!;
@@ -187,9 +190,9 @@ class stepsLine extends StatelessWidget {
                       List<StepsDetail> stepSorted = List.from(stepsDetail);
                       stepSorted.sort((a,b) => a.hour.compareTo(b.hour)); // order bug solving
                       List<FlSpot> lineData =[];
-                      stepSorted.forEach((e) {
+                      for (var e in stepSorted) {
                         lineData.add(FlSpot(e.hour.toDouble(), e.steps));
-                      });
+                      }
                       if (lineData.isEmpty){
                         return const Center(child: Text('No Daily Detail'));
                       } else{
@@ -221,28 +224,28 @@ class stepsLine extends StatelessWidget {
 }
 
 Widget getTitles(double value, TitleMeta meta){
-  Widget text = Text('');
+  Widget text = const Text('');
   switch (value.toInt()) {
     case 7:
-      text =  Text(DateFormat('E').format(DateTime.now().subtract(Duration(days: 1))));
+      text =  Text(DateFormat('E').format(DateTime.now().subtract(const Duration(days: 1))));
       break;
     case 6:
-      text =  Text(DateFormat('E').format(DateTime.now().subtract(Duration(days: 2))));
+      text =  Text(DateFormat('E').format(DateTime.now().subtract(const Duration(days: 2))));
       break;
     case 5:
-      text =  Text(DateFormat('E').format(DateTime.now().subtract(Duration(days: 3))));
+      text =  Text(DateFormat('E').format(DateTime.now().subtract(const Duration(days: 3))));
       break;
     case 4:
-      text =  Text(DateFormat('E').format(DateTime.now().subtract(Duration(days: 4))));
+      text =  Text(DateFormat('E').format(DateTime.now().subtract(const Duration(days: 4))));
       break;
     case 3:
-      text =  Text(DateFormat('E').format(DateTime.now().subtract(Duration(days: 5))));
+      text =  Text(DateFormat('E').format(DateTime.now().subtract(const Duration(days: 5))));
       break;
     case 2:
-      text =  Text(DateFormat('E').format(DateTime.now().subtract(Duration(days: 6))));
+      text =  Text(DateFormat('E').format(DateTime.now().subtract(const Duration(days: 6))));
       break;
     case 1:
-      text =  Text(DateFormat('E').format(DateTime.now().subtract(Duration(days: 7))));
+      text =  Text(DateFormat('E').format(DateTime.now().subtract(const Duration(days: 7))));
       break;
 
   }

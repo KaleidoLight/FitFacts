@@ -11,8 +11,8 @@ import '../themes/blocks.dart';
 import '../themes/theme.dart';
 
 
-class activityPage extends StatelessWidget {
-  const activityPage({Key? key}) : super(key: key);
+class ActivityPage extends StatelessWidget {
+  const ActivityPage({Key? key}) : super(key: key);
 
   static const routename = 'activityPage';
 
@@ -22,7 +22,7 @@ class activityPage extends StatelessWidget {
     var themeMode = context.watch<ThemeModel>().mode;
     var bkColor = (themeMode == ThemeMode.light) ? Colors.deepPurple[50] : Colors.black;
 
-    print('${activityPage.routename} built'); // REMOVE BEFORE PRODUCTION
+    print('${ActivityPage.routename} built'); // REMOVE BEFORE PRODUCTION
     return Scaffold(
       appBar: AppBar(
         title: const Text('Activity'),
@@ -35,8 +35,8 @@ class activityPage extends StatelessWidget {
         onPressed: (){
           showModalQuiz(QuizTopic.activity, context);
         },
-        child: Icon(Icons.play_arrow_rounded, size: 30,),
         tooltip: 'Take Quiz',
+        child: const Icon(Icons.play_arrow_rounded, size: 30,),
       ),
     );
   } //build
@@ -46,6 +46,7 @@ class activityPage extends StatelessWidget {
 
 class Body extends StatelessWidget {
 
+  const Body({super.key});
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -56,12 +57,12 @@ class Body extends StatelessWidget {
         future:Provider.of<DatabaseRepository>(context).getActivityData(),
         builder: (context, snapshot){
         if (snapshot.hasData){
-          final activity_data = snapshot.data as List<ActivityData>;
+          final activityData = snapshot.data as List<ActivityData>;
           return ListView.builder(
-                itemCount: activity_data.length,
+                itemCount: activityData.length,
                 itemBuilder: (context, index){
-                  return activityTile(data: activity_data, index: activity_data.length - index -1);
-                  //widget che usa idati dei vettori
+                  return ActivityTile(data: activityData, index: activityData.length - index -1);
+                  //widget uses data from vectors
                 },
           );
         }else{
@@ -74,13 +75,13 @@ class Body extends StatelessWidget {
 }
 
 
-class activityTile extends StatelessWidget {
+class ActivityTile extends StatelessWidget {
 
   final List<ActivityData> data;
   final int index;
 
 
-  const activityTile({Key? key, required this.data, required this.index}) : super(key: key);
+  const ActivityTile({Key? key, required this.data, required this.index}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +90,7 @@ class activityTile extends StatelessWidget {
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: ExpansionTile(
-            title: largeBlock(
+            title: LargeBlock(
                 title: data[index].name,
                 date: data[index].date,
                 icon: getIcon(data[index].name),
@@ -102,22 +103,22 @@ class activityTile extends StatelessWidget {
                     children : [
                       Row(
                         children: [
-                          Icon(Icons.timer_outlined, color: Colors.orange ),
-                          Text(' ${duration_convert(data[index].activeDuration)}',
-                          style: TextStyle(fontSize: 17),),
+                          const Icon(Icons.timer_outlined, color: Colors.orange ),
+                          Text(' ${durationConvert(data[index].activeDuration)}',
+                          style: const TextStyle(fontSize: 17),),
                         ],
                       ),
 
                       Row(
                         children: [
                           Icon(Icons.flag_outlined, color: Colors.blueGrey[500]),
-                          Text(' ${(data[index].distance*100).round()/100} ' + ((data[index].distanceUnit=='Kilometer') ? 'Km' :  data[index].distanceUnit), style: TextStyle(fontSize: 17),),
+                          Text(' ${(data[index].distance*100).round()/100} ${(data[index].distanceUnit=='Kilometer') ? 'Km' :  data[index].distanceUnit}', style: const TextStyle(fontSize: 17),),
                       ]),
 
                       Row(
                         children: [
                           const Icon(Icons.local_fire_department_outlined, color: Colors.redAccent),
-                          Text(' ${data[index].calories.round()} Kcal', style: TextStyle(fontSize: 17),),
+                          Text(' ${data[index].calories.round()} Kcal', style: const TextStyle(fontSize: 17),),
                         ],
                       )
                     ]
@@ -128,29 +129,29 @@ class activityTile extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.speed, color: Colors.green),
-                          Text(' ' + ((data[index].speed*10).round()/10).toString() + ' Km/h', style: TextStyle(fontSize: 17),),
+                          const Icon(Icons.speed, color: Colors.green),
+                          Text(' ${(data[index].speed*10).round()/10} Km/h', style: const TextStyle(fontSize: 17),),
                         ],
                       ),
 
                       Row(
                         children: [
-                          Icon(Icons.favorite_border_outlined, color: Colors.red),
-                          Text(' ' + (data[index].avgHR.round().toString() +  ' bpm'), style: TextStyle(fontSize: 17),),
+                          const Icon(Icons.favorite_border_outlined, color: Colors.red),
+                          Text(' ${data[index].avgHR.round()} bpm', style: const TextStyle(fontSize: 17),),
                         ],
                       ),
 
                       Row(
                           children: [
-                            Icon(Icons.air, color: Colors.blueAccent),
-                            Text(' ' + ((data[index].vo2max*10).round()/10).toString() + ' ml/kg/min', style: TextStyle(fontSize: 17),),
+                            const Icon(Icons.air, color: Colors.blueAccent),
+                            Text(' ${(data[index].vo2max*10).round()/10} ml/kg/min', style: const TextStyle(fontSize: 17),),
                           ]
                       ),
                     ],)
                 ],
               ),
             ),
-            children : [largeBlock(
+            children : [LargeBlock(
               title: 'Heart rate levels',
               icon: Icons.bar_chart_outlined,
               body: Row(
@@ -159,13 +160,13 @@ class activityTile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children : [
-                      Text('Zone 1  ' + data[index].hl1_range, style: TextStyle(fontSize: 17, color: Colors.green),),
+                      Text('Zone 1  ${data[index].hl1_range}', style: const TextStyle(fontSize: 17, color: Colors.green),),
 
-                      Text('Zone 2  ' + data[index].hl2_range, style: TextStyle(fontSize: 17, color: Colors.orange),),
+                      Text('Zone 2  ${data[index].hl2_range}', style: const TextStyle(fontSize: 17, color: Colors.orange),),
 
-                      Text('Zone 3  '+ data[index].hl3_range, style: TextStyle(fontSize: 17, color: Colors.deepOrange),),
+                      Text('Zone 3  ${data[index].hl3_range}', style: const TextStyle(fontSize: 17, color: Colors.deepOrange),),
 
-                      Text('Zone 4  '+ data[index].hl4_range, style: TextStyle(fontSize: 17, color: Colors.red),),
+                      Text('Zone 4  ${data[index].hl4_range}', style: const TextStyle(fontSize: 17, color: Colors.red),),
                     ]
                 ),
                   Column(
@@ -174,24 +175,24 @@ class activityTile extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text(' ' + data[index].hl1_time.toString() + ' min', style: TextStyle(fontSize: 17),),
+                          Text(' ${data[index].hl1_time} min', style: const TextStyle(fontSize: 17),),
                         ],
                       ),
 
                       Row(
                         children: [
-                          Text(' ' + (data[index].hl2_time.toString()) + ' min', style: TextStyle(fontSize: 17),),
+                          Text(' ${data[index].hl2_time} min', style: const TextStyle(fontSize: 17),),
                         ],
                       ),
 
                       Row(
                           children: [
-                            Text(data[index].hl3_time.toString() + ' min' ,style: TextStyle(fontSize: 17),),
+                            Text('${data[index].hl3_time} min' ,style: const TextStyle(fontSize: 17),),
                           ]
                       ),
                       Row(
                           children: [
-                            Text(data[index].hl4_time.toString() + ' min' ,style: TextStyle(fontSize: 17),),
+                            Text('${data[index].hl4_time} min' ,style: const TextStyle(fontSize: 17),),
                           ]
                       ),
 
@@ -227,12 +228,12 @@ IconData getIcon(String name){
 }
 
 
-String duration_convert(double duration){
+String durationConvert(double duration){
 
-  int hours = (((duration/1000)/60)/60).toInt();
-  int minutes = ((duration/1000)/60).toInt() - hours*60;
-  String duration_str = hours.toString() + 'h ' + minutes.toString() + 'min';
-  return duration_str;
+  int hours = ((duration/1000)/60)~/60;
+  int minutes = (duration/1000)~/60 - hours*60;
+  String durationStr = '${hours}h ${minutes}min';
+  return durationStr;
 }
 
 

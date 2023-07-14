@@ -103,7 +103,7 @@ class ActivityLog {
 
   @override
   String toString() {
-    return '\n\n|${activityName}|\n'
+    return '\n\n|$activityName|\n'
         '-- logId: $logId\n'
         '-- activityTypeId: $activityTypeId\n'
         '-- averageHeartRate: $averageHeartRate\n'

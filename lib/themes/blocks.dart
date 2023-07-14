@@ -2,20 +2,21 @@ import 'package:fitfacts/themes/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class smallBlock extends StatefulWidget {
+//ignore: must_be_immutable
+class SmallBlock extends StatefulWidget {
 
   String title;
   IconData  icon;
   String date;
   Widget body;
 
-  smallBlock({Key? key, required this.title, required this.icon, this.date = '', required this.body}) : super(key: key);
+  SmallBlock({Key? key, required this.title, required this.icon, this.date = '', required this.body}) : super(key: key);
 
   @override
-  State<smallBlock> createState() => _smallBlockState();
+  State<SmallBlock> createState() => _SmallBlockState();
 }
 
-class _smallBlockState extends State<smallBlock> {
+class _SmallBlockState extends State<SmallBlock> {
   @override
   Widget build(BuildContext context) {
 
@@ -27,7 +28,7 @@ class _smallBlockState extends State<smallBlock> {
 
     return Column(
       children: [
-        Container(
+        SizedBox(
           width:  MediaQuery.of(context).size.width/2,
           height: MediaQuery.of(context).size.width/2,
           child: Padding(
@@ -72,7 +73,8 @@ class _smallBlockState extends State<smallBlock> {
   }
 }
 
-class largeBlock extends StatefulWidget {
+//ignore: must_be_immutable
+class LargeBlock extends StatefulWidget {
 
   String title;
   IconData  icon;
@@ -82,13 +84,13 @@ class largeBlock extends StatefulWidget {
   dynamic data;
   bool showBk;
 
-  largeBlock({Key? key, required this.title, required this.icon, this.date = '', required this.body, this.data, this.extraHeight = 0, this.showBk = true}) : super(key: key);
+  LargeBlock({Key? key, required this.title, required this.icon, this.date = '', required this.body, this.data, this.extraHeight = 0, this.showBk = true}) : super(key: key);
 
   @override
-  State<largeBlock> createState() => _largeBlockState();
+  State<LargeBlock> createState() => _LargeBlockState();
 }
 
-class _largeBlockState extends State<largeBlock> {
+class _LargeBlockState extends State<LargeBlock> {
   @override
   Widget build(BuildContext context) {
 
@@ -101,7 +103,7 @@ class _largeBlockState extends State<largeBlock> {
 
     return Column(
       children: [
-        Container(
+        SizedBox(
           width:  MediaQuery.of(context).size.width/1,
           height: MediaQuery.of(context).size.width/2 + widget.extraHeight,
           child: Padding(
@@ -126,7 +128,7 @@ class _largeBlockState extends State<largeBlock> {
                           ),
                           Row(
                             children: [
-                              Text(widget.date, style: TextStyle(fontWeight: FontWeight.w600),),
+                              Text(widget.date, style: const TextStyle(fontWeight: FontWeight.w600),),
                               Container(width: 5,),
                             ],
                           )
