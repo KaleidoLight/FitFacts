@@ -13,11 +13,16 @@ import '../themes/theme.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 
-class StepsPage extends StatelessWidget {
+class StepsPage extends StatefulWidget {
   const StepsPage({Key? key}) : super(key: key);
 
   static const routename = 'StepsPage';
 
+  @override
+  State<StepsPage> createState() => _StepsPageState();
+}
+
+class _StepsPageState extends State<StepsPage> {
   @override
   Widget build(BuildContext context) {
 
@@ -32,6 +37,11 @@ class StepsPage extends StatelessWidget {
       body: const Body(),
       backgroundColor: bkColor,
       drawer: const Navbar(),
+      onDrawerChanged: (isOpened){
+        if(!isOpened){
+          setState((){});
+        }
+      },
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: (){
@@ -41,8 +51,7 @@ class StepsPage extends StatelessWidget {
         child: const Icon(Icons.play_arrow_rounded, size: 30,),
       ),
     );
-  } //build
-}
+  } }
 
 class Body extends StatefulWidget {
 

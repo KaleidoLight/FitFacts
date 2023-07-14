@@ -13,11 +13,16 @@ import '../themes/theme.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 
-class SleepPage extends StatelessWidget {
+class SleepPage extends StatefulWidget {
   const SleepPage({Key? key}) : super(key: key);
 
   static const routename = 'SleepPage';
 
+  @override
+  State<SleepPage> createState() => _SleepPageState();
+}
+
+class _SleepPageState extends State<SleepPage> {
   @override
   Widget build(BuildContext context) {
 
@@ -32,6 +37,11 @@ class SleepPage extends StatelessWidget {
       body: Body(),
       backgroundColor: bkColor,
       drawer: const Navbar(),
+      onDrawerChanged: (isOpened){
+        if(!isOpened){
+          setState((){});
+        }
+      },
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: (){
@@ -41,8 +51,7 @@ class SleepPage extends StatelessWidget {
         child: const Icon(Icons.play_arrow_rounded, size: 30,),
       ),
     );
-  } //build
-}
+  } }
 
 class Body extends StatefulWidget {
 

@@ -11,11 +11,16 @@ import '../themes/blocks.dart';
 import '../themes/theme.dart';
 
 
-class ActivityPage extends StatelessWidget {
+class ActivityPage extends StatefulWidget {
   const ActivityPage({Key? key}) : super(key: key);
 
   static const routename = 'activityPage';
 
+  @override
+  State<ActivityPage> createState() => _ActivityPageState();
+}
+
+class _ActivityPageState extends State<ActivityPage> {
   @override
   Widget build(BuildContext context) {
 
@@ -30,6 +35,11 @@ class ActivityPage extends StatelessWidget {
       body: Body(),
       backgroundColor: bkColor,
       drawer: const Navbar(),
+      onDrawerChanged: (isOpened){
+        if(!isOpened){
+          setState((){});
+        }
+      },
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: (){
@@ -39,8 +49,7 @@ class ActivityPage extends StatelessWidget {
         child: const Icon(Icons.play_arrow_rounded, size: 30,),
       ),
     );
-  } //build
-}
+  } }
 
 
 

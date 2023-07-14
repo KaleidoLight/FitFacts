@@ -13,11 +13,16 @@ import '../themes/theme.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math';
 
-class HeartPage extends StatelessWidget {
+class HeartPage extends StatefulWidget {
   const HeartPage({Key? key}) : super(key: key);
 
   static const routename = 'HeartPage';
 
+  @override
+  State<HeartPage> createState() => _HeartPageState();
+}
+
+class _HeartPageState extends State<HeartPage> {
   @override
   Widget build(BuildContext context) {
     var themeMode = context.watch<ThemeModel>().mode;
@@ -32,6 +37,11 @@ class HeartPage extends StatelessWidget {
       body: const Body(),
       backgroundColor: bkColor,
       drawer: const Navbar(),
+      onDrawerChanged: (isOpened){
+        if(!isOpened){
+          setState((){});
+        }
+      },
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: () {
@@ -44,8 +54,7 @@ class HeartPage extends StatelessWidget {
         ),
       ),
     );
-  } //build
-}
+  } }
 
 class Body extends StatefulWidget {
 
@@ -126,82 +135,86 @@ class HeartView extends StatelessWidget {
                       Provider.of<DatabaseRepository>(context).getHeartData(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      final data = snapshot.data as List<HeartData>;
-                      //daily mean hr
-                      Map<int, int> avgBpm = {};
-                      for (var daySubtract = 1;
-                          daySubtract < 8;
-                          daySubtract++) {
-                        double dayBPM = 0.1;
-                        int dayCounts = 0;
-                        for (var element in data) {
-                          if (element.date ==
-                              DateFormat('yyyy-MM-dd').format(DateTime.now()
-                                  .subtract(Duration(days: daySubtract)))) {
-                            dayBPM = dayBPM + element.beats;
-                            dayCounts = dayCounts + 1;
+                      try {
+                        final data = snapshot.data as List<HeartData>;
+                        //daily mean hr
+                        Map<int, int> avgBpm = {};
+                        for (var daySubtract = 1;
+                            daySubtract < 8;
+                            daySubtract++) {
+                          double dayBPM = 0.1;
+                          int dayCounts = 0;
+                          for (var element in data) {
+                            if (element.date ==
+                                DateFormat('yyyy-MM-dd').format(DateTime.now()
+                                    .subtract(Duration(days: daySubtract)))) {
+                              dayBPM = dayBPM + element.beats;
+                              dayCounts = dayCounts + 1;
+                            }
+                          }
+                          try {
+                            avgBpm[daySubtract] = (dayBPM / dayCounts).round();
+                          } catch (error) {
+                            avgBpm[daySubtract] = 0;
                           }
                         }
-                        try {
-                          avgBpm[daySubtract] = (dayBPM / dayCounts).round();
-                        } catch (error) {
-                          avgBpm[daySubtract] = 0;
-                        }
-                      }
-                      List<BarChartGroupData> dataBars = [];
+                        List<BarChartGroupData> dataBars = [];
 
-                      //min max hr
-                      Map<int, int> minHr = {};
-                      Map<int, int> maxHr = {};
-                      for (var daySubtract = 1;
-                          daySubtract < 8;
-                          daySubtract++) {
-                        List<int> dayBeats = [];
-                        for (var element in data) {
-                          if (element.date ==
-                              DateFormat('yyyy-MM-dd').format(DateTime.now()
-                                  .subtract(Duration(days: daySubtract)))) {
-                            dayBeats.add(element.beats.toInt());
+                        //min max hr
+                        Map<int, int> minHr = {};
+                        Map<int, int> maxHr = {};
+                        for (var daySubtract = 1;
+                            daySubtract < 8;
+                            daySubtract++) {
+                          List<int> dayBeats = [];
+                          for (var element in data) {
+                            if (element.date ==
+                                DateFormat('yyyy-MM-dd').format(DateTime.now()
+                                    .subtract(Duration(days: daySubtract)))) {
+                              dayBeats.add(element.beats.toInt());
+                            }
                           }
+                          minHr[daySubtract] = dayBeats.reduce(min);
+                          maxHr[daySubtract] = dayBeats.reduce(max);
                         }
-                        minHr[daySubtract] = dayBeats.reduce(min);
-                        maxHr[daySubtract] = dayBeats.reduce(max);
+
+                        avgBpm.forEach((key, value) {
+                          dataBars.add(BarChartGroupData(x: key, barRods: [
+                            BarChartRodData(
+                                fromY: avgBpm[8 - key]!.toDouble() - 1,
+                                toY: avgBpm[8 - key]!.toDouble() + 1,
+                                width: 15,
+                                backDrawRodData: BackgroundBarChartRodData(
+                                    fromY: minHr[8 - key]!.toDouble(),
+                                    toY: maxHr[8 - key]!.toDouble(),
+                                    show: true,
+                                    color: Theme.of(context)
+                                        .primaryColor
+                                        .withAlpha(100)),
+                                color: Theme.of(context).primaryColor)
+                          ]));
+                        });
+
+                        return BarChart(BarChartData(
+                            borderData: FlBorderData(show: false),
+                            barGroups: dataBars,
+                            titlesData: FlTitlesData(
+                                topTitles: AxisTitles(
+                                    sideTitles: SideTitles(showTitles: false)),
+                                bottomTitles: AxisTitles(
+                                    sideTitles: SideTitles(
+                                        showTitles: true,
+                                        getTitlesWidget: getTitles))),
+                            gridData: FlGridData(
+                                show: true,
+                                drawHorizontalLine: true,
+                                drawVerticalLine: false),
+                            barTouchData: BarTouchData(
+                                touchTooltipData: BarTouchTooltipData(
+                                    tooltipBgColor: greyColor))));
+                      } catch (e) {
+                        return Center(child: Text('No Data Found'),);
                       }
-
-                      avgBpm.forEach((key, value) {
-                        dataBars.add(BarChartGroupData(x: key, barRods: [
-                          BarChartRodData(
-                              fromY: avgBpm[8 - key]!.toDouble() - 1,
-                              toY: avgBpm[8 - key]!.toDouble() + 1,
-                              width: 15,
-                              backDrawRodData: BackgroundBarChartRodData(
-                                  fromY: minHr[8 - key]!.toDouble(),
-                                  toY: maxHr[8 - key]!.toDouble(),
-                                  show: true,
-                                  color: Theme.of(context)
-                                      .primaryColor
-                                      .withAlpha(100)),
-                              color: Theme.of(context).primaryColor)
-                        ]));
-                      });
-
-                      return BarChart(BarChartData(
-                          borderData: FlBorderData(show: false),
-                          barGroups: dataBars,
-                          titlesData: FlTitlesData(
-                              topTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false)),
-                              bottomTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                      showTitles: true,
-                                      getTitlesWidget: getTitles))),
-                          gridData: FlGridData(
-                              show: true,
-                              drawHorizontalLine: true,
-                              drawVerticalLine: false),
-                          barTouchData: BarTouchData(
-                              touchTooltipData: BarTouchTooltipData(
-                                  tooltipBgColor: greyColor))));
                     } else {
                       return Container();
                     }

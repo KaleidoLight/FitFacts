@@ -12,11 +12,16 @@ import '../themes/theme.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
   static const routename = 'HomePage';
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
 
@@ -31,9 +36,13 @@ class HomePage extends StatelessWidget {
       body: Body(),
       backgroundColor: bkColor,
       drawer: const Navbar(),
+      onDrawerChanged: (isOpened){
+        if(!isOpened){
+          setState((){});
+        }
+      },
     );
-  } //build
-}
+  } }
 
 class Body extends StatefulWidget {
   @override

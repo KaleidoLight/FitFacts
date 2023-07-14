@@ -433,10 +433,10 @@ class _BottomBarState extends State<BottomBar> {
                           }finally{
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              duration: Duration(seconds: 2),
                               backgroundColor: Theme.of(context).primaryColor,
                               content: const Center(child: Text('Fitbit Data Refreshed', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),)),
                             ));
-                            setState(() {}); // refresh ui
                           }
                         },
                         icon: const Icon(Icons.refresh))
@@ -490,7 +490,7 @@ class SignOutAlertDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Sign Out'),
-      content: const Text('Are you sure?\nYou will also be disconnected from your Fitbit',
+      content: const Text('Are you sure?\nYou will be disconnected from your Fitbit\nAll data linked to you will be erased',
       textAlign: TextAlign.center,),
       actions: <Widget>[
         TextButton(

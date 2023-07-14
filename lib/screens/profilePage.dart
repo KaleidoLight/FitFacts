@@ -41,6 +41,11 @@ class _ProfilePageState extends State<ProfilePage> {
         elevation: 0,
       ),
       drawer: const Navbar(),
+      onDrawerChanged: (isOpened){
+        if(!isOpened){
+          setState((){});
+        }
+      },
       body: ListView(
         padding: const EdgeInsets.fromLTRB(15, 30, 15, 0),
         children:[

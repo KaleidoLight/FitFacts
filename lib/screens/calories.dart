@@ -12,11 +12,16 @@ import '../themes/blocks.dart';
 import '../themes/theme.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-class CaloriesPage extends StatelessWidget {
+class CaloriesPage extends StatefulWidget {
   const CaloriesPage({Key? key}) : super(key: key);
 
   static const routename = 'CaloriesPage';
 
+  @override
+  State<CaloriesPage> createState() => _CaloriesPageState();
+}
+
+class _CaloriesPageState extends State<CaloriesPage> {
   @override
   Widget build(BuildContext context) {
     var themeMode = context.watch<ThemeModel>().mode;
@@ -31,6 +36,11 @@ class CaloriesPage extends StatelessWidget {
       body: const Body(),
       backgroundColor: bkColor,
       drawer: const Navbar(),
+      onDrawerChanged: (isOpened){
+        if(!isOpened){
+          setState((){});
+        }
+      },
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: () {
@@ -43,8 +53,7 @@ class CaloriesPage extends StatelessWidget {
         ),
       ),
     );
-  } //build
-}
+  } }
 
 class Body extends StatefulWidget {
 
