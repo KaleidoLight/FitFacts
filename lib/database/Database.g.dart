@@ -233,7 +233,8 @@ class _$UserInfoDao extends UserInfoDao {
 
   @override
   Future<void> registerUser(UserInfo withInfo) async {
-    await _userInfoInsertionAdapter.insert(withInfo, OnConflictStrategy.ignore);
+    await _userInfoInsertionAdapter.insert(
+        withInfo, OnConflictStrategy.replace);
   }
 
   @override

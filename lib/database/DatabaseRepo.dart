@@ -81,11 +81,9 @@ class DatabaseRepository extends ChangeNotifier {
 
   Future<void> registerUser(UserInfo withInfo) async {
     try {
-      await deleteUser(await findUser());
       await database.userInfoDao.registerUser(withInfo);
     } catch (error){
       print(error);
-      await database.userInfoDao.registerUser(withInfo);
     }
     notifyListeners();
   }

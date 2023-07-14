@@ -333,42 +333,36 @@ class _NavItemState extends State<NavItem> {
               color: (_selection == widget.destinationView)
                   ? widget.color.withAlpha(25)
                   : Colors.grey.withAlpha(30)),
-          child: Column(
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(
-                    widget.icon,
-                    size: 25,
-                    color: (_selection == widget.destinationView)
-                        ? widget.color
-                        : greyColor,
-                  ),
-                  Container(
-                    width: 20,
-                  ),
-                  Text(
-                    widget.title,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: (_selection == widget.destinationView)
-                          ? widget.color
-                          : greyColor,
-                    ),
-                  ),
-                  const Spacer(),
-                  Icon(
-                    Icons.arrow_right,
-                    color: (_selection == widget.destinationView)
-                        ? widget.color
-                        : greyColor,
-                  )
-                ],
+              Icon(
+                widget.icon,
+                size: 25,
+                color: (_selection == widget.destinationView)
+                    ? widget.color
+                    : greyColor,
               ),
+              Container(
+                width: 20,
+              ),
+              Text(
+                widget.title,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                  color: (_selection == widget.destinationView)
+                      ? widget.color
+                      : greyColor,
+                ),
+              ),
+              const Spacer(),
+              Icon(
+                Icons.arrow_right,
+                color: (_selection == widget.destinationView)
+                    ? widget.color
+                    : greyColor,
+              )
             ],
           ),
         ),
@@ -490,7 +484,7 @@ void _toLoginPage(BuildContext context) async{
 /// SignOutVerification
 ///
 class SignOutAlertDialog extends StatelessWidget {
-  
+
   const SignOutAlertDialog({super.key});
   @override
   Widget build(BuildContext context) {

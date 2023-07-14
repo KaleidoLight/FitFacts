@@ -28,7 +28,7 @@ abstract class UserInfoDao {
   Future<List<UserInfo>> findAllUsers(); // get all users
 
   //INSERT
-  @Insert(onConflict: OnConflictStrategy.ignore)
+  @Insert(onConflict: OnConflictStrategy.replace)
   Future<void> registerUser(UserInfo withInfo);
 
   //UPDATE
