@@ -25,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
   void _checkLogin() async {
     //Get the SharedPreference instance and check if the value of the 'logged' flag is set or not
     final sp = await SharedPreferences.getInstance();
-    if(sp.getBool('logged') != null){
+    if(sp.getBool('logged') != null && sp.getBool('hasOnboarded') == true){
       //If the flag has a value, push the HomePage
       _toHomePage(context);
     }//if

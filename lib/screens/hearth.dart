@@ -127,7 +127,6 @@ class HeartView extends StatelessWidget {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       final data = snapshot.data as List<HeartData>;
-
                       //daily mean hr
                       Map<int, int> avgBpm = {};
                       for (var daySubtract = 1;
@@ -185,6 +184,7 @@ class HeartView extends StatelessWidget {
                               color: Theme.of(context).primaryColor)
                         ]));
                       });
+
                       return BarChart(BarChartData(
                           borderData: FlBorderData(show: false),
                           barGroups: dataBars,

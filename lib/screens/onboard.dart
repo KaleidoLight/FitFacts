@@ -6,6 +6,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:fitfacts/screens/profilePage.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:fitfacts/database/DatabaseRepo.dart';
 import '../database/UserInfo.dart';
@@ -265,8 +266,10 @@ class _OnboardState extends State<Onboard> {
             ),
             bodyWidget: VisibilityDetector(
               key: const Key('your_widget_key'),
-              onVisibilityChanged: (visibilityInfo) {
+              onVisibilityChanged: (visibilityInfo) async {
                 if (visibilityInfo.visibleFraction == 1.0) {
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  prefs.setBool('hasOnboarded', true);
                   performLoginSetup(context);
                 }
               },
