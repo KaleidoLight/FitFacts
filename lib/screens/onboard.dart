@@ -1,5 +1,4 @@
 import 'package:fitfacts/database/DataDownloader.dart';
-import 'package:fitfacts/screens/homePage.dart';
 import 'package:fitfacts/server/Impact.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -136,7 +135,10 @@ class _OnboardState extends State<Onboard> {
                                 await Impact().authorize(context, user, pass);
                             if (response == 200) {
                               print('AUTHORIZED');
-                              Provider.of<DatabaseRepository>(context, listen: false).registerUser(UserInfo('User', '00-00-0000', 'Male', 0, 0, 0, 0, 0));
+                              Provider.of<DatabaseRepository>(context,
+                                      listen: false)
+                                  .registerUser(UserInfo('User', '00-00-0000',
+                                      'Male', 0, 0, 0, 0, 0));
                               _introKey.currentState?.next();
                             }
                           }))
@@ -157,7 +159,8 @@ class _OnboardState extends State<Onboard> {
             ],
           )),
         ),
-        PageViewModel( // PAGE 2
+        PageViewModel(
+          // PAGE 2
           image: Center(
               child: Column(
             children: [
@@ -268,7 +271,8 @@ class _OnboardState extends State<Onboard> {
               key: const Key('your_widget_key'),
               onVisibilityChanged: (visibilityInfo) async {
                 if (visibilityInfo.visibleFraction == 1.0) {
-                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
                   prefs.setBool('hasOnboarded', true);
                   performLoginSetup(context);
                 }
@@ -298,9 +302,9 @@ void performLoginSetup(BuildContext context) async {
 
   //Perform Redirection to App
   await Future.delayed(const Duration(seconds: 2));
-  Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (BuildContext context) => const HomePage(),
-    ),
+  Navigator.pushNamedAndRemoveUntil(
+    context,
+    '/home',
+    (route) => false,
   );
 }
