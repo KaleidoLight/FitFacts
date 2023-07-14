@@ -137,7 +137,7 @@ class _OnboardState extends State<Onboard> {
                               print('AUTHORIZED');
                               Provider.of<DatabaseRepository>(context,
                                       listen: false)
-                                  .registerUser(UserInfo('User', '00-00-0000',
+                                  .registerUser(UserInfo('User', '01-01-2000',
                                       'Male', 0, 0, 0, 0, 0));
                               _introKey.currentState?.next();
                             }

@@ -55,10 +55,10 @@ class _ProfilePageState extends State<ProfilePage> {
               MainInfoItem(),
 
               DateInfoItem(),
-              
-              DefaultInfoItem(badgeIcon: Icons.monitor_weight_outlined, title: 'Weight', unit: '(kg)', queryString: 'Weight',),
 
               DefaultInfoItem(badgeIcon: Icons.height_outlined, title: 'Height', unit: '(cm)', queryString: 'Height',),
+              
+              DefaultInfoItem(badgeIcon: Icons.monitor_weight_outlined, title: 'Weight', unit: '(kg)', queryString: 'Weight',),
               
               DefaultInfoItem(badgeIcon: Icons.local_fire_department_rounded, title: 'Calories Goal', unit: '(kCal)', queryString: 'CalorieGoal'),
 
@@ -729,7 +729,7 @@ class SignOutAlertDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Sign Out'),
-      content: const Text('Are you sure?\nYou will also be disconnected from your Fitbit',
+      content: const Text('Are you sure?\nYou will be disconnected from your Fitbit\nAll data linked to you will be erased',
         textAlign: TextAlign.center,),
       actions: <Widget>[
         TextButton(

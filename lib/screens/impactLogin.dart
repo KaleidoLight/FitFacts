@@ -60,7 +60,6 @@ class ImpactLogin extends StatelessWidget {
                             name: 'Username',
                             decoration:
                             const InputDecoration(labelText: 'Username', focusedBorder: InputBorder.none),
-                            initialValue: 'MMmxITaSML',
                           ),
                         )),
                   ),

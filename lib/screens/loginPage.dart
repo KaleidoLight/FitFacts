@@ -53,6 +53,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return FlutterLogin(
       title: 'FitFacts',
+      logo: const AssetImage('assets/images/roundLogo.png'),
       theme: LoginTheme(
           pageColorLight: Theme.of(context).primaryColor,
           buttonTheme: LoginButtonTheme(highlightColor: Colors.deepPurple[300], splashColor: Colors.deepPurple[300]),
