@@ -103,6 +103,7 @@ Future<void> downloadAndStoreData(BuildContext context) async {
   for (int day = 1; day <= 7; day++) {
     if (activityAPIResponse.data.isNotEmpty) {
       final dailyActivities = activityAPIResponse.day(day);
+      print('${dailyActivities.date} - ${dailyActivities.data}');
       if (dailyActivities.data.isNotEmpty) {
         dailyActivities.data.forEach((activity) {
           Provider.of<DatabaseRepository>(context, listen: false).addActivityData(ActivityData(
@@ -118,20 +119,17 @@ Future<void> downloadAndStoreData(BuildContext context) async {
               activeDuration: activity.activeDuration.toDouble(),
               speed: activity.speed.toDouble(),
               pace: activity.pace,
-              hl1_range:
-                  '${activity.heartRateZones[0].min} - ${activity.heartRateZones[0].max} bpm',
-              hl1_time: activity.heartRateZones[0].minutes.toDouble(),
-              hl2_range:
-                  '${activity.heartRateZones[1].min} - ${activity.heartRateZones[1].max} bpm',
-              hl2_time: activity.heartRateZones[1].minutes.toDouble(),
-              hl3_range:
-                  '${activity.heartRateZones[2].min} - ${activity.heartRateZones[2].max} bpm',
-              hl3_time: activity.heartRateZones[2].minutes.toDouble(),
-              hl4_range:
-                  '${activity.heartRateZones[3].min} - ${activity.heartRateZones[3].max} bpm',
-              hl4_time: activity.heartRateZones[3].minutes.toDouble()));
-        });
-        activityReference += 1;
+              hl1_range: activity.heartRateZones.isNotEmpty  ? '${activity.heartRateZones[0].min} - ${activity.heartRateZones[0].max} bpm' : '',
+              hl1_time: activity.heartRateZones.isNotEmpty  ? activity.heartRateZones[0].minutes.toDouble() : 0.0,
+              hl2_range: activity.heartRateZones.length >1 ? '${activity.heartRateZones[1].min} - ${activity.heartRateZones[1].max} bpm' : '',
+              hl2_time: activity.heartRateZones.length >1 ? activity.heartRateZones[1].minutes.toDouble() : 0.0,
+              hl3_range: activity.heartRateZones.length >2 ? '${activity.heartRateZones[2].min} - ${activity.heartRateZones[2].max} bpm' : '',
+              hl3_time: activity.heartRateZones.length >2 ? activity.heartRateZones[2].minutes.toDouble(): 0.0,
+              hl4_range: activity.heartRateZones.length > 3 ? '${activity.heartRateZones[3].min} - ${activity.heartRateZones[3].max} bpm' : '',
+              hl4_time: activity.heartRateZones.length > 3 ? activity.heartRateZones[3].minutes.toDouble() : 0.0));
+          activityReference += 1;
+        }
+        );
       } else {
         print('No Activities for this Day');
       }
@@ -139,5 +137,7 @@ Future<void> downloadAndStoreData(BuildContext context) async {
       print('No Activities for this time range');
     }
   }
+
+
 }
 

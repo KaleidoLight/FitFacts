@@ -433,7 +433,7 @@ class _BottomBarState extends State<BottomBar> {
                           }finally{
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              duration: Duration(seconds: 2),
+                              duration: const Duration(seconds: 1),
                               backgroundColor: Theme.of(context).primaryColor,
                               content: const Center(child: Text('Fitbit Data Refreshed', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),)),
                             ));

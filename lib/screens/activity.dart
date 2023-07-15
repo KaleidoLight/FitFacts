@@ -32,7 +32,7 @@ class _ActivityPageState extends State<ActivityPage> {
       appBar: AppBar(
         title: const Text('Activity'),
       ),
-      body: Body(),
+      body: const Body(),
       backgroundColor: bkColor,
       drawer: const Navbar(),
       onDrawerChanged: (isOpened){
@@ -67,6 +67,7 @@ class Body extends StatelessWidget {
         builder: (context, snapshot){
         if (snapshot.hasData){
           final activityData = snapshot.data as List<ActivityData>;
+          print(activityData.last.name);
           return ListView.builder(
                 itemCount: activityData.length,
                 itemBuilder: (context, index){
@@ -238,7 +239,6 @@ IconData getIcon(String name){
 
 
 String durationConvert(double duration){
-
   int hours = ((duration/1000)/60)~/60;
   int minutes = (duration/1000)~/60 - hours*60;
   String durationStr = '${hours}h ${minutes}min';

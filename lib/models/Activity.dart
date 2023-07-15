@@ -118,7 +118,7 @@ class ActivityLog {
 }
 
 class HeartRateZone {
-  final String name;
+  final dynamic name;
   final num min;
   final num max;
   final num minutes;
@@ -133,7 +133,7 @@ class HeartRateZone {
 
   factory HeartRateZone.fromJson(Map<String, dynamic> json) {
     return HeartRateZone(
-      name: json['name'] ?? '',
+      name: json['name'] is List ? json['name'] : json['name'] ?? '',
       min: json['min'] ?? 0,
       max: json['max'] ?? 0,
       minutes: json['minutes'] ?? 0,

@@ -75,7 +75,7 @@ QuizData createQuizDatabase(BuildContext context) {
         ),
 
     QuizActivity(
-        title: 'What is the average RMR (resting metabolic rate) ?',
+        title: 'What is the average RMR (Resting Metabolic Rate) ?',
         topic: QuizTopic.calorie,
         questions: [
           QuizQuestion(body: '1200 - 2000 Kcal/day', isCorrect: true),
@@ -203,7 +203,7 @@ QuizData createQuizDatabase(BuildContext context) {
         answer: 'BMI represents an index of fatness. It is widely used as a risk factor for the development of several health issues.\nIn addition, it is widely used in determining public health policies.',
         link: 'https://doi.org/10.1097%2FNT.0000000000000092',
         unit: 'Kg/m^2',
-        positive: '',
+        positive: 'Your BMI is above range, but don\'t give up! Focus on burning calories',
         negative: 'Your BMI is within range! ',
         getReference: () async {
           return 25;
