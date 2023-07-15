@@ -39,7 +39,7 @@ class _HeartPageState extends State<HeartPage> {
       drawer: const Navbar(),
       onDrawerChanged: (isOpened){
         if(!isOpened){
-          setState((){});
+          Provider.of<DatabaseRepository>(context, listen: false).updateView();
         }
       },
       floatingActionButton: FloatingActionButton(

@@ -291,4 +291,8 @@ class DatabaseRepository extends ChangeNotifier {
     await database.userInfoDao.wipeData();
   }
 
+  void updateView(){
+    notifyListeners();
+  }
+
 }

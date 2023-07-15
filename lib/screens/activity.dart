@@ -37,7 +37,7 @@ class _ActivityPageState extends State<ActivityPage> {
       drawer: const Navbar(),
       onDrawerChanged: (isOpened){
         if(!isOpened){
-          setState((){});
+          Provider.of<DatabaseRepository>(context, listen: false).updateView();
         }
       },
       floatingActionButton: FloatingActionButton(

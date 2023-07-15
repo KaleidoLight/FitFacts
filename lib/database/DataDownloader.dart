@@ -103,7 +103,6 @@ Future<void> downloadAndStoreData(BuildContext context) async {
   for (int day = 1; day <= 7; day++) {
     if (activityAPIResponse.data.isNotEmpty) {
       final dailyActivities = activityAPIResponse.day(day);
-      print('${dailyActivities.date} - ${dailyActivities.data}');
       if (dailyActivities.data.isNotEmpty) {
         dailyActivities.data.forEach((activity) {
           Provider.of<DatabaseRepository>(context, listen: false).addActivityData(ActivityData(

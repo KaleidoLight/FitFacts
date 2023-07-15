@@ -38,7 +38,7 @@ class _CaloriesPageState extends State<CaloriesPage> {
       drawer: const Navbar(),
       onDrawerChanged: (isOpened){
         if(!isOpened){
-          setState((){});
+          Provider.of<DatabaseRepository>(context, listen: false).updateView();
         }
       },
       floatingActionButton: FloatingActionButton(

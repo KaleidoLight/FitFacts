@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
       drawer: const Navbar(),
       onDrawerChanged: (isOpened){
         if(!isOpened){
-          setState((){});
+          Provider.of<DatabaseRepository>(context, listen: false).updateView();
         }
       },
     );

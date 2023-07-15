@@ -43,7 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
       drawer: const Navbar(),
       onDrawerChanged: (isOpened){
         if(!isOpened){
-          setState((){});
+          Provider.of<DatabaseRepository>(context, listen: false).updateView();
         }
       },
       body: ListView(
