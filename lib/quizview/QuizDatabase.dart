@@ -225,8 +225,8 @@ QuizData createQuizDatabase(BuildContext context) {
       unit: 'Km',
       topic: QuizTopic.step,
       answer: 'A research shows 5km is a good daily walking distance.\nThe step length can be calculated approximately as height(cm)*0.415',
-      positive: 'Wonderful!, Yesterday you walked a longer distance ',
-      negative: 'Come on! That\'s not such a long distance',
+      positive: 'Wonderful!, Yesterday you walked a longer distance',
+      negative: 'Come on! Yesterday you did not walked enough',
       getReference: () async {
         final sexRaw = await Provider.of<DatabaseRepository>(context, listen: false).getSex();
         final height = await Provider.of<DatabaseRepository>(context, listen: false).getHeight();

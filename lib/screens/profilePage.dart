@@ -7,10 +7,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../server/NetworkUtils.dart';
 import '../themes/theme.dart';
-import 'loginPage.dart';
 
 
 class ProfilePage extends StatefulWidget {
@@ -479,24 +476,6 @@ class _MainInfoItemState extends State<MainInfoItem> {
                                 )),
                               ),
                               Container(width: 5,),
-                              OutlinedButton(
-                                  onPressed: (){
-                                    showDialog(context: context, builder: (BuildContext context){
-                                      return SignOutAlertDialog();
-                                    }).then((value) async {
-                                      if (value != null && value == true) {
-                                        await Provider.of<DatabaseRepository>(context, listen: false).wipeDatabase();
-                                        clearSharedPreferences();
-                                        _toLoginPage(context);
-                                      } else {
-                                        // User canceled sign out
-                                      }
-                                    });
-                                  },
-                                  style: OutlinedButton.styleFrom(foregroundColor: Theme.of(context).primaryColor),
-                                  child: Row(
-                                    children: const [Icon(Icons.logout)],
-                              )),
                             ],
                           )
                         ],
@@ -750,14 +729,3 @@ class SignOutAlertDialog extends StatelessWidget {
     );
   }
 }
-
-// to leave user logged in
-void _toLoginPage(BuildContext context) async{
-  //Unset the 'username' filed in SharedPreference
-  final sp = await SharedPreferences.getInstance();
-  sp.remove('logged');
-  //Pop the drawer first
-  Navigator.pop(context);
-  //Then pop the HomePage
-  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginPage()));
-}//_toCalendarPage
