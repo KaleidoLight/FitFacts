@@ -138,7 +138,7 @@ class CaloriesView extends StatelessWidget {
                     if (snapshot.hasData) {
                       final List<Object> data = snapshot.data!;
                       final calorieDetail = data[0] as List<CalorieData>;
-                      final calorieGoal = data[1] as int;
+                      final calorieGoal = data[1] as int; 
                       List<BarChartGroupData> dataBars = [];
                       for (var e in calorieDetail) {
                         dataBars

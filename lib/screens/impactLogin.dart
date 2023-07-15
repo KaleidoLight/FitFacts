@@ -58,8 +58,9 @@ class ImpactLogin extends StatelessWidget {
                           borderRadius: const BorderRadius.all(Radius.circular(10)),
                           child: FormBuilderTextField(
                             name: 'Username',
-                            decoration:
-                            const InputDecoration(labelText: 'Username', focusedBorder: InputBorder.none),
+                            decoration: const InputDecoration(
+                                labelText: 'Username',
+                                focusedBorder: InputBorder.none),
                           ),
                         )),
                   ),
@@ -131,45 +132,8 @@ class ImpactLogin extends StatelessWidget {
   } //build
 }
 
-class ProceedButton extends StatefulWidget {
-  const ProceedButton({Key? key, required this.route, this.title = 'Next'}) : super(key: key);
 
-  final String title;
-  final GlobalKey<IntroductionScreenState> route;
-  @override
-  State<ProceedButton> createState() => _ProceedButtonState();
-}
 
-class _ProceedButtonState extends State<ProceedButton> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-        child: InkWell(
-          child: Container(
-            height: 60,
-            color: Theme.of(context).primaryColor,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Text(
-                  'Next',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                )
-              ],
-            ),
-          ),
-          onTap: () {
-            widget.route.currentState?.next();
-            print('pressed');
-          },
-        ),
-      ),
-    );
-  }
-}
 
 
 

@@ -352,14 +352,12 @@ QuizData createQuizDatabase(BuildContext context) {
               dayBPM = dayBPM + element.beats;
               dayCounts = dayCounts + 1;
             }
-
             try {
               avgBpm.add((dayBPM / dayCounts ).round());
               effectiveDay = effectiveDay + 1;
             } catch (error) {
               avgBpm[daySubtract] = 0;
             }
-
           }
           int sumHr = 0;
           for (var element in avgBpm) {
