@@ -302,3 +302,4 @@ Widget getTitles(double value, TitleMeta meta) {
     child: text,
   );
 }
+

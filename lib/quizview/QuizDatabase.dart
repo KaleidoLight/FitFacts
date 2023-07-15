@@ -18,13 +18,13 @@ QuizData createQuizDatabase(BuildContext context) {
         topic: QuizTopic.step,
         answer: 'Health benefits are present above 7000 steps per day',
         positive: 'Wonderful!, Yesterday you did better than average with',
-        negative: 'Don\'t give up! This week you did ',
+        negative: 'Don\'t give up! Yesterday you did ',
         roundType: Roundings.integer,
         getReference: () async {return 7000;},
         unit: 'steps', getPersonalData: () async {
       final stepsData =
           await Provider.of<DatabaseRepository>(context).getStepsData();
-      return stepsData[0].steps;
+      return stepsData.last.steps;
     },
         questions: [
           QuizQuestion(body: '10000'),
@@ -240,7 +240,7 @@ QuizData createQuizDatabase(BuildContext context) {
         final sexRaw = await Provider.of<DatabaseRepository>(context, listen: false).getSex();
         final height = await Provider.of<DatabaseRepository>(context, listen: false).getHeight();
         final sex = (sexRaw == 'Male') ? 0.415 : 0.412;
-        var distance = stepsData[0].steps*sex*height; //cm
+        var distance = stepsData.last.steps*sex*height; //cm
         distance = distance.round()/100000; //km
         return distance;
       },
