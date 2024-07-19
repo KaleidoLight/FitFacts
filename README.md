@@ -15,3 +15,6 @@ INQ0092018 - BIOMEDICAL WEARABLE TECHNOLOGIES FOR HEALTHCARE AND WELLBEING 2022-
 - Alberto Presti
 
 ![Screenshot](https://github.com/KaleidoLight/FitFacts/blob/main/readme_img/intro.png)
+![Screenshot](https://github.com/KaleidoLight/FitFacts/blob/main/readme_img/core.png)
+![Screenshot](https://github.com/KaleidoLight/FitFacts/blob/main/readme_img/vis.png)
+![Screenshot](https://github.com/KaleidoLight/FitFacts/blob/main/readme_img/quiz.png)
