@@ -13,3 +13,5 @@ INQ0092018 - BIOMEDICAL WEARABLE TECHNOLOGIES FOR HEALTHCARE AND WELLBEING 2022-
 - Sebastiano Toniolo
 - Martina Zambon
 - Alberto Presti
+
+![Screenshot](https://github.com/KaleidoLight/FitFacts/blob/main/readme_img/intro.png)
